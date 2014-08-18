@@ -1,14 +1,27 @@
-Wanderlust
-==========
+# Wanderlust - Work in Progress
 
 ### Cache warmer with priorities
 
-Wanderlust, the yearning to travel through Google Analytics, Piwik, REST endpoints, sitemap.xml, etc to warm up the caches of your web app.
+Wanderlust, the yearning to travel through Google Analytics, Piwik, REST endpoints, sitemap.xml, etc to warm up the caches of your website.
 
-WIP
+### Cold Cache vs. Warm Cache ?
+
+#### Cold Cache
+
+There is analogy with cold engine and warm engine of the car. 
+
+When the cache is empty or has irrelevant data, so that CPU needs to do a slower read from main memory for your program data requirement.
+
+#### Warm Cache
+
+When the cache contains relevant data, and all the reads for your program are satisfied from the cache itself.
+
+## Architectural Overview
 
 [![Mindmap of Wanderlust](https://raw.githubusercontent.com/SchumacherFM/wanderlust/master/mindmap/wanderlust.png "Mindmap of Wanderlust")](https://raw.githubusercontent.com/SchumacherFM/wanderlust/master/mindmap/wanderlust.png)
 
+- Rucksack: Database [https://github.com/HouzuoGuo/tiedot](https://github.com/HouzuoGuo/tiedot)
+- Picnic: Web Router: [https://github.com/codegangsta/negroni](https://github.com/codegangsta/negroni)
 
 ## Build
 
@@ -17,6 +30,8 @@ Using [https://github.com/laher/goxc](https://github.com/laher/goxc)
 Setup go/src for darwin, linux and windows [http://dave.cheney.net/2013/07/09/an-introduction-to-cross-compilation-with-go-1-1](http://dave.cheney.net/2013/07/09/an-introduction-to-cross-compilation-with-go-1-1)
 
 Run `make build`. If you are interested in pre-compiled binaries, ping me.
+
+Using `godep` for dependency management.
 
 # Contributing
 

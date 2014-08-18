@@ -16,8 +16,7 @@
       with priorities
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <node CREATED="1408226077809" ID="ID_1082254437" MODIFIED="1408231745357" POSITION="right">
 <richcontent TYPE="NODE"><html>
   <head>
@@ -40,8 +39,7 @@
       - Handles configurations
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <cloud COLOR="#ff9966"/>
 <node CREATED="1408228814250" ID="ID_1818745543" MODIFIED="1408228910352" TEXT="Actions">
 <cloud COLOR="#ffcc66"/>
@@ -82,8 +80,7 @@
       - Goroutine, r/w and watch to DB
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <cloud COLOR="#0099ff"/>
 <node CREATED="1408226766578" ID="ID_1513397460" MODIFIED="1408226865717" TEXT="Behaviour">
 <node CREATED="1408226805365" ID="ID_1125581192" MODIFIED="1408226818214" TEXT="Gets list of URLs and dispatches them to the workers"/>
@@ -115,8 +112,7 @@
       - Configure Priorities
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <cloud COLOR="#99ff99"/>
 <node CREATED="1408226282839" ID="ID_1071132970" MODIFIED="1408226471322" TEXT="Prio">
 <icon BUILTIN="full-1"/>
@@ -146,8 +142,7 @@
       with/without OAuth config
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <cloud COLOR="#66ffcc"/>
 <node CREATED="1408226343226" ID="ID_1516046397" MODIFIED="1408226351662" TEXT="e.g. Top 200 Sold products in Magento"/>
 <node CREATED="1408226358864" ID="ID_139686099" MODIFIED="1408226375517" TEXT="e.g. CMS Pages"/>
@@ -173,9 +168,9 @@
     ]
 }</pre>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 </node>
+<node CREATED="1408321951235" ID="ID_1675573368" MODIFIED="1408321992192" TEXT="The order of the URLs in the JSON feed decides the loading order"/>
 </node>
 </node>
 <node CREATED="1408226392635" ID="ID_1582515810" MODIFIED="1408226479578" TEXT="Prio">
@@ -201,12 +196,11 @@
       If configured
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 </node>
 </node>
 </node>
-<node CREATED="1408227030201" ID="ID_310886734" MODIFIED="1408228539032" POSITION="right">
+<node CREATED="1408227030201" ID="ID_310886734" MODIFIED="1408321579967" POSITION="right">
 <richcontent TYPE="NODE"><html>
   <head>
     
@@ -219,10 +213,15 @@
       KV? Database for storage. No 3rd party. Compiled into.
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <cloud COLOR="#ccccff"/>
-<node CREATED="1408231284740" ID="ID_25161220" MODIFIED="1408231295352" TEXT="Write access to HDD only for saving"/>
+<node CREATED="1408321536418" ID="ID_1460198452" MODIFIED="1408321667611" TEXT="https://code.google.com/p/leveldb-go/"/>
+<node CREATED="1408321580596" ID="ID_1138239741" MODIFIED="1408321924122" TEXT="https://github.com/cznic/kv"/>
+<node CREATED="1408321633191" ID="ID_1710461451" MODIFIED="1408321634751" TEXT="https://github.com/boltdb/bolt"/>
+<node CREATED="1408321676751" ID="ID_1351308280" MODIFIED="1408321677811" TEXT="https://github.com/syndtr/goleveldb"/>
+<node CREATED="1408321894169" ID="ID_681319205" MODIFIED="1408321895953" TEXT="https://github.com/HouzuoGuo/tiedot">
+<node CREATED="1408321895954" ID="ID_869537289" MODIFIED="1408321898412" TEXT="+1"/>
+</node>
 </node>
 <node CREATED="1408227268529" ID="ID_1662394047" MODIFIED="1408232458793" POSITION="left">
 <richcontent TYPE="NODE"><html>
@@ -243,8 +242,7 @@
       - Goroutine
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <cloud COLOR="#cc00cc"/>
 </node>
 <node CREATED="1408231473795" ID="ID_1639913958" MODIFIED="1408231477785" POSITION="right" TEXT="General Stuff">
@@ -254,6 +252,28 @@
 <node CREATED="1408231265873" ID="ID_525514306" MODIFIED="1408231279512" TEXT="The only write access to the HDD is for saving the DB"/>
 <node CREATED="1408231312099" ID="ID_1235551636" MODIFIED="1408231334046" TEXT="Wanderlust can run anywhere"/>
 <node CREATED="1408231240797" ID="ID_225989754" MODIFIED="1408231258328" TEXT="All CSS, JS, HTML files are compiled into"/>
+<node CREATED="1408321328218" ID="ID_970423774" MODIFIED="1408321486226">
+<richcontent TYPE="NODE"><html>
+  <head>
+    
+  </head>
+  <body>
+    <p>
+      <b>CLI Settings</b>
+    </p>
+    <p>
+      - Parallel (GOMAXPROCS)
+    </p>
+    <p>
+      - HTTP Port
+    </p>
+    <p>
+      - storage dir for DB
+    </p>
+  </body>
+</html>
+</richcontent>
+</node>
 </node>
 </node>
 </map>
