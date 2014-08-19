@@ -17,7 +17,7 @@
     </p>
   </body>
 </html></richcontent>
-<node CREATED="1408226077809" ID="ID_1082254437" MODIFIED="1408231745357" POSITION="right">
+<node CREATED="1408226077809" ID="ID_1082254437" MODIFIED="1408431998370" POSITION="right">
 <richcontent TYPE="NODE"><html>
   <head>
     
@@ -59,6 +59,10 @@
 <node CREATED="1408227096764" ID="ID_1917687630" MODIFIED="1408229329570" TEXT="Provisioners and their access data"/>
 <node CREATED="1408229333431" ID="ID_920425934" MODIFIED="1408229394680" TEXT="Wanderer: Concurrency level"/>
 <node CREATED="1408229358645" ID="ID_454668395" MODIFIED="1408229419886" TEXT="Brotzeit: Concurrency level"/>
+</node>
+<node CREATED="1408431999379" ID="ID_1149314733" MODIFIED="1408432599270" TEXT="REST API">
+<cloud COLOR="#cccc00"/>
+<node CREATED="1408432030914" ID="ID_1273328265" MODIFIED="1408432579004" TEXT="Start the Wanderer, e.g. after a deployment"/>
 </node>
 </node>
 <node CREATED="1408226087413" ID="ID_1865183383" MODIFIED="1408228749873" POSITION="left" STYLE="bubble">
@@ -248,6 +252,8 @@
 <node CREATED="1408231473795" ID="ID_1639913958" MODIFIED="1408231477785" POSITION="right" TEXT="General Stuff">
 <node CREATED="1408231437313" ID="ID_1943784766" MODIFIED="1408231442250" TEXT="Future Features">
 <node CREATED="1408231445390" ID="ID_1320540073" MODIFIED="1408231459146" TEXT="Distributed Wanderers"/>
+<node CREATED="1408332810790" ID="ID_1020350825" MODIFIED="1408332840229" TEXT="REST API in Picnic for the Rucksack"/>
+<node CREATED="1408332893227" ID="ID_79108366" MODIFIED="1408332958913" TEXT="Extend Provisioner JSON to add NumOfRequests and Concurrency level"/>
 </node>
 <node CREATED="1408231265873" ID="ID_525514306" MODIFIED="1408231279512" TEXT="The only write access to the HDD is for saving the DB"/>
 <node CREATED="1408231312099" ID="ID_1235551636" MODIFIED="1408231334046" TEXT="Wanderlust can run anywhere"/>
@@ -271,8 +277,7 @@
       - storage dir for DB
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 </node>
 </node>
 </node>
