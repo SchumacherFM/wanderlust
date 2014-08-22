@@ -1,5 +1,7 @@
 # Wanderlust - Work in Progress
 
+Domain: cachewarmer.io is available
+
 ### Cache warmer with priorities
 
 Wanderlust, the yearning to travel through Google Analytics, Piwik, REST endpoints, sitemap.xml, etc to warm up the caches of your website.
