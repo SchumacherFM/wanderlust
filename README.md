@@ -18,7 +18,7 @@ When the cache contains relevant data, and all the reads for your program are sa
 
 ## Architectural Overview
 
-[![Mindmap of Wanderlust](https://raw.githubusercontent.com/SchumacherFM/wanderlust/master/mindmap/wanderlust.png "Mindmap of Wanderlust")](https://raw.githubusercontent.com/SchumacherFM/wanderlust/master/mindmap/wanderlust.png)
+Please see the wanderlust.png image in the mindmap directory.
 
 - Rucksack: Database [https://github.com/HouzuoGuo/tiedot](https://github.com/HouzuoGuo/tiedot)
 - Picnic: Web Router: [https://github.com/codegangsta/negroni](https://github.com/codegangsta/negroni)
