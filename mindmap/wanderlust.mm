@@ -54,6 +54,8 @@
 <node CREATED="1408227170612" ID="ID_431038421" MODIFIED="1408227176107" TEXT="View performance metrics"/>
 <node CREATED="1408229209703" ID="ID_919530530" MODIFIED="1408229228214" TEXT="View all URLs from the provisioners"/>
 <node CREATED="1408227074344" ID="ID_290075585" MODIFIED="1408227090765" TEXT="View Amount of Running Background Workers"/>
+<node CREATED="1408666866219" ID="ID_1483591538" MODIFIED="1408666911942" TEXT="View of 404/500, etc errors"/>
+<node CREATED="1408666887730" ID="ID_103649480" MODIFIED="1408666898430" TEXT="View of other errors"/>
 </node>
 <node CREATED="1408229253107" ID="ID_636372056" MODIFIED="1408229301345" TEXT="Configurations">
 <cloud COLOR="#cccc00"/>
@@ -88,8 +90,7 @@
       - r/w and watch to DB
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <cloud COLOR="#0099ff"/>
 <node CREATED="1408226766578" ID="ID_1513397460" MODIFIED="1408226865717" TEXT="Behaviour">
 <node CREATED="1408226805365" ID="ID_1125581192" MODIFIED="1408226818214" TEXT="Gets list of URLs and dispatches them to the workers"/>
@@ -124,8 +125,7 @@
       - Multiple Accounts of GA, Piwik, REST endpoints, etc
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <cloud COLOR="#99ff99"/>
 <node CREATED="1408226282839" ID="ID_1071132970" MODIFIED="1408226471322" TEXT="Prio">
 <icon BUILTIN="full-1"/>
