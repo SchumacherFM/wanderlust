@@ -18,6 +18,8 @@ When the cache contains relevant data, and all the reads for your program are sa
 
 ## Architectural Overview
 
+Ideas: [https://github.com/GordonLesti/Lesti_Fpc/issues/25](https://github.com/GordonLesti/Lesti_Fpc/issues/25)
+
 Please see the wanderlust.png image in the mindmap directory.
 
 - Rucksack: Database [https://github.com/HouzuoGuo/tiedot](https://github.com/HouzuoGuo/tiedot)
