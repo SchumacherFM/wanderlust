@@ -41,12 +41,13 @@
   </body>
 </html></richcontent>
 <cloud COLOR="#ff9966"/>
-<node CREATED="1408228814250" ID="ID_1818745543" MODIFIED="1408228910352" TEXT="Actions">
+<node CREATED="1408228814250" ID="ID_1818745543" MODIFIED="1408665089248" TEXT="Actions">
 <cloud COLOR="#ffcc66"/>
 <node CREATED="1408228827778" ID="ID_79040744" MODIFIED="1408228835639" TEXT="Start the Wanderer"/>
 <node CREATED="1408228842031" ID="ID_1123195613" MODIFIED="1408229170111" TEXT="Start the Brotzeit"/>
 <node CREATED="1408229470319" ID="ID_1737173709" MODIFIED="1408229482405" TEXT="Purge URLs collected from Brotzeit by provisioner"/>
 <node CREATED="1408229490288" ID="ID_1374484413" MODIFIED="1408229493396" TEXT="Purge all data"/>
+<node CREATED="1408665089999" ID="ID_686051620" MODIFIED="1408665139322" TEXT="Configure internal Cron Scheduler for each or all provisioners"/>
 </node>
 <node CREATED="1408229245604" ID="ID_1214455075" MODIFIED="1408229284099" TEXT="Views">
 <cloud COLOR="#ffff66"/>
@@ -65,7 +66,7 @@
 <node CREATED="1408432030914" ID="ID_1273328265" MODIFIED="1408432579004" TEXT="Start the Wanderer, e.g. after a deployment"/>
 </node>
 </node>
-<node CREATED="1408226087413" ID="ID_1865183383" MODIFIED="1408228749873" POSITION="left" STYLE="bubble">
+<node CREATED="1408226087413" ID="ID_1865183383" MODIFIED="1408665380632" POSITION="left" STYLE="bubble">
 <richcontent TYPE="NODE"><html>
   <head>
     
@@ -81,10 +82,14 @@
       - Marks fetched URLs as already processed
     </p>
     <p>
-      - Goroutine, r/w and watch to DB
+      - Nearly unlimited goroutines
+    </p>
+    <p>
+      - r/w and watch to DB
     </p>
   </body>
-</html></richcontent>
+</html>
+</richcontent>
 <cloud COLOR="#0099ff"/>
 <node CREATED="1408226766578" ID="ID_1513397460" MODIFIED="1408226865717" TEXT="Behaviour">
 <node CREATED="1408226805365" ID="ID_1125581192" MODIFIED="1408226818214" TEXT="Gets list of URLs and dispatches them to the workers"/>
@@ -97,7 +102,7 @@
 <node CREATED="1408226158615" ID="ID_1945888817" MODIFIED="1408226719516" TEXT="HTTP Worker"/>
 </node>
 </node>
-<node CREATED="1408226129104" ID="ID_815610302" MODIFIED="1408231856577" POSITION="left">
+<node CREATED="1408226129104" ID="ID_815610302" MODIFIED="1408665047859" POSITION="left">
 <richcontent TYPE="NODE"><html>
   <head>
     
@@ -115,8 +120,12 @@
     <p>
       - Configure Priorities
     </p>
+    <p>
+      - Multiple Accounts of GA, Piwik, REST endpoints, etc
+    </p>
   </body>
-</html></richcontent>
+</html>
+</richcontent>
 <cloud COLOR="#99ff99"/>
 <node CREATED="1408226282839" ID="ID_1071132970" MODIFIED="1408226471322" TEXT="Prio">
 <icon BUILTIN="full-1"/>
