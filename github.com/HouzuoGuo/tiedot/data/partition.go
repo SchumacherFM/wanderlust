@@ -7,7 +7,7 @@ package data
 
 import (
 	"errors"
-	"github.com/HouzuoGuo/tiedot/tdlog"
+	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/tdlog"
 	"sync"
 )
 

@@ -4,7 +4,7 @@ package httpapi
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/HouzuoGuo/tiedot/db"
+	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/db"
 	"net/http"
 	"strconv"
 )

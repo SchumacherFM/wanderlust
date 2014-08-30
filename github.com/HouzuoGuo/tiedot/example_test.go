@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/HouzuoGuo/tiedot/db"
+	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/db"
 	"os"
 	"strings"
 	"testing"

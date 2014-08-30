@@ -4,7 +4,7 @@ package db
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/HouzuoGuo/tiedot/tdlog"
+	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/tdlog"
 	"math/rand"
 )
 

@@ -9,7 +9,7 @@ package data
 
 import (
 	"encoding/binary"
-	"github.com/HouzuoGuo/tiedot/tdlog"
+	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/tdlog"
 	"sync"
 )
 

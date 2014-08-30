@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/HouzuoGuo/tiedot/db"
+	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/db"
 	"math/rand"
 	"os"
 	"runtime"

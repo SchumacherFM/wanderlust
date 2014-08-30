@@ -3,10 +3,10 @@ package main
 
 import (
 	"flag"
-	"github.com/HouzuoGuo/tiedot/db"
-	"github.com/HouzuoGuo/tiedot/httpapi"
-	"github.com/HouzuoGuo/tiedot/tdlog"
-	"github.com/HouzuoGuo/tiedot/webcp"
+	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/db"
+	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/httpapi"
+	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/tdlog"
+	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/webcp"
 	"log"
 	"os"
 	"os/signal"
