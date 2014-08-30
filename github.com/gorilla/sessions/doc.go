@@ -23,7 +23,7 @@ Let's start with an example that shows the sessions API in a nutshell:
 
 	import (
 		"net/http"
-		"github.com/gorilla/sessions"
+		"github.com/SchumacherFM/wanderlust/github.com/gorilla/sessions"
 	)
 
 	var store = sessions.NewCookieStore([]byte("something-very-secret"))
@@ -88,7 +88,7 @@ so it is easy to register new datatypes for storage in sessions:
 
 	import(
 		"encoding/gob"
-		"github.com/gorilla/sessions"
+		"github.com/SchumacherFM/wanderlust/github.com/gorilla/sessions"
 	)
 
 	type Person struct {
