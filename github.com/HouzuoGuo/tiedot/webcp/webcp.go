@@ -17,7 +17,7 @@ You can read more about go.rice here: https://github.com/GeertJohan/go.rice
 package webcp
 
 import (
-	"github.com/GeertJohan/go.rice"
+	rice "github.com/SchumacherFM/wanderlust/github.com/GeertJohan/go.rice"
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/tdlog"
 	"html/template"
 	"net/http"
