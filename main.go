@@ -17,20 +17,59 @@
 package main
 
 import (
-	"runtime"
-	"os"
 	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/cli"
+	"github.com/SchumacherFM/wanderlust/picnic"
+	"log"
+	"os"
+	"runtime"
+	"sync"
 )
 
-func showHelp(c *cli.Context) {
-	cli.ShowAppHelp(c)
+var wanderlustConfig *wanderlustApp
+
+type wanderlustApp struct {
+	cliContext *cli.Context
+	waitGroup  sync.WaitGroup
+	logger     *log.Logger
 }
 
+func init() {
+	wanderlustConfig = &wanderlustApp{}
+}
 
+func (w *wanderlustApp) initLogger(logFile string) {
+	if "" != logFile {
+		logFilePointer, err := os.OpenFile(logFile, os.O_WRONLY|os.O_CREATE, 0600)
+		if err != nil {
+			panic(err)
+		}
+		w.logger = log.New(logFilePointer, "", log.LstdFlags)
+	} else {
+		w.logger = log.New(os.Stderr, "", log.LstdFlags)
+	}
+}
+
+// starts the HTTP server for the picnic web interface and runs it in a goroutine
+func (w *wanderlustApp) bootPicnic() {
+	w.waitGroup.Add(1)
+	picnicApp := &picnic.PicnicApp{
+		Port: uint(w.cliContext.Int("picnic-port")),
+		Ip:   w.cliContext.String("picnic-ip"),
+	}
+	go func() {
+		defer w.waitGroup.Done()
+		picnicApp.Execute()
+	}()
+	w.logger.Printf("Picnic Running https://%s", picnicApp.GetListenAddress())
+	w.waitGroup.Wait()
+}
+
+// mainAction will be executed when the CLI command run will be provided
 func mainAction(c *cli.Context) {
-
+	wanderlustConfig.cliContext = c
+	wanderlustConfig.initLogger(c.String("logFile"))
+	wanderlustConfig.bootPicnic()
 }
-
 
 func main() {
 	if "" == os.Getenv("GOMAXPROCS") {
@@ -48,7 +87,12 @@ func main() {
 			ShortName: "r",
 			Usage:     "Run the wanderlust app. `help run` for more information",
 			Action:    mainAction,
-			Flags:     []cli.Flag{
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "picnic-ip,pip",
+					Value: "",
+					Usage: "IP address for picnic dashboard",
+				},
 				cli.IntFlag{
 					Name:  "picnic-port,pp",
 					Value: 3008,
@@ -73,4 +117,8 @@ func main() {
 		},
 	}
 	app.Run(os.Args)
+}
+
+func showHelp(c *cli.Context) {
+	cli.ShowAppHelp(c)
 }
