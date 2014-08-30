@@ -1,6 +1,4 @@
-# Wanderlust - Work in Progress
-
-Domain: cachewarmer.io is available
+# Wanderlust - WIP
 
 ### Cache warmer with priorities
 
@@ -20,10 +18,9 @@ When the cache contains relevant data, and all the reads for your program are sa
 
 ## Architectural Overview
 
-Ideas: [https://github.com/GordonLesti/Lesti_Fpc/issues/25](https://github.com/GordonLesti/Lesti_Fpc/issues/25)
+![mindmap](https://raw.githubusercontent.com/SchumacherFM/wanderlust/master/mindmap/wanderlust.png)
 
-Please see the wanderlust.png image in the mindmap directory.
-
+- Ideas: [https://github.com/GordonLesti/Lesti_Fpc/issues/25](https://github.com/GordonLesti/Lesti_Fpc/issues/25)
 - Rucksack: Database [https://github.com/HouzuoGuo/tiedot](https://github.com/HouzuoGuo/tiedot)
 - Picnic: Web Router: [https://github.com/codegangsta/negroni](https://github.com/codegangsta/negroni)
 
@@ -55,5 +52,4 @@ General Public License
 
 Made in Sydney, Australia :-)
 
-If you consider a donation please contribute to: [http://www.seashepherd.org/](http://www.seashepherd.org/)
 
