@@ -68,6 +68,7 @@ func (w *wanderlustApp) bootPicnic() {
 func mainAction(c *cli.Context) {
 	wanderlustConfig.cliContext = c
 	wanderlustConfig.initLogger(c.String("logFile"))
+	wanderlustConfig.logger.Printf("GOMAXPROCS is set to %d", runtime.NumCPU())
 	wanderlustConfig.bootPicnic()
 }
 
