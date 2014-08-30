@@ -21,7 +21,7 @@ func Require(w http.ResponseWriter, r *http.Request, key string, val *string) bo
 	return true
 }
 
-func Start(db *db.DB, port int) {
+func Start(db *db.DB, listenAddress string) {
 	HttpDB = db
 
 	// collection management (stop-the-world)
@@ -54,6 +54,5 @@ func Start(db *db.DB, port int) {
 	// web control panel
 	webcp.RegisterWebCp()
 
-	tdlog.Noticef("Will listen on all interfaces, port %d", port)
-	http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
+	http.ListenAndServe(listenAddress, nil)
 }
