@@ -23,6 +23,7 @@ import (
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/webcp"
 	"fmt"
 	"os"
+	"log"
 )
 
 const (
@@ -34,6 +35,7 @@ type RucksackApp struct {
 	Ip        string
 	Db        *db.DB
 	DbDir     string
+	Logger     *log.Logger
 }
 
 func (p *RucksackApp) InitDb() {
@@ -41,6 +43,7 @@ func (p *RucksackApp) InitDb() {
 	var err error
 	if "" == p.DbDir {
 		dbDir = os.TempDir()+"/wldb_"+helpers.RandomString(10)
+		p.Logger.Printf("Database temp directory is %s", dbDir)
 	}
 	isDir, _ := helpers.DirectoryExists(dbDir)
 	if false == isDir {

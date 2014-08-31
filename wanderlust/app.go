@@ -75,6 +75,7 @@ func (w *WanderlustApp) BootRucksack() {
 		Port: w.CliContext.Int("rucksack-port"),
 		Ip:   w.CliContext.String("rucksack-ip"),
 		DbDir:   w.CliContext.String("databaseDirectory"),
+		Logger: w.Logger,
 	}
 	rucksackApp.InitDb()
 	w.db = rucksackApp.GetDb()
