@@ -19,7 +19,6 @@ package picnic
 import (
 	"crypto/tls"
 	"fmt"
-	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"log"
 	"net/http"
@@ -28,8 +27,9 @@ import (
 )
 
 const (
-	PEM_CERT = "cert.pem"
-	PEM_KEY  = "key.pem"
+	PEM_CERT    = "cert.pem"
+	PEM_KEY     = "key.pem"
+	RD_DIST_DIR = "responsive-dashboard/dist/"
 )
 
 type PicnicApp struct {
@@ -39,14 +39,10 @@ type PicnicApp struct {
 }
 
 func (p *PicnicApp) Execute() {
-	r := mux.NewRouter()
-	r.HandleFunc("/", dashBoardHandler).Methods("GET")
-	r.HandleFunc("/test", testDataHandler).Methods("GET")
-	//	http.Handle("/", r)
 
 	server := &http.Server{
 		Addr:      p.GetListenAddress(),
-		Handler:   r,
+		Handler:   getRoutes(),
 		TLSConfig: p.getTlsConfig(),
 	}
 
@@ -115,12 +111,4 @@ func (p *PicnicApp) generatePems() (certFile, keyFile string) {
 	}
 	certGenerator.Generate()
 	return
-}
-
-func dashBoardHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hi there! This is the DashBoard %#v!", r.URL)
-}
-
-func testDataHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "test data Hi there! %#v!", r.URL)
 }
