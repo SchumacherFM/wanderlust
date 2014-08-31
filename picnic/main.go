@@ -17,6 +17,7 @@
 package picnic
 
 import (
+	"crypto/tls"
 	"fmt"
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
 	"github.com/SchumacherFM/wanderlust/helpers"
@@ -44,13 +45,33 @@ func (p *PicnicApp) Execute() {
 	//	http.Handle("/", r)
 
 	server := &http.Server{
-		Addr:    p.GetListenAddress(),
-		Handler: r,
+		Addr:      p.GetListenAddress(),
+		Handler:   r,
+		TLSConfig: p.getTlsConfig(),
 	}
+
 	err := server.ListenAndServeTLS(p.generatePems())
 	if nil != err {
 		p.Logger.Fatal("Picnic ListenAndServe: ", err)
 	}
+}
+
+func (p *PicnicApp) getTlsConfig() *tls.Config {
+	tlsConfig := &tls.Config{}
+	// @see http://www.hydrogen18.com/blog/your-own-pki-tls-golang.html
+	tlsConfig.CipherSuites = []uint16{
+		//		tls.TLS_RSA_WITH_AES_128_CBC_SHA,
+		tls.TLS_RSA_WITH_AES_256_CBC_SHA,
+		//		tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+		tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+		//		tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+		tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+		//		tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+		tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+	}
+	tlsConfig.MinVersion = tls.VersionTLS12
+	// no need to disable session resumption http://chimera.labs.oreilly.com/books/1230000000545/ch04.html#TLS_RESUME
+	return tlsConfig
 }
 
 func (p *PicnicApp) GetListenAddress() string {
@@ -77,7 +98,9 @@ func (p *PicnicApp) generatePems() (certFile, keyFile string) {
 	duration := 180 * 24 * time.Hour                      // half a year
 	validFrom := time.Now().Format("Jan 2 15:04:05 2006") // any other year number results in a weird result :-?
 
-	if true == helpers.PathExists(certFile) && true == helpers.PathExists(keyFile) {
+	isDir1, _ := helpers.PathExists(certFile)
+	isDir2, _ := helpers.PathExists(keyFile)
+	if isDir1 && isDir2 {
 		return
 	}
 	// @todo check if pems exists if so do nothing

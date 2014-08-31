@@ -66,6 +66,7 @@ func (gc *GenerateCert) Generate() {
 		SerialNumber: serialNumber,
 		Subject: pkix.Name{
 			Organization: []string{"Wanderlust Co"},
+			Country:      []string{"AU"},
 		},
 		NotBefore:             notBefore,
 		NotAfter:              notAfter,
