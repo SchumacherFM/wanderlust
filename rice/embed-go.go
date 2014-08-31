@@ -85,6 +85,7 @@ func operationEmbedGo(pkg *build.Package) {
 					fmt.Printf("error reading file content while walking box: %s\n", err)
 					os.Exit(1)
 				}
+				// @todo add here the compressor for GZIP
 				box.Files = append(box.Files, fileData)
 
 				// add tree entry
