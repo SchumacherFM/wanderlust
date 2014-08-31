@@ -17,8 +17,57 @@
 package rucksack
 
 import (
-
+	"github.com/SchumacherFM/wanderlust/helpers"
+	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/httpapi"
+	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/db"
+	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/webcp"
+	"fmt"
+	"os"
 )
+
 const (
-
+	LOCALHOST_IP4 = "127.0.0.1"
 )
+
+type RucksackApp struct {
+	Port      int
+	Ip        string
+	Db        *db.DB
+	DbDir     string
+}
+
+func (p *RucksackApp) InitDb() {
+	dbDir := p.DbDir
+	var err error
+	if "" == p.DbDir {
+		dbDir = os.TempDir()+"/wldb_"+helpers.RandomString(10)
+	}
+	isDir, _ := helpers.DirectoryExists(dbDir)
+	if false == isDir {
+		err = os.Mkdir(dbDir, 0700)
+		if nil != err {
+			panic("Cannot create database directory: " + dbDir)
+		}
+	}
+	p.Db, err = db.OpenDB(dbDir)
+	if nil != err {
+		panic(err)
+	}
+}
+
+func (p *RucksackApp) GetDb() *db.DB {
+	return p.Db
+}
+
+func (p *RucksackApp) StartHttp() {
+	webcp.WebCp = "webcp"
+	httpapi.Start(p.Db, p.GetListenAddress())
+}
+
+func (p *RucksackApp) GetListenAddress() string {
+	ip := LOCALHOST_IP4
+	if "" != p.Ip {
+		ip = p.Ip
+	}
+	return fmt.Sprintf("%s:%d", ip, p.Port)
+}
