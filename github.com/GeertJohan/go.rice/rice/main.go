@@ -18,9 +18,6 @@ func main() {
 	switch flagsParser.Active.Name {
 	case "embed", "embed-go":
 		operationEmbedGo(pkg)
-	case "embed-syso":
-		log.Println("WARNING: embedding .syso is expirimental..")
-		operationEmbedSyso(pkg)
 	case "clean":
 		operationClean(pkg)
 	}
