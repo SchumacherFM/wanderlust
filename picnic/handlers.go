@@ -28,20 +28,21 @@ import (
 	"net/http"
 )
 
-func getRiceImgBox() *rice.Box {
-	return rice.MustFindBox(RD_DIST_DIR + "/img")
-}
-
 func getRoutes() *mux.Router {
 	router := mux.NewRouter()
 	router.HandleFunc("/", dashBoardHandler).Methods("GET")
-	router.HandleFunc("/favicon.ico", handlerFavicon)
 	router.HandleFunc("/test", testDataHandler).Methods("GET")
+
+	router.HandleFunc("/favicon.ico", handlerFavicon)
+
+	router.Handle("/css/", http.StripPrefix("/css/", http.FileServer(rice.MustFindBox("static/css").HTTPBox())))
+	router.Handle("/js/", http.StripPrefix("/js/", http.FileServer(rice.MustFindBox("static/js").HTTPBox())))
+
 	return router
 }
 
 func handlerFavicon(w http.ResponseWriter, r *http.Request) {
-	w.Write(getRiceImgBox().MustBytes("favicon.ico"))
+	w.Write(rice.MustFindBox("rd/dist/img").MustBytes("favicon.ico"))
 }
 
 func dashBoardHandler(w http.ResponseWriter, r *http.Request) {
