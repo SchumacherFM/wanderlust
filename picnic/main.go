@@ -22,12 +22,13 @@ import (
 	"log"
 	"net/http"
 )
+
 const (
 	LOCALHOST_IP4 = "127.0.0.1"
 )
 
 type PicnicApp struct {
-	Port uint
+	Port int
 	Ip   string
 }
 
