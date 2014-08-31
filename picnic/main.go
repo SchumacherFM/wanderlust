@@ -26,10 +26,15 @@ import (
 	"time"
 )
 
+const (
+	PEM_CERT = "cert.pem"
+	PEM_KEY  = "key.pem"
+)
+
 type PicnicApp struct {
 	ListenAddress string
 	PemDir        string
-	Logger *log.Logger
+	Logger        *log.Logger
 }
 
 func (p *PicnicApp) Execute() {
@@ -66,24 +71,27 @@ func (p *PicnicApp) generatePems() (certFile, keyFile string) {
 	}
 	helpers.CreateDirectoryIfNotExists(dir)
 	dir = dir + pathSep
+	certFile = dir + PEM_CERT
+	keyFile = dir + PEM_KEY
 	address, _, _ := helpers.ValidateListenAddress(p.ListenAddress)
-	duration := 180 * 24 * time.Hour // half a year
+	duration := 180 * 24 * time.Hour                      // half a year
 	validFrom := time.Now().Format("Jan 2 15:04:05 2006") // any other year number results in a weird result :-?
 
+	if true == helpers.PathExists(certFile) && true == helpers.PathExists(keyFile) {
+		return
+	}
 	// @todo check if pems exists if so do nothing
 	certGenerator := &helpers.GenerateCert{
 		Host:         address,   // "Comma-separated hostnames and IPs to generate a certificate for"
 		ValidFrom:    validFrom, // "Creation date formatted as Jan 1 15:04:05 2011"
 		ValidFor:     duration,  // "duration", 365*24*time.Hour, "Duration that certificate is valid for"
-		IsCA:         true,     // "ca", false, "whether this cert should be its own Certificate Authority"
+		IsCA:         true,      // "ca", false, "whether this cert should be its own Certificate Authority"
 		RsaBits:      2048,      // "rsa-bits", 2048, "Size of RSA key to generate"
-		CertFileName: dir + "cert.pem",
-		KeyFileName:  dir + "key.pem",
+		CertFileName: certFile,
+		KeyFileName:  keyFile,
 	}
-
 	certGenerator.Generate()
-
-	return certGenerator.CertFileName, certGenerator.KeyFileName
+	return
 }
 
 func dashBoardHandler(w http.ResponseWriter, r *http.Request) {

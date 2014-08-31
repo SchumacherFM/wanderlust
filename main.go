@@ -63,7 +63,7 @@ func main() {
 				cli.StringFlag{
 					Name:  "picnic-pem-dir,ppd",
 					Value: "",
-					Usage: "Directory to store the .pem certificates. If empty will throw it somewhere in the system.",
+					Usage: "Directory to store the .pem certificates. If empty will throw it somewhere in the system. If provided files must be cert.pem and key.pem!",
 				},
 				cli.StringFlag{
 					Name:  "rucksack-listen-address,rla",
