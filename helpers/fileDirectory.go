@@ -28,7 +28,7 @@ func GetTempDir()string{
 	return dir
 }
 
-func DirectoryExists(path string) (bool, error) {
+func PathExists(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err == nil {
 		return true, nil
@@ -40,7 +40,7 @@ func DirectoryExists(path string) (bool, error) {
 }
 
 func CreateDirectoryIfNotExists(path string) {
-	isDir, _ := DirectoryExists(path)
+	isDir, _ := PathExists(path)
 	if false == isDir {
 		err := os.Mkdir(path, 0700)
 		if nil != err {
