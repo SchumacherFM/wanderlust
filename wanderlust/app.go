@@ -17,21 +17,21 @@
 package wanderlust
 
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/cli"
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/db"
+	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/cli"
 	"github.com/SchumacherFM/wanderlust/picnic"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 	"log"
 	"os"
-	"sync"
 	"runtime"
+	"sync"
 )
 
 type WanderlustApp struct {
 	CliContext *cli.Context
 	waitGroup  sync.WaitGroup
 	Logger     *log.Logger
-	db            *db.DB
+	db         *db.DB
 }
 
 // final method to wait on all the goroutines which are running mostly the HTTP server or other daemons
@@ -72,9 +72,9 @@ func (w *WanderlustApp) BootPicnic() {
 // inits the rucksack and boots on the default http mux
 func (w *WanderlustApp) BootRucksack() {
 	rucksackApp := &rucksack.RucksackApp{
-		Port: w.CliContext.Int("rucksack-port"),
-		Ip:   w.CliContext.String("rucksack-ip"),
-		DbDir:   w.CliContext.String("databaseDirectory"),
+		Port:   w.CliContext.Int("rucksack-port"),
+		Ip:     w.CliContext.String("rucksack-ip"),
+		DbDir:  w.CliContext.String("databaseDirectory"),
 		Logger: w.Logger,
 	}
 	rucksackApp.InitDb()

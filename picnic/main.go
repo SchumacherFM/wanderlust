@@ -34,9 +34,15 @@ type PicnicApp struct {
 
 func (p *PicnicApp) Execute() {
 	r := mux.NewRouter()
-	r.HandleFunc("/", dashBoardHandler)
-	http.Handle("/", r)
-	err := http.ListenAndServe(p.GetListenAddress(), nil)
+	r.HandleFunc("/", dashBoardHandler).Methods("GET")
+	r.HandleFunc("/test", testDataHandler).Methods("GET")
+	//	http.Handle("/", r)
+
+	server := &http.Server{
+		Addr:    p.GetListenAddress(),
+		Handler: r,
+	}
+	err := server.ListenAndServeTLS(certFile, keyFile)
 	if nil != err {
 		log.Fatal("Picnic ListenAndServe: ", err)
 	}
@@ -52,4 +58,8 @@ func (p *PicnicApp) GetListenAddress() string {
 
 func dashBoardHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hi there! This is the DashBoard %#v!", r.URL)
+}
+
+func testDataHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "test data Hi there! %#v!", r.URL)
 }

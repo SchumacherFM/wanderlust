@@ -17,8 +17,8 @@
 package helpers
 
 import (
-	"time"
 	"math/rand"
+	"time"
 )
 
 // randomString generates a pseudo-random alpha-numeric string with given length.
