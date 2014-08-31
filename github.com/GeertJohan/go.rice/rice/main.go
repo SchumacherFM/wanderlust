@@ -21,8 +21,6 @@ func main() {
 	case "embed-syso":
 		log.Println("WARNING: embedding .syso is expirimental..")
 		operationEmbedSyso(pkg)
-	case "append":
-		operationAppend(pkg)
 	case "clean":
 		operationClean(pkg)
 	}
