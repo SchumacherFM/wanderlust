@@ -18,58 +18,24 @@ package main
 
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/cli"
-	"github.com/SchumacherFM/wanderlust/picnic"
-	"log"
+	"github.com/SchumacherFM/wanderlust/wanderlust"
 	"os"
 	"runtime"
-	"sync"
 )
 
-var wanderlustConfig *wanderlustApp
-
-type wanderlustApp struct {
-	cliContext *cli.Context
-	waitGroup  sync.WaitGroup
-	logger     *log.Logger
-}
+var wlApp *wanderlust.WanderlustApp
 
 func init() {
-	wanderlustConfig = &wanderlustApp{}
-}
-
-func (w *wanderlustApp) initLogger(logFile string) {
-	if "" != logFile {
-		logFilePointer, err := os.OpenFile(logFile, os.O_WRONLY|os.O_CREATE, 0600)
-		if err != nil {
-			panic(err)
-		}
-		w.logger = log.New(logFilePointer, "", log.LstdFlags)
-	} else {
-		w.logger = log.New(os.Stderr, "", log.LstdFlags)
-	}
-}
-
-// starts the HTTP server for the picnic web interface and runs it in a goroutine
-func (w *wanderlustApp) bootPicnic() {
-	w.waitGroup.Add(1)
-	picnicApp := &picnic.PicnicApp{
-		Port: uint(w.cliContext.Int("picnic-port")),
-		Ip:   w.cliContext.String("picnic-ip"),
-	}
-	go func() {
-		defer w.waitGroup.Done()
-		picnicApp.Execute()
-	}()
-	w.logger.Printf("Picnic Running https://%s", picnicApp.GetListenAddress())
-	w.waitGroup.Wait()
+	wlApp = &wanderlust.WanderlustApp{}
 }
 
 // mainAction will be executed when the CLI command run will be provided
 func mainAction(c *cli.Context) {
-	wanderlustConfig.cliContext = c
-	wanderlustConfig.initLogger(c.String("logFile"))
-	wanderlustConfig.logger.Printf("GOMAXPROCS is set to %d", runtime.NumCPU())
-	wanderlustConfig.bootPicnic()
+	wlApp.CliContext = c
+	wlApp.InitLogger(c.String("logFile"))
+	wlApp.BootRucksack()
+	wlApp.BootPicnic() // depends on the rucksack
+	wlApp.Finalizer()
 }
 
 func main() {
@@ -99,20 +65,25 @@ func main() {
 					Value: 3008,
 					Usage: "Port for the picnic admin web interface",
 				},
+				cli.StringFlag{
+					Name:  "rucksack-ip,rip",
+					Value: "",
+					Usage: "IP address for the rucksack database",
+				},
 				cli.IntFlag{
 					Name:  "rucksack-port,pr",
 					Value: 3009,
-					Usage: "Port for the rucksack JSON REST API @todo",
+					Usage: "Port for the rucksack JSON REST API. If port is zero then no HTTP server will be booted",
+				},
+				cli.StringFlag{
+					Name:  "databaseDirectory,dd",
+					Value: "",
+					Usage: "Storage directory of the .db files. If empty then /tmp/random directory will be used.",
 				},
 				cli.StringFlag{
 					Name:  "logFile,lf",
 					Value: "",
 					Usage: "Log to file or if empty to os.Stderr",
-				},
-				cli.StringFlag{
-					Name:  "databaseDirectory,dd",
-					Value: "",
-					Usage: "Storage directory of the .db file",
 				},
 			},
 		},
