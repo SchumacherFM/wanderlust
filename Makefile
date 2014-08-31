@@ -12,6 +12,9 @@ run:
 
 build:
 	mkdir -p build
+	# @todo
+	#cd github.com/GeertJohan/go.rice/rice && go build
+	#cd ../../../picnic && rice embed-go
 	goxc -c=.goxc.json -pr="$(PRERELEASE)" -d ./build
 
 .PHONY: build
