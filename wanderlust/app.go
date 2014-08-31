@@ -57,7 +57,7 @@ func (w *WanderlustApp) BootPicnic() {
 	picnicApp := &picnic.PicnicApp{
 		ListenAddress: w.CliContext.String("picnic-listen-address"),
 		PemDir:        w.CliContext.String("picnic-pem-dir"),
-		Logger: w.Logger,
+		Logger:        w.Logger,
 	}
 	if "" != picnicApp.ListenAddress { // don't start if empty
 		w.waitGroup.Add(1)
@@ -73,9 +73,9 @@ func (w *WanderlustApp) BootPicnic() {
 // inits the rucksack and boots on the default http mux
 func (w *WanderlustApp) BootRucksack() {
 	rucksackApp := &rucksack.RucksackApp{
-		ListenAddress:     w.CliContext.String("rucksack-listen-address"),
-		DbDir:  w.CliContext.String("rucksack-dir"),
-		Logger: w.Logger,
+		ListenAddress: w.CliContext.String("rucksack-listen-address"),
+		DbDir:         w.CliContext.String("rucksack-dir"),
+		Logger:        w.Logger,
 	}
 	rucksackApp.InitDb()
 	w.db = rucksackApp.GetDb()

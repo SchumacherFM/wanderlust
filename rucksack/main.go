@@ -25,17 +25,17 @@ import (
 )
 
 type RucksackApp struct {
-	ListenAddress     string
-	db     *db.DB
-	DbDir             string
-	Logger *log.Logger
+	ListenAddress string
+	db            *db.DB
+	DbDir         string
+	Logger        *log.Logger
 }
 
 func (r *RucksackApp) InitDb() {
 	dbDir := r.DbDir
 	var err error
 	if "" == r.DbDir {
-		dbDir = helpers.GetTempDir()+"wldb_"+helpers.RandomString(10)
+		dbDir = helpers.GetTempDir() + "wldb_" + helpers.RandomString(10)
 		r.Logger.Printf("Database temp directory is %s", dbDir)
 	}
 	helpers.CreateDirectoryIfNotExists(dbDir)
