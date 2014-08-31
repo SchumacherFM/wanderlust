@@ -17,7 +17,6 @@
 package rucksack
 
 import (
-	"fmt"
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/db"
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/httpapi"
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/webcp"
@@ -26,52 +25,41 @@ import (
 	"os"
 )
 
-const (
-	LOCALHOST_IP4 = "127.0.0.1"
-)
-
 type RucksackApp struct {
-	Port   int
-	Ip     string
-	Db     *db.DB
-	DbDir  string
+	ListenAddress     string
+	db     *db.DB
+	DbDir             string
 	Logger *log.Logger
 }
 
-func (p *RucksackApp) InitDb() {
-	dbDir := p.DbDir
+func (r *RucksackApp) InitDb() {
+	dbDir := r.DbDir
 	var err error
-	if "" == p.DbDir {
-		dbDir = os.TempDir() + "/wldb_" + helpers.RandomString(10)
-		p.Logger.Printf("Database temp directory is %s", dbDir)
+	if "" == r.DbDir {
+		dbDir = os.TempDir()+"/wldb_"+helpers.RandomString(10)
+		r.Logger.Printf("Database temp directory is %s", dbDir)
 	}
-	isDir, _ := helpers.DirectoryExists(dbDir)
-	if false == isDir {
-		err = os.Mkdir(dbDir, 0700)
-		if nil != err {
-			panic("Cannot create database directory: " + dbDir)
-		}
-	}
-	p.Db, err = db.OpenDB(dbDir)
+	helpers.CreateDirectoryIfNotExists(dbDir)
+	r.db, err = db.OpenDB(dbDir)
 	if nil != err {
 		panic(err)
 	}
 }
 
-func (p *RucksackApp) GetDb() *db.DB {
-	return p.Db
+func (r *RucksackApp) GetDb() *db.DB {
+	return r.db
 }
 
 // listens on the DefaultServeMux
-func (p *RucksackApp) StartHttp() {
+func (r *RucksackApp) StartHttp() {
 	webcp.WebCp = "webcp"
-	httpapi.Start(p.Db, p.GetListenAddress())
+	httpapi.Start(r.db, r.GetListenAddress())
 }
 
-func (p *RucksackApp) GetListenAddress() string {
-	ip := LOCALHOST_IP4
-	if "" != p.Ip {
-		ip = p.Ip
+func (r *RucksackApp) GetListenAddress() string {
+	address, port, err := helpers.ValidateListenAddress(r.ListenAddress)
+	if nil != err {
+		r.Logger.Fatal(err, r.ListenAddress)
 	}
-	return fmt.Sprintf("%s:%d", ip, p.Port)
+	return address + ":" + port
 }

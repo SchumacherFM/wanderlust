@@ -56,29 +56,24 @@ func main() {
 			Action:    mainAction,
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "picnic-ip,pip",
-					Value: "",
-					Usage: "IP address for picnic dashboard",
-				},
-				cli.IntFlag{
-					Name:  "picnic-port,pp",
-					Value: 3008,
-					Usage: "Port for the picnic admin web interface",
+					Name:  "picnic-listen-address,pla",
+					Value: "127.0.0.1:3008",
+					Usage: "IP:Port address for picnic dashboard to listen on",
 				},
 				cli.StringFlag{
-					Name:  "rucksack-ip,rip",
+					Name:  "picnic-pem-dir,ppd",
 					Value: "",
-					Usage: "IP address for the rucksack database",
-				},
-				cli.IntFlag{
-					Name:  "rucksack-port,pr",
-					Value: 3009,
-					Usage: "Port for the rucksack JSON REST API. If port is zero then no HTTP server will be booted",
+					Usage: "Directory to store the .pem certificates. If empty will throw it somewhere in the system.",
 				},
 				cli.StringFlag{
-					Name:  "databaseDirectory,dd",
+					Name:  "rucksack-listen-address,rla",
+					Value: "127.0.0.1:3108",
+					Usage: "IP:Port address for the rucksack REST API and web control panel",
+				},
+				cli.StringFlag{
+					Name:  "rucksack-dir,rd",
 					Value: "",
-					Usage: "Storage directory of the .db files. If empty then /tmp/random directory will be used.",
+					Usage: "Storage directory of the rucksack files. If empty then /tmp/random directory will be used.",
 				},
 				cli.StringFlag{
 					Name:  "logFile,lf",

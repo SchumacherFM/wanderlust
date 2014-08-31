@@ -55,10 +55,11 @@ func (w *WanderlustApp) InitLogger(logFile string) {
 // starts the HTTP server for the picnic web interface and runs it in a goroutine
 func (w *WanderlustApp) BootPicnic() {
 	picnicApp := &picnic.PicnicApp{
-		Port: w.CliContext.Int("picnic-port"),
-		Ip:   w.CliContext.String("picnic-ip"),
+		ListenAddress: w.CliContext.String("picnic-listen-address"),
+		PemDir:        w.CliContext.String("picnic-pem-dir"),
+		Logger: w.Logger,
 	}
-	if picnicApp.Port > 0 {
+	if "" != picnicApp.ListenAddress { // don't start if empty
 		w.waitGroup.Add(1)
 		go func() {
 			defer w.waitGroup.Done()
@@ -72,14 +73,13 @@ func (w *WanderlustApp) BootPicnic() {
 // inits the rucksack and boots on the default http mux
 func (w *WanderlustApp) BootRucksack() {
 	rucksackApp := &rucksack.RucksackApp{
-		Port:   w.CliContext.Int("rucksack-port"),
-		Ip:     w.CliContext.String("rucksack-ip"),
-		DbDir:  w.CliContext.String("databaseDirectory"),
+		ListenAddress:     w.CliContext.String("rucksack-listen-address"),
+		DbDir:  w.CliContext.String("rucksack-dir"),
 		Logger: w.Logger,
 	}
 	rucksackApp.InitDb()
 	w.db = rucksackApp.GetDb()
-	if rucksackApp.Port > 0 {
+	if "" != rucksackApp.ListenAddress {
 		w.waitGroup.Add(1)
 		go func() {
 			defer w.waitGroup.Done()

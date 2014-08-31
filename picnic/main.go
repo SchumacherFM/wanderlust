@@ -19,17 +19,17 @@ package picnic
 import (
 	"fmt"
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
+	"github.com/SchumacherFM/wanderlust/helpers"
 	"log"
 	"net/http"
-)
-
-const (
-	LOCALHOST_IP4 = "127.0.0.1"
+	"os"
+	"time"
 )
 
 type PicnicApp struct {
-	Port int
-	Ip   string
+	ListenAddress string
+	PemDir        string
+	Logger *log.Logger
 }
 
 func (p *PicnicApp) Execute() {
@@ -42,18 +42,48 @@ func (p *PicnicApp) Execute() {
 		Addr:    p.GetListenAddress(),
 		Handler: r,
 	}
-	err := server.ListenAndServeTLS(certFile, keyFile)
+	err := server.ListenAndServeTLS(p.generatePems())
 	if nil != err {
-		log.Fatal("Picnic ListenAndServe: ", err)
+		p.Logger.Fatal("Picnic ListenAndServe: ", err)
 	}
 }
 
 func (p *PicnicApp) GetListenAddress() string {
-	ip := LOCALHOST_IP4
-	if "" != p.Ip {
-		ip = p.Ip
+	address, port, err := helpers.ValidateListenAddress(p.ListenAddress)
+	if nil != err {
+		p.Logger.Fatal(err, p.ListenAddress)
 	}
-	return fmt.Sprintf("%s:%d", ip, p.Port)
+	return address + ":" + port
+}
+
+func (p *PicnicApp) generatePems() (certFile, keyFile string) {
+	var dir string
+	dir = p.PemDir
+	pathSep := string(os.PathSeparator)
+	if "" == dir {
+		dir = os.TempDir() + pathSep + "wlpem_" + helpers.RandomString(10)
+		p.Logger.Printf("PEM certificate temp directory is %s", dir)
+	}
+	helpers.CreateDirectoryIfNotExists(dir)
+	dir = dir + pathSep
+	address, _, _ := helpers.ValidateListenAddress(p.ListenAddress)
+	duration := 180 * 24 * time.Hour // half a year
+	validFrom := time.Now().Format("Jan 2 15:04:05 2006") // any other year number results in a weird result :-?
+
+	// @todo check if pems exists if so do nothing
+	certGenerator := &helpers.GenerateCert{
+		Host:         address,   // "Comma-separated hostnames and IPs to generate a certificate for"
+		ValidFrom:    validFrom, // "Creation date formatted as Jan 1 15:04:05 2011"
+		ValidFor:     duration,  // "duration", 365*24*time.Hour, "Duration that certificate is valid for"
+		IsCA:         true,     // "ca", false, "whether this cert should be its own Certificate Authority"
+		RsaBits:      2048,      // "rsa-bits", 2048, "Size of RSA key to generate"
+		CertFileName: dir + "cert.pem",
+		KeyFileName:  dir + "key.pem",
+	}
+
+	certGenerator.Generate()
+
+	return certGenerator.CertFileName, certGenerator.KeyFileName
 }
 
 func dashBoardHandler(w http.ResponseWriter, r *http.Request) {
