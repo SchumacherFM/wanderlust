@@ -22,3 +22,8 @@ _testmain.go
 *.exe
 *.test
 /build
+
+# files for responsive dashboard
+
+node_modules
+bower_components
