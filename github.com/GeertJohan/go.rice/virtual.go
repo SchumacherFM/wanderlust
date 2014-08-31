@@ -2,7 +2,7 @@ package rice
 
 import (
 	"errors"
-	"github.com/GeertJohan/go.rice/embedded"
+	"github.com/SchumacherFM/wanderlust/github.com/GeertJohan/go.rice/embedded"
 	"os"
 	"syscall"
 )

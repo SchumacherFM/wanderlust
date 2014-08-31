@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"fmt"
-	"github.com/GeertJohan/go.rice/embedded"
+	"github.com/SchumacherFM/wanderlust/github.com/GeertJohan/go.rice/embedded"
 	"github.com/akavel/rsrc/coff"
 	"go/build"
 	"io"
@@ -43,7 +43,7 @@ import "C"
 import (
 	"bytes"
 	"encoding/gob"
-	"github.com/GeertJohan/go.rice/embedded"
+	"github.com/SchumacherFM/wanderlust/github.com/GeertJohan/go.rice/embedded"
 	"unsafe"
 )
 

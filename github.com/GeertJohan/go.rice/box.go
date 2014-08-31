@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/GeertJohan/go.rice/embedded"
+	"github.com/SchumacherFM/wanderlust/github.com/GeertJohan/go.rice/embedded"
 	"io/ioutil"
 	"os"
 	"path/filepath"
