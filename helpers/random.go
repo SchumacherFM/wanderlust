@@ -17,7 +17,10 @@
 package helpers
 
 import (
+	"errors"
 	"math/rand"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -35,4 +38,23 @@ func RandomString(length int) string {
 		k[i] = rune(c)
 	}
 	return string(k)
+}
+
+func ValidateListenAddress(address string) (string, string, error) {
+	var host string
+	var port int
+	var err error
+	parts := strings.Split(address, ":")
+	host = parts[0]
+	port, err = strconv.Atoi(parts[1])
+	if nil != err {
+		return "", "", err
+	}
+	if "" == host {
+		host = "127.0.0.1"
+	}
+	if port < 1 {
+		return "", "", errors.New("Port is zero!")
+	}
+	return host, strconv.Itoa(port), nil
 }
