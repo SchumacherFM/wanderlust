@@ -18,6 +18,16 @@ package helpers
 
 import "os"
 
+// returns the OS default temp dir with trailing slash
+func GetTempDir()string{
+	dir:=os.TempDir()
+	pathSep := string(os.PathSeparator)
+	if pathSep != dir[len(dir)-1:len(dir)] {
+		dir = dir+pathSep
+	}
+	return dir
+}
+
 func DirectoryExists(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err == nil {

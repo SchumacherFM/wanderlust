@@ -61,7 +61,7 @@ func (p *PicnicApp) generatePems() (certFile, keyFile string) {
 	dir = p.PemDir
 	pathSep := string(os.PathSeparator)
 	if "" == dir {
-		dir = os.TempDir() + pathSep + "wlpem_" + helpers.RandomString(10)
+		dir = helpers.GetTempDir() + "wlpem_" + helpers.RandomString(10)
 		p.Logger.Printf("PEM certificate temp directory is %s", dir)
 	}
 	helpers.CreateDirectoryIfNotExists(dir)
