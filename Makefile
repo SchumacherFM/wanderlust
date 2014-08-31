@@ -12,9 +12,18 @@ run:
 
 build:
 	mkdir -p build
-	# @todo
-	#cd github.com/GeertJohan/go.rice/rice && go build
-	#cd ../../../picnic && rice embed-go
-	goxc -c=.goxc.json -pr="$(PRERELEASE)" -d ./build
+	cd gzrice && go build
+	cd ..
+	cd ./github.com/GeertJohan/go.rice/rice && go build
+	cd ../../../
+	# build with gzip support
+	./gzrice/gzrice --import-path ./picnic/ embed-go
+	# no gzip support
+	./github.com/GeertJohan/go.rice/rice/rice --import-path ./github.com/HouzuoGuo/tiedot/webcp/ embed-go
+	#goxc -c=.goxc.json -pr="$(PRERELEASE)" -d ./build
+
+clean:
+	find . -name "static-*.go" -delete
+	find . -name "rd-dist-*.go" -delete
 
 .PHONY: build

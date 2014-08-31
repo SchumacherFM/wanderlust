@@ -28,5 +28,11 @@ _testmain.go
 node_modules
 bower_components
 
+# ignore custom rice box
+/gzrice/gzrice
+
 # rice boxes (embedded go files of the responsive dashboard)
-rd-dist-*
+rd-dist-*.go
+
+# tiedot
+static-*.go
