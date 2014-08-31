@@ -35,8 +35,12 @@ func getRoutes() *mux.Router {
 
 	router.HandleFunc("/favicon.ico", handlerFavicon)
 
-	router.Handle("/css/", http.StripPrefix("/css/", http.FileServer(rice.MustFindBox("static/css").HTTPBox())))
-	router.Handle("/js/", http.StripPrefix("/js/", http.FileServer(rice.MustFindBox("static/js").HTTPBox())))
+	// due to the rice box regex when building embedded files we must use the full path in the MustFindBox method
+	router.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(rice.MustFindBox("rd/dist/css").HTTPBox())))
+	router.PathPrefix("/fonts/").Handler(http.StripPrefix("/fonts/", http.FileServer(rice.MustFindBox("rd/dist/fonts").HTTPBox())))
+	router.PathPrefix("/img/").Handler(http.StripPrefix("/img/", http.FileServer(rice.MustFindBox("rd/dist/img").HTTPBox())))
+	router.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(rice.MustFindBox("rd/dist/js").HTTPBox())))
+	router.PathPrefix("/lib/").Handler(http.StripPrefix("/lib/", http.FileServer(rice.MustFindBox("rd/dist/lib").HTTPBox())))
 
 	return router
 }
