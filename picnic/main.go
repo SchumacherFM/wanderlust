@@ -18,7 +18,6 @@ package picnic
 
 import (
 	"crypto/tls"
-	"fmt"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"log"
 	"net/http"
