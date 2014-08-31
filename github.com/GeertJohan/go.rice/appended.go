@@ -2,8 +2,8 @@ package rice
 
 import (
 	"archive/zip"
-	"bitbucket.org/kardianos/osext"
-	"github.com/daaku/go.zipexe"
+	"github.com/SchumacherFM/wanderlust/github.com/kardianos/osext"
+	"github.com/SchumacherFM/wanderlust/github.com/daaku/go.zipexe"
 	"log"
 	"os"
 	"path/filepath"

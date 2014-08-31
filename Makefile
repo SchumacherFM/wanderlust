@@ -21,9 +21,11 @@ build:
 	# no gzip support
 	./github.com/GeertJohan/go.rice/rice/rice --import-path ./github.com/HouzuoGuo/tiedot/webcp/ embed-go
 	#goxc -c=.goxc.json -pr="$(PRERELEASE)" -d ./build
+	go build -a -v -o wlapp
 
 clean:
 	find . -name "static-*.go" -delete
 	find . -name "rd-dist-*.go" -delete
+	rm -f ./gzrice/gzrice ./github.com/GeertJohan/go.rice/rice/rice
 
 .PHONY: build
