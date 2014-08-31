@@ -12,8 +12,8 @@ var flags struct {
 	Verbose    bool   `long:"verbose" short:"v" description:"Show verbose debug information"`
 	ImportPath string `long:"import-path" short:"i" description:"Import path to use. Using PWD when left empty."`
 
-	EmbedGo   struct{} `command:"embed-go" alias:"embed"`
-	Clean     struct{} `command:"clean"`
+	EmbedGo struct{} `command:"embed-go" alias:"embed"`
+	Clean   struct{} `command:"clean"`
 }
 
 // flags parser

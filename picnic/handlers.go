@@ -23,8 +23,8 @@ package picnic
 
 import (
 	"fmt"
-	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
 	rice "github.com/SchumacherFM/wanderlust/github.com/GeertJohan/go.rice"
+	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
 	"net/http"
 )
 
