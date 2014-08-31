@@ -69,7 +69,7 @@ func (w *WanderlustApp) BootPicnic() {
 
 }
 
-// inits the rucksack
+// inits the rucksack and boots on the default http mux
 func (w *WanderlustApp) BootRucksack() {
 	rucksackApp := &rucksack.RucksackApp{
 		Port: w.CliContext.Int("rucksack-port"),

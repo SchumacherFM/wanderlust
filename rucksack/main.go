@@ -62,6 +62,7 @@ func (p *RucksackApp) GetDb() *db.DB {
 	return p.Db
 }
 
+// listens on the DefaultServeMux
 func (p *RucksackApp) StartHttp() {
 	webcp.WebCp = "webcp"
 	httpapi.Start(p.Db, p.GetListenAddress())
