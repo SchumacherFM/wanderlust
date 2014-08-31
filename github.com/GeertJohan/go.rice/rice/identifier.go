@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/GeertJohan/go.incremental"
+	incremental "github.com/SchumacherFM/wanderlust/github.com/GeertJohan/go.incremental"
 	"strconv"
 )
 

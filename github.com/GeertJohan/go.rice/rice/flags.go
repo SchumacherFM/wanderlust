@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	goflags "github.com/jessevdk/go-flags" // rename import to `goflags` (file scope) so we can use `var flags` (package scope)
+	goflags "github.com/SchumacherFM/wanderlust/github.com/jessevdk/go-flags" // rename import to `goflags` (file scope) so we can use `var flags` (package scope)
 	"go/build"
 	"os"
 )
