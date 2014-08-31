@@ -28,3 +28,13 @@ func DirectoryExists(path string) (bool, error) {
 	}
 	return false, err
 }
+
+func CreateDirectoryIfNotExists(path string) {
+	isDir, _ := DirectoryExists(path)
+	if false == isDir {
+		err := os.Mkdir(path, 0700)
+		if nil != err {
+			panic("Cannot create directory: " + path)
+		}
+	}
+}
