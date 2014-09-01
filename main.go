@@ -18,15 +18,15 @@ package main
 
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/cli"
-	"github.com/SchumacherFM/wanderlust/wanderlust"
+	"github.com/SchumacherFM/wanderlust/wlapp"
 	"os"
 	"runtime"
 )
 
-var wlApp *wanderlust.WanderlustApp
+var wlApp *wlapp.WanderlustApp
 
 func init() {
-	wlApp = &wanderlust.WanderlustApp{}
+	wlApp = &wlapp.WanderlustApp{}
 }
 
 // mainAction will be executed when the CLI command run will be provided
