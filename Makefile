@@ -24,8 +24,7 @@ build:
 	go build -a -v
 
 clean:
-	find . -name "static-*.go" -delete
-	find . -name "rd-dist-*.go" -delete
+	find . -name "*.rice-box.go" -delete
 	rm -f ./gzrice/gzrice ./github.com/GeertJohan/go.rice/rice/rice
 
 .PHONY: build
