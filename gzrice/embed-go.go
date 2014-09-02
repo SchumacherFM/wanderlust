@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"compress/gzip"
 	"fmt"
 	"go/build"
 	"go/format"
@@ -13,6 +14,17 @@ import (
 	"strings"
 	"time"
 )
+
+var compressFileExt map[string]bool
+
+func init(){
+	compressFileExt = map[string]bool{
+		"css":true,
+		"js":true,
+		"eot":true,
+		"svg":true,
+	}
+}
 
 func operationEmbedGo(pkg *build.Package) {
 
@@ -80,11 +92,14 @@ func operationEmbedGo(pkg *build.Package) {
 					ModTime:    info.ModTime().Unix(),
 				}
 				verbosef("\tincludes file: '%s'\n", fileData.FileName)
-				fileData.Content, err = ioutil.ReadFile(path)
+				var isCompressed bool
+				fileData.Content, isCompressed, err = getGzipFileContent(path)
 				if err != nil {
 					fmt.Printf("error reading file content while walking box: %s\n", err)
 					os.Exit(1)
 				}
+				fileData.IsGzip = isCompressed
+
 				// @todo add here the compressor for GZIP
 				box.Files = append(box.Files, fileData)
 
@@ -127,4 +142,30 @@ func operationEmbedGo(pkg *build.Package) {
 			os.Exit(1)
 		}
 	}
+}
+
+// returns gzip compressed data
+func getGzipFileContent(path string) ([]byte, bool, error) {
+
+	// @todo get file ext and then isset compressFileExt[ext]
+
+	content, err := ioutil.ReadFile(path)
+	if nil != err {
+		fmt.Printf("error reading file content while walking box: %s\n", err)
+		os.Exit(1)
+	}
+	var contentBuffer bytes.Buffer
+	gzWriter, errGZ := gzip.NewWriterLevel(&contentBuffer, gzip.BestCompression)
+	if nil != errGZ {
+		fmt.Printf("error creating gz writer while walking box: %s\n", err)
+		os.Exit(1)
+	}
+	defer gzWriter.Close()
+	_, errGzW := gzWriter.Write(content)
+	if nil != errGzW {
+		fmt.Printf("error writing gz data while walking box: %s\n", err)
+		os.Exit(1)
+	}
+	gzWriter.Flush()
+	return contentBuffer.Bytes(), nil
 }

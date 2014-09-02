@@ -6,7 +6,7 @@ import (
 	"text/template"
 )
 
-// gzip suport @todo Content must be transformed to byte instead of string
+// gzip support @todo Content must be transformed to byte instead of string
 
 var tmplEmbeddedBox *template.Template
 
@@ -27,7 +27,8 @@ func init() {
 	{{range .Files}}{{.Identifier}} := &embedded.EmbeddedFile{
 		Filename:    ` + "`" + `{{.FileName}}` + "`" + `,
 		FileModTime: time.Unix({{.ModTime}}, 0),
-		Content:     string({{.Content | printf "%#v"}}), //++ TODO: optimize? (double allocation) or does compiler already optimize this?
+		Content:     {{.Content | printf "%#v"}},
+		IsGzip:		{{.IsGzip | printf "%#v"}}
 	}
 	{{end}}
 
@@ -82,6 +83,7 @@ type fileDataType struct {
 	FileName   string
 	Content    []byte
 	ModTime    int64
+	IsGzip     bool
 }
 
 type dirDataType struct {
