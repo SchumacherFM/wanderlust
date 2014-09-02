@@ -29,7 +29,7 @@ node_modules
 bower_components
 
 # ignore custom rice box
-/gzrice/gzrice
+/src/github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice/gzrice/gzrice
 
 # rice boxes (embedded go files of the responsive dashboard)
 rd-dist-*.go
