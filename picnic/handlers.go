@@ -21,6 +21,8 @@
 
 package picnic
 
+// @todo add kr/secureheader
+
 import (
 	"fmt"
 	rice "github.com/SchumacherFM/wanderlust/github.com/GeertJohan/go.rice"
