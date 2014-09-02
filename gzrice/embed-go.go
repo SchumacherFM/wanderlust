@@ -17,12 +17,12 @@ import (
 
 var compressFileExt map[string]bool
 
-func init(){
+func init() {
 	compressFileExt = map[string]bool{
-		"css":true,
-		"js":true,
-		"eot":true,
-		"svg":true,
+		"css": true,
+		"js":  true,
+		"eot": true,
+		"svg": true,
 	}
 }
 
