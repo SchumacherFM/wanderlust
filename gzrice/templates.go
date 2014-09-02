@@ -28,7 +28,7 @@ func init() {
 		Filename:    ` + "`" + `{{.FileName}}` + "`" + `,
 		FileModTime: time.Unix({{.ModTime}}, 0),
 		Content:     {{.Content | printf "%#v"}},
-		IsGzip:		{{.IsGzip | printf "%#v"}}
+		IsGzip:		{{.IsGzip | printf "%#v"}},
 	}
 	{{end}}
 

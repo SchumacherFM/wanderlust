@@ -9,11 +9,6 @@ import (
 	"time"
 )
 
-const (
-	EmbedTypeGo   = 0
-	EmbedTypeSyso = 1
-)
-
 // EmbeddedBox defines an embedded box
 type EmbeddedBox struct {
 	Name      string                   // box name

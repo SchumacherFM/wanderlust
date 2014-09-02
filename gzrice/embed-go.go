@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -145,15 +146,21 @@ func operationEmbedGo(pkg *build.Package) {
 }
 
 // returns gzip compressed data
-func getGzipFileContent(path string) ([]byte, bool, error) {
+func getGzipFileContent(filePath string) ([]byte, bool, error) {
 
-	// @todo get file ext and then isset compressFileExt[ext]
+	ext := path.Ext(filePath)
+	_, isAllowed := compressFileExt[ext[1:]]
 
-	content, err := ioutil.ReadFile(path)
+	content, err := ioutil.ReadFile(filePath)
 	if nil != err {
 		fmt.Printf("error reading file content while walking box: %s\n", err)
 		os.Exit(1)
 	}
+
+	if false == isAllowed {
+		return content, isAllowed, nil
+	}
+
 	var contentBuffer bytes.Buffer
 	gzWriter, errGZ := gzip.NewWriterLevel(&contentBuffer, gzip.BestCompression)
 	if nil != errGZ {
@@ -167,5 +174,5 @@ func getGzipFileContent(path string) ([]byte, bool, error) {
 		os.Exit(1)
 	}
 	gzWriter.Flush()
-	return contentBuffer.Bytes(), nil
+	return contentBuffer.Bytes(), isAllowed, nil
 }
