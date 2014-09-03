@@ -32,7 +32,7 @@ Setup go/src for darwin, linux and windows [http://dave.cheney.net/2013/07/09/an
 
 Run `make build`. If you are interested in pre-compiled binaries, ping me.
 
-Using `godep` for dependency management.
+Dependencies to external packages are all included in this repository.
 
 # Contributing
 
