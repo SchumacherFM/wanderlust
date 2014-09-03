@@ -17,22 +17,26 @@
 package helpers
 
 import (
-	"math/rand"
-	"time"
+	"errors"
+	"strconv"
+	"strings"
 )
 
-// randomString generates a pseudo-random alpha-numeric string with given length.
-func RandomString(length int) string {
-	rand.Seed(time.Now().UnixNano())
-	k := make([]rune, length)
-	for i := 0; i < length; i++ {
-		c := rand.Intn(35)
-		if c < 10 {
-			c += 48 // numbers (0-9) (0+48 == 48 == '0', 9+48 == 57 == '9')
-		} else {
-			c += 87 // lower case alphabets (a-z) (10+87 == 97 == 'a', 35+87 == 122 = 'z')
-		}
-		k[i] = rune(c)
+func ValidateListenAddress(address string) (string, string, error) {
+	var host string
+	var port int
+	var err error
+	parts := strings.Split(address, ":")
+	host = parts[0]
+	port, err = strconv.Atoi(parts[1])
+	if nil != err {
+		return "", "", err
 	}
-	return string(k)
+	if "" == host {
+		host = "127.0.0.1"
+	}
+	if port < 1 {
+		return "", "", errors.New("Port is zero!")
+	}
+	return host, strconv.Itoa(port), nil
 }
