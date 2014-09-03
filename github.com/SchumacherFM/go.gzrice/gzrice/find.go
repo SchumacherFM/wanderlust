@@ -39,9 +39,9 @@ func findBoxes(pkg *build.Package) map[string]bool {
 		}
 
 		var riceIsImported bool
-		ricePkgName := "rice"
+		ricePkgName := "gzrice"
 		for _, imp := range f.Imports {
-			if strings.HasSuffix(imp.Path.Value, "go.rice\"") {
+			if strings.HasSuffix(imp.Path.Value, "go.gzrice\"") {
 				if imp.Name != nil {
 					ricePkgName = imp.Name.Name
 				}
