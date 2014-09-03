@@ -19,16 +19,15 @@
 
 package picnic
 
-// @todo add kr/secureheader
-
 import (
 	"fmt"
 	gzrice "github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice"
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
+	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/negroni"
 	"net/http"
 )
 
-func getHandler() *mux.Router {
+func getHandler() *negroni.Negroni {
 	router := mux.NewRouter()
 	router.HandleFunc("/", dashBoardHandler).Methods("GET")
 	router.HandleFunc("/test", testDataHandler).Methods("GET")
@@ -44,7 +43,12 @@ func getHandler() *mux.Router {
 	router.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(gzrice.MustFindBox("rd/dist/js").HTTPBox())))
 	router.PathPrefix("/lib/").Handler(http.StripPrefix("/lib/", http.FileServer(gzrice.MustFindBox("rd/dist/lib").HTTPBox())))
 
-	return router
+	n := negroni.New(
+		negroni.HandlerFunc(corsMiddleware),
+		negroni.HandlerFunc(gzipContentTypeMiddleware),
+	)
+	n.UseHandler(router)
+	return n
 }
 
 func handlerFavicon(w http.ResponseWriter, r *http.Request) {
