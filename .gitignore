@@ -21,6 +21,7 @@ _testmain.go
 
 *.exe
 *.test
+# build folder for goxc
 /build
 
 # files for responsive dashboard
@@ -28,11 +29,10 @@ _testmain.go
 node_modules
 bower_components
 
-# ignore custom rice box
-/src/github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice/gzrice/gzrice
+# ignore binaries
+/rice
+/gzrice
+/wanderlust
 
 # rice boxes (embedded go files of the responsive dashboard)
-rd-dist-*.go
-
-# tiedot
-static-*.go
+*.rice-box.go
