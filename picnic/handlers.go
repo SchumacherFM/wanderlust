@@ -16,8 +16,6 @@
 
 // Wanderlust uses go.rice package for serving static web content
 //
-// To embed web content, please download go.rice and run
-// `rice embed-go` in "picnic" directory and use the generated Go source code in your project.
 
 package picnic
 
@@ -25,7 +23,7 @@ package picnic
 
 import (
 	"fmt"
-	rice "github.com/SchumacherFM/wanderlust/github.com/GeertJohan/go.rice"
+	gzrice "github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice"
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
 	"net/http"
 )
@@ -38,17 +36,17 @@ func getRoutes() *mux.Router {
 	router.HandleFunc("/favicon.ico", handlerFavicon)
 
 	// due to the rice box regex when building embedded files we must use the full path in the MustFindBox method
-	router.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(rice.MustFindBox("rd/dist/css").HTTPBox())))
-	router.PathPrefix("/fonts/").Handler(http.StripPrefix("/fonts/", http.FileServer(rice.MustFindBox("rd/dist/fonts").HTTPBox())))
-	router.PathPrefix("/img/").Handler(http.StripPrefix("/img/", http.FileServer(rice.MustFindBox("rd/dist/img").HTTPBox())))
-	router.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(rice.MustFindBox("rd/dist/js").HTTPBox())))
-	router.PathPrefix("/lib/").Handler(http.StripPrefix("/lib/", http.FileServer(rice.MustFindBox("rd/dist/lib").HTTPBox())))
+	router.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(gzrice.MustFindBox("rd/dist/css").HTTPBox())))
+	router.PathPrefix("/fonts/").Handler(http.StripPrefix("/fonts/", http.FileServer(gzrice.MustFindBox("rd/dist/fonts").HTTPBox())))
+	router.PathPrefix("/img/").Handler(http.StripPrefix("/img/", http.FileServer(gzrice.MustFindBox("rd/dist/img").HTTPBox())))
+	router.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(gzrice.MustFindBox("rd/dist/js").HTTPBox())))
+	router.PathPrefix("/lib/").Handler(http.StripPrefix("/lib/", http.FileServer(gzrice.MustFindBox("rd/dist/lib").HTTPBox())))
 
 	return router
 }
 
 func handlerFavicon(w http.ResponseWriter, r *http.Request) {
-	w.Write(rice.MustFindBox("rd/dist/img").MustBytes("favicon.ico"))
+	w.Write(gzrice.MustFindBox("rd/dist/img").MustBytes("favicon.ico"))
 }
 
 func dashBoardHandler(w http.ResponseWriter, r *http.Request) {

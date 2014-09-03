@@ -1,4 +1,4 @@
-package rice
+package gzrice
 
 import (
 	"fmt"

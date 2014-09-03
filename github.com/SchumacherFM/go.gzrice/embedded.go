@@ -1,4 +1,4 @@
-package rice
+package gzrice
 
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice/embedded"

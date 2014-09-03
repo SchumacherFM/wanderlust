@@ -1,8 +1,8 @@
-package rice
+package gzrice
 
 import (
 	"errors"
-	"github.com/SchumacherFM/wanderlust/github.com/GeertJohan/go.rice/embedded"
+	"github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice/embedded"
 	"os"
 	"syscall"
 )

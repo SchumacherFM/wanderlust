@@ -6,8 +6,6 @@ import (
 	"text/template"
 )
 
-// gzip support @todo Content must be transformed to byte instead of string
-
 var tmplEmbeddedBox *template.Template
 
 func init() {
@@ -17,7 +15,7 @@ func init() {
 	tmplEmbeddedBox, err = template.New("embeddedBox").Parse(`package {{.Package}}
 
 import (
-	"github.com/SchumacherFM/wanderlust/gzrice/embedded"
+	"github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice/embedded"
 	"time"
 )
 

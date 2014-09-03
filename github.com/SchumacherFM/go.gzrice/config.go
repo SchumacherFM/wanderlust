@@ -1,4 +1,4 @@
-package rice
+package gzrice
 
 // LocateMethod defines how a box is located.
 type LocateMethod int
