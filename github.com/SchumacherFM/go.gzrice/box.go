@@ -195,11 +195,7 @@ func (b *Box) Bytes(name string) ([]byte, error) {
 		if ef == nil {
 			return nil, os.ErrNotExist
 		}
-		// clone byteSlice
-		cpy := make([]byte, 0, len(ef.Content))
-		cpy = append(cpy, ef.Content...)
-		// return copied bytes
-		return cpy, nil
+		return ef.Content, nil
 	}
 
 	// open actual file from disk
@@ -236,8 +232,8 @@ func (b *Box) String(name string) (string, error) {
 		if ef == nil {
 			return "", os.ErrNotExist
 		}
-		// return as string
-		return ef.Content, nil
+		// return as string @todo bug because could be IsGzipped
+		return string(ef.Content), nil
 	}
 
 	// open actual file from disk

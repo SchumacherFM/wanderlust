@@ -99,7 +99,7 @@ func operationEmbedGo(pkg *build.Package) {
 					fmt.Printf("error reading file content while walking box: %s\n", err)
 					os.Exit(1)
 				}
-				fileData.IsGzip = isCompressed
+				fileData.IsGzipped = isCompressed
 
 				// @todo add here the compressor for GZIP
 				box.Files = append(box.Files, fileData)

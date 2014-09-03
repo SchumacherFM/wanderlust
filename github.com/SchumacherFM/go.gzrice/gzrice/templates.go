@@ -26,7 +26,7 @@ func init() {
 		Filename:    ` + "`" + `{{.FileName}}` + "`" + `,
 		FileModTime: time.Unix({{.ModTime}}, 0),
 		Content:     {{.Content | printf "%#v"}},
-		IsGzip:		{{.IsGzip | printf "%#v"}},
+		IsGzipped:	 {{.IsGzipped | printf "%#v"}},
 	}
 	{{end}}
 
@@ -81,7 +81,7 @@ type fileDataType struct {
 	FileName   string
 	Content    []byte
 	ModTime    int64
-	IsGzip     bool
+	IsGzipped     bool
 }
 
 type dirDataType struct {

@@ -84,7 +84,7 @@ func (ef *embeddedFileInfo) IsDir() bool {
 
 // IsGzip returns true if the file is compressed
 func (ef *embeddedFileInfo) IsGzip() bool {
-	return ef.IsGzip
+	return ef.IsGzipped
 }
 
 // Sys returns the underlying data source (always nil)
