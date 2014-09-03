@@ -17,30 +17,13 @@
 package helpers
 
 import (
-	"errors"
-	"strconv"
-	"strings"
+	"testing"
 )
 
-func ValidateListenAddress(address string) (string, string, error) {
-	var host string
-	var port int
-	var err error
-	parts := strings.Split(address, ":")
-	if 2 != len(parts) {
-		return "", "", errors.New("Missing : separator or too many")
+func TestRandomString(t *testing.T) {
+	rs := RandomString(10)
+	if 10 != len(rs) {
+		t.Errorf("String %s is not 10 char long", rs)
 	}
-	host = parts[0]
-
-	port, err = strconv.Atoi(parts[1])
-	if nil != err {
-		return "", "", err
-	}
-	if "" == host {
-		host = "127.0.0.1"
-	}
-	if port < 1 {
-		return "", "", errors.New("Port is zero!")
-	}
-	return host, strconv.Itoa(port), nil
+	// test that string is in range
 }
