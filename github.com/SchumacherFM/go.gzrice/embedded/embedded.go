@@ -62,7 +62,7 @@ type EmbeddedFile struct {
 	Filename    string // filename
 	FileModTime time.Time
 	Content     []byte
-	IsGzipped      bool
+	IsGzipped   bool
 }
 
 // EmbeddedBoxes is a public register of embedded boxes

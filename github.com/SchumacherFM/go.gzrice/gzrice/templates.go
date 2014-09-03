@@ -81,7 +81,7 @@ type fileDataType struct {
 	FileName   string
 	Content    []byte
 	ModTime    int64
-	IsGzipped     bool
+	IsGzipped  bool
 }
 
 type dirDataType struct {

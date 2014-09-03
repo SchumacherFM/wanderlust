@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"fmt"
+	gzrice "github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice"
 	"go/build"
 	"go/format"
 	"io"
@@ -13,7 +14,6 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
-	gzrice "github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice"
 )
 
 func operationEmbedGo(pkg *build.Package) {
