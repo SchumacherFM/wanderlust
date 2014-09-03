@@ -111,3 +111,25 @@ func TestConfigLocateOrder(t *testing.T) {
 		}
 	}
 }
+
+func TestIsCompressingAllowed1(t *testing.T) {
+
+	data := map[string]bool{
+		"file.css":  true,
+		"file.js":   true,
+		"file.jpg":  false,
+		"":          false,
+		"/":         false,
+		"file.svg":  true,
+		"file.html": false,
+		"i.css":     true,
+		"font.eot":  true,
+		"index":     false,
+	}
+
+	for fileName, result := range data {
+		if result != IsCompressingAllowed(fileName) {
+			t.Errorf("%s should be %v but is %v", fileName, result, IsCompressingAllowed(fileName))
+		}
+	}
+}

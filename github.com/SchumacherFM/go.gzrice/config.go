@@ -6,8 +6,8 @@ import "path"
 type LocateMethod int
 
 const (
-	LocateFS = LocateMethod(iota) // Locate on the filesystem.
-	LocateEmbedded                // Locate embedded boxes.
+	LocateFS       = LocateMethod(iota) // Locate on the filesystem.
+	LocateEmbedded                      // Locate embedded boxes.
 )
 
 var compressFileExt map[string]bool
@@ -40,7 +40,7 @@ func (c *Config) FindBox(boxName string) (*Box, error) {
 
 func IsCompressingAllowed(filePath string) bool {
 	ext := path.Ext(filePath) // returns .ext
-	if len(ext) < 4 { // @todo bug
+	if len(ext) < 2 {
 		return false
 	}
 	_, isSet := compressFileExt[ext[1:]]
