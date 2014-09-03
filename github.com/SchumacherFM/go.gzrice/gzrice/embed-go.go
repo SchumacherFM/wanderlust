@@ -10,22 +10,11 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 	"time"
+	gzrice "github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice"
 )
-
-var compressFileExt map[string]bool
-
-func init() {
-	compressFileExt = map[string]bool{
-		"css": true,
-		"js":  true,
-		"eot": true,
-		"svg": true,
-	}
-}
 
 func operationEmbedGo(pkg *build.Package) {
 
@@ -148,8 +137,7 @@ func operationEmbedGo(pkg *build.Package) {
 // returns gzip compressed data
 func getGzipFileContent(filePath string) ([]byte, bool, error) {
 
-	ext := path.Ext(filePath)
-	_, isAllowed := compressFileExt[ext[1:]]
+	isAllowed := gzrice.IsCompressingAllowed(filePath)
 
 	content, err := ioutil.ReadFile(filePath)
 	if nil != err {
