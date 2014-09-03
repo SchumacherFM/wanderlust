@@ -28,7 +28,7 @@ import (
 	"net/http"
 )
 
-func getRoutes() *mux.Router {
+func getHandler() *mux.Router {
 	router := mux.NewRouter()
 	router.HandleFunc("/", dashBoardHandler).Methods("GET")
 	router.HandleFunc("/test", testDataHandler).Methods("GET")
@@ -36,7 +36,9 @@ func getRoutes() *mux.Router {
 	router.HandleFunc("/favicon.ico", handlerFavicon)
 
 	// due to the rice box regex when building embedded files we must use the full path in the MustFindBox method
-	router.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(gzrice.MustFindBox("rd/dist/css").HTTPBox())))
+	router.PathPrefix("/css/").Handler(
+		http.StripPrefix("/css/", http.FileServer(gzrice.MustFindBox("rd/dist/css").HTTPBox())),
+	)
 	router.PathPrefix("/fonts/").Handler(http.StripPrefix("/fonts/", http.FileServer(gzrice.MustFindBox("rd/dist/fonts").HTTPBox())))
 	router.PathPrefix("/img/").Handler(http.StripPrefix("/img/", http.FileServer(gzrice.MustFindBox("rd/dist/img").HTTPBox())))
 	router.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(gzrice.MustFindBox("rd/dist/js").HTTPBox())))

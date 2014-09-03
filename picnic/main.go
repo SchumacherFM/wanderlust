@@ -41,7 +41,7 @@ func (p *PicnicApp) Execute() {
 
 	server := &http.Server{
 		Addr:      p.GetListenAddress(),
-		Handler:   getRoutes(),
+		Handler:   getHandler(),
 		TLSConfig: p.getTlsConfig(),
 	}
 
