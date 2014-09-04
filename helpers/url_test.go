@@ -17,8 +17,8 @@
 package helpers
 
 import (
-	"testing"
 	"errors"
+	"testing"
 )
 
 type result struct {
@@ -51,10 +51,10 @@ func TestValidateListenAddress(t *testing.T) {
 	for input, res := range data {
 		host, port, err = ValidateListenAddress(input)
 
-		if nil==err && res.host != host {
+		if nil == err && res.host != host {
 			t.Errorf("Expected %s got %s", res.host, host)
 		}
-		if nil==err && res.port != port {
+		if nil == err && res.port != port {
 			t.Errorf("Expected %s got %s", res.port, port)
 		}
 		if err != nil && res.err.Error() != err.Error() {

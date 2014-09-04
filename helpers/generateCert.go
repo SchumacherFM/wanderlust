@@ -13,8 +13,8 @@ import (
 	"crypto/x509"
 	"crypto/x509/pkix"
 	"encoding/pem"
+	"errors"
 	"fmt"
-	"log"
 	"math/big"
 	"net"
 	"os"
@@ -32,15 +32,15 @@ type GenerateCert struct {
 	KeyFileName  string
 }
 
-func (gc *GenerateCert) Generate() {
+func (gc *GenerateCert) Generate() error {
 
 	if len(gc.Host) == 0 {
-		log.Fatalf("Missing required --host parameter")
+		return errors.New("Missing required host parameter")
 	}
 
 	priv, err := rsa.GenerateKey(rand.Reader, gc.RsaBits)
 	if err != nil {
-		log.Fatalf("failed to generate private key: %s", err)
+		return errors.New(fmt.Sprintf("failed to generate private key: %s", err))
 	}
 
 	var notBefore time.Time
@@ -49,8 +49,7 @@ func (gc *GenerateCert) Generate() {
 	} else {
 		notBefore, err = time.Parse("Jan 2 15:04:05 2006", gc.ValidFrom)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Failed to parse creation date: %s\n", err)
-			os.Exit(1)
+			return errors.New(fmt.Sprintf("Failed to parse creation date: %s\n", err))
 		}
 	}
 
@@ -59,7 +58,7 @@ func (gc *GenerateCert) Generate() {
 	serialNumberLimit := new(big.Int).Lsh(big.NewInt(1), 128)
 	serialNumber, err := rand.Int(rand.Reader, serialNumberLimit)
 	if err != nil {
-		log.Fatalf("failed to generate serial number: %s", err)
+		return errors.New(fmt.Sprintf("failed to generate serial number: %s", err))
 	}
 
 	template := x509.Certificate{
@@ -91,23 +90,21 @@ func (gc *GenerateCert) Generate() {
 
 	derBytes, err := x509.CreateCertificate(rand.Reader, &template, &template, &priv.PublicKey, priv)
 	if err != nil {
-		log.Fatalf("Failed to create certificate: %s", err)
+		return errors.New(fmt.Sprintf("Failed to create certificate: %s", err))
 	}
 
 	certOut, err := os.Create(gc.CertFileName)
 	if err != nil {
-		log.Fatalf("failed to open "+gc.CertFileName+" for writing: %s", err)
+		return errors.New(fmt.Sprintf("failed to open "+gc.CertFileName+" for writing: %s", err))
 	}
 	pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: derBytes})
 	certOut.Close()
-	log.Print("written cert.pem\n")
 
 	keyOut, err := os.OpenFile(gc.KeyFileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
-		log.Print("failed to open "+gc.KeyFileName+" for writing:", err)
-		return
+		return errors.New(fmt.Sprintf("failed to open "+gc.KeyFileName+" for writing:", err))
 	}
 	pem.Encode(keyOut, &pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(priv)})
 	keyOut.Close()
-	log.Print("written key.pem\n")
+	return nil
 }

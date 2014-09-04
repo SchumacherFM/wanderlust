@@ -98,7 +98,6 @@ func (p *PicnicApp) generatePems() (certFile, keyFile string) {
 	if isDir1 && isDir2 {
 		return
 	}
-	// @todo check if pems exists if so do nothing
 	certGenerator := &helpers.GenerateCert{
 		Host:         address,   // "Comma-separated hostnames and IPs to generate a certificate for"
 		ValidFrom:    validFrom, // "Creation date formatted as Jan 1 15:04:05 2011"
@@ -108,6 +107,10 @@ func (p *PicnicApp) generatePems() (certFile, keyFile string) {
 		CertFileName: certFile,
 		KeyFileName:  keyFile,
 	}
-	certGenerator.Generate()
+	certErr := certGenerator.Generate()
+	if nil != certErr {
+		p.Logger.Panic(certErr)
+	}
+
 	return
 }
