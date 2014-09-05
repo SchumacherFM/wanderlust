@@ -114,17 +114,18 @@ func TestConfigLocateOrder(t *testing.T) {
 
 func TestIsCompressingAllowed1(t *testing.T) {
 
-	data := map[string]bool{
-		"file.css":  true,
-		"file.js":   true,
-		"file.jpg":  false,
-		"":          false,
-		"/":         false,
-		"file.svg":  true,
-		"file.html": false,
-		"i.css":     true,
-		"font.eot":  true,
-		"index":     false,
+	data := map[string]int{
+		"file.css":  1,
+		"file.js":   1,
+		"file.jpg":  -1,
+		"":          0,
+		"/":         0,
+		"file.svg":  1,
+		"file.html": 0,
+		"i.css":     1,
+		"font.eot":  1,
+		"font.gif":  -1,
+		"index":     0,
 	}
 
 	for fileName, result := range data {

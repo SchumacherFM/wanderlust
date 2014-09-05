@@ -10,16 +10,22 @@ const (
 	LocateEmbedded                      // Locate embedded boxes.
 )
 
-var compressFileExt map[string]bool
-
-func init() {
-	compressFileExt = map[string]bool{
-		"css": true,
-		"js":  true,
-		"eot": true,
-		"svg": true,
+var (
+	// 1 yes
+	// -1 no
+	// 0 not found so could be a html page without extension
+	compressFileExt = map[string]int{
+		"css":  1,
+		"js":   1,
+		"eot":  1,
+		"svg":  1,
+		"png":  -1,
+		"gif":  -1,
+		"jpg":  -1,
+		"ttf":  -1,
+		"woff": -1,
 	}
-}
+)
 
 // Config allows customizing the box lookup behavior.
 type Config struct {
@@ -38,11 +44,14 @@ func (c *Config) FindBox(boxName string) (*Box, error) {
 	return findBox(boxName, c.LocateOrder)
 }
 
-func IsCompressingAllowed(filePath string) bool {
+func IsCompressingAllowed(filePath string) int {
 	ext := path.Ext(filePath) // returns .ext
 	if len(ext) < 2 {
-		return false
+		return 0
 	}
-	_, isSet := compressFileExt[ext[1:]]
-	return isSet
+	status, isSet := compressFileExt[ext[1:]]
+	if true == isSet {
+		return status
+	}
+	return 0
 }
