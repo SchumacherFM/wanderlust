@@ -22,8 +22,8 @@ package picnic
 import (
 	"fmt"
 	gzrice "github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice"
-	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
 	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/negroni"
+	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
 	"net/http"
 )
 
@@ -45,7 +45,7 @@ func getHandler() *negroni.Negroni {
 
 	n := negroni.New(
 		negroni.HandlerFunc(corsMiddleware),
-		negroni.HandlerFunc(gzipContentTypeMiddleware),
+		negroni.HandlerFunc(GzipContentTypeMiddleware),
 	)
 	n.UseHandler(router)
 	return n

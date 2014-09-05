@@ -22,9 +22,7 @@ package picnic
 // @todo add kr/secureheader
 
 import (
-
 	"net/http"
-	gzrice "github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice"
 )
 
 func corsMiddleware(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
@@ -40,20 +38,4 @@ func corsMiddleware(res http.ResponseWriter, req *http.Request, next http.Handle
 	//	}
 
 	next(res, req)
-}
-
-func gzipContentTypeMiddleware(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
-	// res.Header().Set("Content-Type", "application/json")
-	isAllowed := gzrice.IsCompressingAllowed(req.RequestURI)
-	if true == isAllowed {
-		res.Header().Set("Content-Encoding", "gzip")
-		res.Header().Add("Vary", "Accept-Encoding")
-	}
-
-	next(res, req)
-
-	if true == isAllowed {
-		// Delete the content length after we know we have been written to.
-		res.Header().Del("Content-Length")
-	}
 }
