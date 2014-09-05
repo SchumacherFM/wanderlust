@@ -29,14 +29,14 @@ func TestRandomString(t *testing.T) {
 }
 
 /**
-	05. Sept 2014; run with `go test -v -bench=.`
-	BenchmarkRandomString	  200000	     11956 ns/op
-	go version go1.3.1 darwin/amd64
-	Retina, 13-inch, Late 2013
-	Processor  2.4 GHz Intel Core i5
-	Software  OS X 10.9.4 (13E28)
- */
-func BenchmarkRandomString(b *testing.B){
+05. Sept 2014; run with `go test -v -bench=.`
+BenchmarkRandomString	  200000	     11956 ns/op
+go version go1.3.1 darwin/amd64
+Retina, 13-inch, Late 2013
+Processor  2.4 GHz Intel Core i5
+Software  OS X 10.9.4 (13E28)
+*/
+func BenchmarkRandomString(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		RandomString(10)
 	}
