@@ -1,6 +1,8 @@
 package gzrice
 
-import "path"
+import (
+	"path"
+)
 
 // LocateMethod defines how a box is located.
 type LocateMethod int

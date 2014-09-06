@@ -50,6 +50,11 @@ const (
 // compresses html content if client supports
 func GzipContentTypeMiddleware(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	isAllowed := gzrice.IsCompressingAllowed(req.RequestURI)
+	embeddedBoxesExists := gzrice.IsEmbedded() // only for dev ...
+	if false == embeddedBoxesExists && 1 == isAllowed {
+		isAllowed = 0
+	}
+
 	if 1 == isAllowed { // file in ricebox is already gzcompressed
 		res.Header().Set(headerContentEncoding, encodingGzip)
 		res.Header().Set(headerVary, headerAcceptEncoding)

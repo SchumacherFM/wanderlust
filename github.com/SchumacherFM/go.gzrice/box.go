@@ -22,6 +22,11 @@ type Box struct {
 
 var defaultLocateOrder = []LocateMethod{LocateEmbedded, LocateFS}
 
+// IsEmbedded returns bool if there are any embedded boxes
+func IsEmbedded() bool {
+	return len(embedded.EmbeddedBoxes) > 0
+}
+
 func findBox(name string, order []LocateMethod) (*Box, error) {
 	b := &Box{name: name}
 

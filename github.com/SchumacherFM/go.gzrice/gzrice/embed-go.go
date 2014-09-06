@@ -145,8 +145,8 @@ func getGzipFileContent(filePath string) ([]byte, bool, error) {
 		os.Exit(1)
 	}
 
-	if false == isAllowed {
-		return content, isAllowed, nil
+	if -1 == isAllowed {
+		return content, false, nil
 	}
 
 	var contentBuffer bytes.Buffer
@@ -162,5 +162,5 @@ func getGzipFileContent(filePath string) ([]byte, bool, error) {
 		os.Exit(1)
 	}
 	gzWriter.Flush()
-	return contentBuffer.Bytes(), isAllowed, nil
+	return contentBuffer.Bytes(), true, nil
 }
