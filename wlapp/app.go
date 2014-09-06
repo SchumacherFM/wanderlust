@@ -23,10 +23,10 @@ import (
 	"github.com/SchumacherFM/wanderlust/rucksack"
 	"log"
 	"os"
+	"os/signal"
 	"runtime"
 	"sync"
 	"syscall"
-	"os/signal"
 )
 
 type WanderlustApp struct {
@@ -93,7 +93,6 @@ func (w *WanderlustApp) BootRucksack() {
 	}
 }
 
-
 // catchSysCall ends the program correctly when receiving a sys call
 // @todo add things like remove PEM dir, DB dir when no CLI value has been provided
 func (w *WanderlustApp) catchSysCall() {
@@ -108,7 +107,6 @@ func (w *WanderlustApp) catchSysCall() {
 	go func() {
 		for sig := range signalChannel {
 			w.Logger.Printf("Received signal: %s\n", sig.String())
-
 
 			os.Exit(0)
 		}

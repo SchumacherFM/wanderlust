@@ -29,17 +29,17 @@ type result struct {
 
 func getData() map[string]result {
 	return map[string]result{
-		":3109": result{
+		":3109": {
 			"127.0.0.1",
 			"3109",
 			nil,
 		},
-		"246.245.145.235:3108": result{
+		"246.245.145.235:3108": {
 			"246.245.145.235",
 			"3108",
 			nil,
 		},
-		"246.245.145.235": result{
+		"246.245.145.235": {
 			"246.245.145.235",
 			"",
 			errors.New("Missing : separator or too many"),
@@ -74,7 +74,7 @@ go version go1.3.1 darwin/amd64
 */
 func BenchmarkValidateListenAddress(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		for input, _ := range getData() {
+		for input := range getData() {
 			ValidateListenAddress(input)
 		}
 	}
