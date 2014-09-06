@@ -70,6 +70,7 @@ func (w *WanderlustApp) BootPicnic() {
 
 }
 
+// @todo remove this and add it to the picnic app as a feature to start and stop the DB backend via web panel
 // inits the rucksack and boots on the default http mux
 func (w *WanderlustApp) BootRucksack() {
 	rucksackApp := &rucksack.RucksackApp{
