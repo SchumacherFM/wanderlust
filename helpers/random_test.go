@@ -30,11 +30,9 @@ func TestRandomString(t *testing.T) {
 
 /**
 05. Sept 2014; run with `go test -v -bench=.`
-BenchmarkRandomString	  200000	     11956 ns/op
+BenchmarkRandomString	  200000	     11956 ns/op Late 2013; 2.4 GHz Intel Core i5; OS X 10.9.4 (13E28)
+BenchmarkRandomString	  200000	     14001 ns/op Mid  2012; 1.8 GHz Intel Core i5; OS X 10.9.4 (13E28)
 go version go1.3.1 darwin/amd64
-Retina, 13-inch, Late 2013
-Processor  2.4 GHz Intel Core i5
-Software  OS X 10.9.4 (13E28)
 */
 func BenchmarkRandomString(b *testing.B) {
 	for n := 0; n < b.N; n++ {

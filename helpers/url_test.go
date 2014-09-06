@@ -68,11 +68,9 @@ func TestValidateListenAddress(t *testing.T) {
 
 /**
 05. Sept 2014; run with `go test -v -bench=.`
-BenchmarkValidateListenAddress	 1000000	      1594 ns/op
+BenchmarkValidateListenAddress	 1000000	      1594 ns/op  Late 2013; 2.4 GHz Intel Core i5; OS X 10.9.4 (13E28)
+BenchmarkValidateListenAddress	 1000000	      2003 ns/op  Mid  2012; 1.8 GHz Intel Core i5; OS X 10.9.4 (13E28)
 go version go1.3.1 darwin/amd64
-Retina, 13-inch, Late 2013
-Processor  2.4 GHz Intel Core i5
-Software  OS X 10.9.4 (13E28)
 */
 func BenchmarkValidateListenAddress(b *testing.B) {
 	for n := 0; n < b.N; n++ {
