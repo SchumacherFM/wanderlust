@@ -39,10 +39,7 @@ func mainAction(c *cli.Context) {
 }
 
 func main() {
-	if "" == os.Getenv("GOMAXPROCS") {
-		runtime.GOMAXPROCS(runtime.NumCPU())
-	}
-
+	setMaxParallelism()
 	app := cli.NewApp()
 	app.Name = "Wanderlust"
 	app.Version = "0.0.1"
@@ -88,4 +85,16 @@ func main() {
 
 func showHelp(c *cli.Context) {
 	cli.ShowAppHelp(c)
+}
+
+func setMaxParallelism() {
+	if "" != os.Getenv("GOMAXPROCS") {
+		return
+	}
+	maxProcs := runtime.GOMAXPROCS(0)
+	mp := runtime.NumCPU()
+	if maxProcs < mp {
+		mp = maxProcs
+	}
+	runtime.GOMAXPROCS(mp)
 }
