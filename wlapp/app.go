@@ -25,6 +25,8 @@ import (
 	"os"
 	"runtime"
 	"sync"
+	"syscall"
+	"os/signal"
 )
 
 type WanderlustApp struct {
@@ -37,6 +39,7 @@ type WanderlustApp struct {
 // final method to wait on all the goroutines which are running mostly the HTTP server or other daemons
 func (w *WanderlustApp) Finalizer() {
 	w.Logger.Printf("GOMAXPROCS is set to %d", runtime.NumCPU())
+	w.catchSysCall()
 	w.waitGroup.Wait()
 }
 
@@ -88,4 +91,26 @@ func (w *WanderlustApp) BootRucksack() {
 		}()
 		w.Logger.Printf("Rucksack Running http://%s", rucksackApp.GetListenAddress())
 	}
+}
+
+
+// catchSysCall ends the program correctly when receiving a sys call
+// @todo add things like remove PEM dir, DB dir when no CLI value has been provided
+func (w *WanderlustApp) catchSysCall() {
+	signalChannel := make(chan os.Signal, 1)
+	signal.Notify(
+		signalChannel,
+		syscall.SIGHUP,
+		syscall.SIGINT,
+		syscall.SIGTERM,
+		syscall.SIGQUIT,
+	)
+	go func() {
+		for sig := range signalChannel {
+			w.Logger.Printf("Received signal: %s\n", sig.String())
+
+
+			os.Exit(0)
+		}
+	}()
 }
