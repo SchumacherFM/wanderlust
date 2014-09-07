@@ -27,7 +27,24 @@ import (
 	"net/http"
 )
 
-func getHandler() *negroni.Negroni {
+// our custom handler
+type handlerFunc func(c *context, w http.ResponseWriter, r *http.Request) error
+
+// the handler should create a new context on each request, and handle any returned
+// errors appropriately.
+func (p *PicnicApp) handler(h handlerFunc, level authLevel) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		p.handleError(w, r, func() error {
+			user, err := p.authenticate(r, level)
+			if err != nil {
+				return err
+			}
+			return h(newContext(app, r, user), w, r)
+		}())
+	}
+}
+
+func (p *PicnicApp) getHandler() *negroni.Negroni {
 	router := mux.NewRouter()
 
 	brotzeitApi := router.PathPrefix("/brotzeit/").Subrouter()
@@ -42,6 +59,11 @@ func getHandler() *negroni.Negroni {
 	wandererApi.HandleFunc("/stop", noopHandler).Methods("GET")
 	wandererApi.HandleFunc("/concurrency", noopHandler).Methods("PUT")
 	wandererApi.HandleFunc("/current", noopHandler).Methods("GET")
+
+	// start stop the database web interface
+	rucksackApi := router.PathPrefix("/rucksack/").Subrouter()
+	rucksackApi.HandleFunc("/start", noopHandler).Methods("GET")
+	rucksackApi.HandleFunc("/stop", noopHandler).Methods("GET")
 
 	// a provisioner can be:
 	// ga (Google Analytics), pw (Piwik), sm (URL to sitemap.xml), url (any URL), json (our special JSON format)
@@ -78,5 +100,5 @@ func dashBoardHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func noopHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte(fmt.Sprintf("Found route \n%#v\n ", r)))
+	renderString(w, 200, fmt.Sprintf("Found route \n%#v\n ", r))
 }

@@ -18,23 +18,53 @@ package picnic
 
 import (
 	"crypto/tls"
+	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"log"
 	"net/http"
-	"os"
-	"time"
 )
 
 const (
-	PEM_CERT    = "cert.pem"
-	PEM_KEY     = "key.pem"
-	RD_DIST_DIR = "responsive-dashboard/dist/"
+	PEM_CERT                           string = "cert.pem"
+	PEM_KEY                            string = "key.pem"
+	RD_DIST_DIR                        string = "responsive-dashboard/dist/"
+	DEFAULT_TLS_SESSION_CACHE_CAPACITY int    = 128
 )
+
+type PicnicAppI interface {
+	getServer() *http.Server
+	generatePems() (certFile, keyFile string, err error)
+	Execute() error
+	getTlsConfig() *tls.Config
+	GetListenAddress() string
+	getPemDir() string
+}
 
 type PicnicApp struct {
 	ListenAddress string
 	PemDir        string
 	Logger        *log.Logger
+	session       sessionManagerI
+	certFile      string
+	keyFile       string
+}
+
+func NewPicnicApp(listenAddress, pemDir string, logger *log.Logger) (PicnicAppI, error) {
+	var err error
+	picnicApp := &PicnicApp{
+		ListenAddress: listenAddress,
+		PemDir:        pemDir,
+		Logger:        logger,
+	}
+	picnicApp.certFile, picnicApp.keyFile, err = picnicApp.generatePems()
+	if nil != err {
+		return nil, err
+	}
+	picnicApp.session, err = newSessionManager(picnicApp.certFile, picnicApp.keyFile)
+	if nil != err {
+		return nil, err
+	}
+	return picnicApp, nil
 }
 
 func (p *PicnicApp) getServer() *http.Server {
@@ -46,12 +76,27 @@ func (p *PicnicApp) getServer() *http.Server {
 	return server
 }
 
-func (p *PicnicApp) Execute() {
+func (p *PicnicApp) getPemDir() string {
+	return p.PemDir
+}
 
-	err := p.getServer().ListenAndServeTLS(p.generatePems())
+func (p *PicnicApp) generatePems() (certFile, keyFile string, err error) {
+	// PemDir can be empty then it will generate a random one
+	pemDir, err := helpers.GeneratePems(p.GetListenAddress(), p.getPemDir(), PEM_CERT, PEM_KEY)
 	if nil != err {
-		p.Logger.Fatal("Picnic ListenAndServe: ", err)
+		return "", "", err
 	}
+	if "" != pemDir {
+		p.Logger.Printf("PEM certificate temp directory is %s", pemDir)
+	}
+	p.PemDir = pemDir
+	certFile = pemDir + PEM_CERT
+	keyFile = pemDir + PEM_KEY
+	return
+}
+
+func (p *PicnicApp) Execute() error {
+	return errgo.Mask(p.getServer().ListenAndServeTLS(p.certFile, p.keyFile))
 }
 
 func (p *PicnicApp) getTlsConfig() *tls.Config {
@@ -69,6 +114,10 @@ func (p *PicnicApp) getTlsConfig() *tls.Config {
 	}
 	tlsConfig.MinVersion = tls.VersionTLS12
 	// no need to disable session resumption http://chimera.labs.oreilly.com/books/1230000000545/ch04.html#TLS_RESUME
+
+	// https://twitter.com/karlseguin/status/508531717011820544
+	tlsConfig.ClientSessionCache = tls.NewLRUClientSessionCache(DEFAULT_TLS_SESSION_CACHE_CAPACITY)
+
 	return tlsConfig
 }
 
@@ -78,42 +127,4 @@ func (p *PicnicApp) GetListenAddress() string {
 		p.Logger.Fatal(err, p.ListenAddress)
 	}
 	return address + ":" + port
-}
-
-func (p *PicnicApp) generatePems() (certFile, keyFile string) {
-	var dir string
-	dir = p.PemDir
-	pathSep := string(os.PathSeparator)
-	if "" == dir {
-		dir = helpers.GetTempDir() + "wlpem_" + helpers.RandomString(10)
-		p.Logger.Printf("PEM certificate temp directory is %s", dir)
-	}
-	helpers.CreateDirectoryIfNotExists(dir)
-	dir = dir + pathSep
-	certFile = dir + PEM_CERT
-	keyFile = dir + PEM_KEY
-	address, _, _ := helpers.ValidateListenAddress(p.ListenAddress)
-	duration := 180 * 24 * time.Hour                      // half a year
-	validFrom := time.Now().Format("Jan 2 15:04:05 2006") // any other year number results in a weird result :-?
-
-	isDir1, _ := helpers.PathExists(certFile)
-	isDir2, _ := helpers.PathExists(keyFile)
-	if isDir1 && isDir2 {
-		return
-	}
-	certGenerator := &helpers.GenerateCert{
-		Host:         address,   // "Comma-separated hostnames and IPs to generate a certificate for"
-		ValidFrom:    validFrom, // "Creation date formatted as Jan 1 15:04:05 2011"
-		ValidFor:     duration,  // "duration", 365*24*time.Hour, "Duration that certificate is valid for"
-		IsCA:         true,      // "ca", false, "whether this cert should be its own Certificate Authority"
-		RsaBits:      2048,      // "rsa-bits", 2048, "Size of RSA key to generate"
-		CertFileName: certFile,
-		KeyFileName:  keyFile,
-	}
-	certErr := certGenerator.Generate()
-	if nil != certErr {
-		p.Logger.Panic(certErr)
-	}
-
-	return
 }

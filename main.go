@@ -35,6 +35,8 @@ func mainAction(c *cli.Context) {
 	wlApp.InitLogger(c.String("logFile"))
 	wlApp.BootRucksack()
 	wlApp.BootPicnic() // depends on the rucksack
+	wlApp.BootBrotzeit()
+	wlApp.BootWanderer()
 	wlApp.Finalizer()
 }
 

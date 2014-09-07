@@ -23,12 +23,31 @@ package picnic
 
 import (
 	"net/http"
+	"strings"
 )
+
+const (
+	HEADER_X_AUTH_TOKEN     string = "X-AUTH-TOKEN"
+	HEADER_X_API_VERSION    string = "X-API-VERSION"
+	HEADER_X_REQUESTED_WITH string = "X-Requested-With"
+)
+
+func getCorsAllowHeaders() string {
+	headers := []string{
+		HEADER_X_AUTH_TOKEN,
+		HEADER_X_API_VERSION,
+		HEADER_X_REQUESTED_WITH,
+		"Content-Type",
+		"Accept",
+		"Origin",
+	}
+	return strings.Join(headers, ", ")
+}
 
 func corsMiddleware(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	// Return CORS Headers and end
 	res.Header().Set("Access-Control-Allow-Origin", "*")
-	res.Header().Set("Access-Control-Allow-Headers", "X-AUTH-TOKEN, X-API-VERSION, X-Requested-With, Content-Type, Accept, Origin")
+	res.Header().Set("Access-Control-Allow-Headers", getCorsAllowHeaders())
 	res.Header().Set("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS")
 	res.Header().Set("Access-Control-Max-Age", "1728000")
 

@@ -57,20 +57,36 @@ func (w *WanderlustApp) InitLogger(logFile string) {
 
 // starts the HTTP server for the picnic web interface and runs it in a goroutine
 func (w *WanderlustApp) BootPicnic() {
-	picnicApp := &picnic.PicnicApp{
-		ListenAddress: w.CliContext.String("picnic-listen-address"),
-		PemDir:        w.CliContext.String("picnic-pem-dir"),
-		Logger:        w.Logger,
+
+	picnicApp, err := NewPicnicApp(
+		w.CliContext.String("picnic-listen-address"),
+		w.CliContext.String("picnic-pem-dir"),
+		w.Logger,
+	)
+
+	if nil != err {
+		w.Logger.Fatal(err)
 	}
-	if "" != picnicApp.ListenAddress { // don't start if empty
+
+	if "" != picnicApp.GetListenAddress() { // don't start if empty
 		w.waitGroup.Add(1)
 		go func() {
 			defer w.waitGroup.Done()
-			picnicApp.Execute()
+			err := picnicApp.Execute()
+			if nil != err {
+				w.Logger.Fatal(err)
+			}
 		}()
 		w.Logger.Printf("Picnic Running https://%s", picnicApp.GetListenAddress())
 	}
+}
 
+func (w *WanderlustApp) BootWanderer() {
+	w.Logger.Print("Booting Wanderer ... @todo")
+}
+
+func (w *WanderlustApp) BootBrotzeit() {
+	w.Logger.Print("Booting Brotzeit ... @todo")
 }
 
 // @todo remove this and add it to the picnic app as a feature to start and stop the DB backend via web panel

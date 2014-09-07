@@ -15,6 +15,7 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
+	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 	"math/big"
 	"net"
 	"os"
@@ -22,7 +23,43 @@ import (
 	"time"
 )
 
-type GenerateCert struct {
+// GeneratePems creates new PEM files if they not yet exists
+// returns the name of the PEM directory and error|nil
+func GeneratePems(listenAddress, pemDir, certFileName, keyFileName string) (string, error) {
+	dir := pemDir
+	pathSep := string(os.PathSeparator)
+	if "" == dir {
+		dir = GetTempDir() + "wlpem_" + RandomString(10)
+	}
+	CreateDirectoryIfNotExists(dir)
+	dir = dir + pathSep
+	certFile := dir + certFileName
+	keyFile := dir + keyFileName
+	address, _, vlaErr := ValidateListenAddress(listenAddress)
+	if nil != vlaErr {
+		return "", errgo.Mask(vlaErr)
+	}
+	duration := 180 * 24 * time.Hour                      // half a year
+	validFrom := time.Now().Format("Jan 2 15:04:05 2006") // any other year number results in a weird result :-?
+
+	isDir1, _ := PathExists(certFile)
+	isDir2, _ := PathExists(keyFile)
+	if isDir1 && isDir2 {
+		return dir, nil
+	}
+	certGenerator := &generateCert{
+		Host:         address,   // "Comma-separated hostnames and IPs to generate a certificate for"
+		ValidFrom:    validFrom, // "Creation date formatted as Jan 1 15:04:05 2011"
+		ValidFor:     duration,  // "duration", 365*24*time.Hour, "Duration that certificate is valid for"
+		IsCA:         true,      // "ca", false, "whether this cert should be its own Certificate Authority"
+		RsaBits:      2048,      // "rsa-bits", 2048, "Size of RSA key to generate"
+		CertFileName: certFile,
+		KeyFileName:  keyFile,
+	}
+	return dir, errgo.Mask(certGenerator.Generate())
+}
+
+type generateCert struct {
 	Host         string        // flag.String("host", "", "Comma-separated hostnames and IPs to generate a certificate for")
 	ValidFrom    string        // flag.String("start-date", "", "Creation date formatted as Jan 1 15:04:05 2011")
 	ValidFor     time.Duration // flag.Duration("duration", 365*24*time.Hour, "Duration that certificate is valid for")
@@ -32,7 +69,7 @@ type GenerateCert struct {
 	KeyFileName  string
 }
 
-func (gc *GenerateCert) Generate() error {
+func (gc *generateCert) Generate() error {
 
 	if len(gc.Host) == 0 {
 		return errors.New("Missing required host parameter")
