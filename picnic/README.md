@@ -1,3 +1,5 @@
-# Hints
+# Mental Note
 
-[https://github.com/Ehesp/Responsive-Dashboard](https://github.com/Ehesp/Responsive-Dashboard)
+Implemented [https://github.com/Ehesp/Responsive-Dashboard](https://github.com/Ehesp/Responsive-Dashboard)
+
+

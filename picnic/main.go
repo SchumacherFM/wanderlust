@@ -37,15 +37,18 @@ type PicnicApp struct {
 	Logger        *log.Logger
 }
 
-func (p *PicnicApp) Execute() {
-
+func (p *PicnicApp) getServer() *http.Server {
 	server := &http.Server{
 		Addr:      p.GetListenAddress(),
-		Handler:   getHandler(),
+		Handler:   p.getHandler(),
 		TLSConfig: p.getTlsConfig(),
 	}
+	return server
+}
 
-	err := server.ListenAndServeTLS(p.generatePems())
+func (p *PicnicApp) Execute() {
+
+	err := p.getServer().ListenAndServeTLS(p.generatePems())
 	if nil != err {
 		p.Logger.Fatal("Picnic ListenAndServe: ", err)
 	}
