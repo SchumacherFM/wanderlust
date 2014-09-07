@@ -29,15 +29,33 @@ import (
 
 func getHandler() *negroni.Negroni {
 	router := mux.NewRouter()
-	router.HandleFunc("/", dashBoardHandler).Methods("GET")
-	router.HandleFunc("/test", testDataHandler).Methods("GET")
 
-	router.HandleFunc("/favicon.ico", handlerFavicon)
+	brotzeitApi := router.PathPrefix("/brotzeit/").Subrouter()
+	brotzeitApi.HandleFunc("/start", noopHandler).Methods("GET")
+	brotzeitApi.HandleFunc("/stop", noopHandler).Methods("GET")
+	brotzeitApi.HandleFunc("/purge", noopHandler).Methods("GET") // purges all collected URLs
+	brotzeitApi.HandleFunc("/concurrency", noopHandler).Methods("PUT")
+	brotzeitApi.HandleFunc("/collections", noopHandler).Methods("GET") // retrieves running processes
+
+	wandererApi := router.PathPrefix("/wanderer/").Subrouter()
+	wandererApi.HandleFunc("/start", noopHandler).Methods("GET")
+	wandererApi.HandleFunc("/stop", noopHandler).Methods("GET")
+	wandererApi.HandleFunc("/concurrency", noopHandler).Methods("PUT")
+	wandererApi.HandleFunc("/current", noopHandler).Methods("GET")
+
+	// a provisioner can be:
+	// ga (Google Analytics), pw (Piwik), sm (URL to sitemap.xml), url (any URL), json (our special JSON format)
+	provisionerApi := router.PathPrefix("/provisioners/").Subrouter()
+	provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}", noopHandler).Methods("GET")        // get account
+	provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}", noopHandler).Methods("DELETE")     // delete account
+	provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}/save", noopHandler).Methods("PATCH") // save account data
+	provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}/urls", noopHandler).Methods("GET")   // retrieve all urls associated
+
+	router.HandleFunc("/", dashBoardHandler).Methods("GET")
+	router.HandleFunc("/favicon.ico", handlerFavicon).Methods("GET")
 
 	// due to the rice box regex when building embedded files we must use the full path in the MustFindBox method
-	router.PathPrefix("/css/").Handler(
-		http.StripPrefix("/css/", http.FileServer(gzrice.MustFindBox("rd/dist/css").HTTPBox())),
-	)
+	router.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(gzrice.MustFindBox("rd/dist/css").HTTPBox())))
 	router.PathPrefix("/fonts/").Handler(http.StripPrefix("/fonts/", http.FileServer(gzrice.MustFindBox("rd/dist/fonts").HTTPBox())))
 	router.PathPrefix("/img/").Handler(http.StripPrefix("/img/", http.FileServer(gzrice.MustFindBox("rd/dist/img").HTTPBox())))
 	router.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(gzrice.MustFindBox("rd/dist/js").HTTPBox())))
@@ -56,9 +74,9 @@ func handlerFavicon(w http.ResponseWriter, r *http.Request) {
 }
 
 func dashBoardHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hi there! This is the DashBoard %#v!", r.URL)
+	w.Write(gzrice.MustFindBox("rd/dist").MustBytes("index.html"))
 }
 
-func testDataHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "test data Hi there! %#v!", r.URL)
+func noopHandler(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte(fmt.Sprintf("Found route \n%#v\n ", r)))
 }

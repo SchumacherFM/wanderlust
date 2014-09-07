@@ -29,13 +29,13 @@ func corsMiddleware(res http.ResponseWriter, req *http.Request, next http.Handle
 	// Return CORS Headers and end
 	res.Header().Set("Access-Control-Allow-Origin", "*")
 	res.Header().Set("Access-Control-Allow-Headers", "X-AUTH-TOKEN, X-API-VERSION, X-Requested-With, Content-Type, Accept, Origin")
-	res.Header().Set("Access-Control-Allow-Methods", "POST, GET") // , PUT, DELETE, OPTIONS
+	res.Header().Set("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS")
 	res.Header().Set("Access-Control-Max-Age", "1728000")
 
-	//	if req.Method == "OPTIONS" {
-	//		res.WriteHeader(200)
-	//		return
-	//	}
+	if req.Method == "OPTIONS" {
+		res.WriteHeader(200)
+		return
+	}
 
 	next(res, req)
 }
