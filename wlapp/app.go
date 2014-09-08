@@ -58,7 +58,7 @@ func (w *WanderlustApp) InitLogger(logFile string) {
 // starts the HTTP server for the picnic web interface and runs it in a goroutine
 func (w *WanderlustApp) BootPicnic() {
 
-	picnicApp, err := NewPicnicApp(
+	picnicApp, err := picnic.NewPicnicApp(
 		w.CliContext.String("picnic-listen-address"),
 		w.CliContext.String("picnic-pem-dir"),
 		w.Logger,

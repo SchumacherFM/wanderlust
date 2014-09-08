@@ -28,6 +28,7 @@ const (
 )
 
 // lazily fetches the current session user
+// check also JWT
 func (p *PicnicApp) authenticate(r *http.Request, level authLevel) (picnicerI, error) {
 	var user picnicerI
 	user = newPicnicer()

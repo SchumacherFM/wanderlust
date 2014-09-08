@@ -28,19 +28,23 @@ import (
 )
 
 // our custom handler
-type handlerFunc func(c *context, w http.ResponseWriter, r *http.Request) error
+type handlerFunc func(rc requestContextI, w http.ResponseWriter, r *http.Request) error
 
 // the handler should create a new context on each request, and handle any returned
 // errors appropriately.
 func (p *PicnicApp) handler(h handlerFunc, level authLevel) http.HandlerFunc {
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		p.handleError(w, r, func() error {
+
+		doAuthentication := func() error {
 			user, err := p.authenticate(r, level)
 			if err != nil {
 				return err
 			}
-			return h(newContext(app, r, user), w, r)
-		}())
+			return h(newRequestContext(p, r, user), w, r)
+		}
+
+		p.handleError(w, r, doAuthentication())
 	}
 }
 
@@ -48,30 +52,30 @@ func (p *PicnicApp) getHandler() *negroni.Negroni {
 	router := mux.NewRouter()
 
 	brotzeitApi := router.PathPrefix("/brotzeit/").Subrouter()
-	brotzeitApi.HandleFunc("/start", noopHandler).Methods("GET")
-	brotzeitApi.HandleFunc("/stop", noopHandler).Methods("GET")
-	brotzeitApi.HandleFunc("/purge", noopHandler).Methods("GET") // purges all collected URLs
-	brotzeitApi.HandleFunc("/concurrency", noopHandler).Methods("PUT")
-	brotzeitApi.HandleFunc("/collections", noopHandler).Methods("GET") // retrieves running processes
+	brotzeitApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_IGNORE)).Methods("GET")
+	brotzeitApi.HandleFunc("/stop", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
+	brotzeitApi.HandleFunc("/purge", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET") // purges all collected URLs
+	brotzeitApi.HandleFunc("/concurrency", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("PUT")
+	brotzeitApi.HandleFunc("/collections", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET") // retrieves running processes
 
 	wandererApi := router.PathPrefix("/wanderer/").Subrouter()
-	wandererApi.HandleFunc("/start", noopHandler).Methods("GET")
-	wandererApi.HandleFunc("/stop", noopHandler).Methods("GET")
-	wandererApi.HandleFunc("/concurrency", noopHandler).Methods("PUT")
-	wandererApi.HandleFunc("/current", noopHandler).Methods("GET")
+	wandererApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
+	wandererApi.HandleFunc("/stop", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
+	wandererApi.HandleFunc("/concurrency", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("PUT")
+	wandererApi.HandleFunc("/current", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
 
 	// start stop the database web interface
 	rucksackApi := router.PathPrefix("/rucksack/").Subrouter()
-	rucksackApi.HandleFunc("/start", noopHandler).Methods("GET")
-	rucksackApi.HandleFunc("/stop", noopHandler).Methods("GET")
+	rucksackApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
+	rucksackApi.HandleFunc("/stop", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
 
 	// a provisioner can be:
 	// ga (Google Analytics), pw (Piwik), sm (URL to sitemap.xml), url (any URL), json (our special JSON format)
 	provisionerApi := router.PathPrefix("/provisioners/").Subrouter()
-	provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}", noopHandler).Methods("GET")        // get account
-	provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}", noopHandler).Methods("DELETE")     // delete account
-	provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}/save", noopHandler).Methods("PATCH") // save account data
-	provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}/urls", noopHandler).Methods("GET")   // retrieve all urls associated
+	provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")        // get account
+	provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("DELETE")     // delete account
+	provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}/save", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("PATCH") // save account data
+	provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}/urls", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")   // retrieve all urls associated
 
 	router.HandleFunc("/", dashBoardHandler).Methods("GET")
 	router.HandleFunc("/favicon.ico", handlerFavicon).Methods("GET")
@@ -99,6 +103,6 @@ func dashBoardHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(gzrice.MustFindBox("rd/dist").MustBytes("index.html"))
 }
 
-func noopHandler(w http.ResponseWriter, r *http.Request) {
-	renderString(w, 200, fmt.Sprintf("Found route \n%#v\n ", r))
+func noopHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
+	return renderString(w, 200, fmt.Sprintf("Found route \n%#v\n %#v\n", r,rc))
 }
