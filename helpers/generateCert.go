@@ -32,7 +32,11 @@ func GeneratePems(listenAddress, pemDir, certFileName, keyFileName string) (stri
 		dir = GetTempDir() + "wlpem_" + RandomString(10)
 	}
 	CreateDirectoryIfNotExists(dir)
-	dir = dir + pathSep
+
+	if len(dir) > 0 && pathSep != dir[len(dir)-1:] {
+		dir = dir + pathSep
+	}
+
 	certFile := dir + certFileName
 	keyFile := dir + keyFileName
 	address, _, vlaErr := ValidateListenAddress(listenAddress)

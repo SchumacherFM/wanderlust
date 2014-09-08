@@ -104,5 +104,5 @@ func dashBoardHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func noopHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
-	return renderString(w, 200, fmt.Sprintf("Found route \n%#v\n %#v\n", r,rc))
+	return renderString(w, 200, fmt.Sprintf("Found route \n%#v\n %#v\n", r, rc))
 }
