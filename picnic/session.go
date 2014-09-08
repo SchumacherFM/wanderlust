@@ -44,7 +44,7 @@ type sessionInfo struct {
 	LoggedIn bool   `json:"loggedIn"`
 }
 
-func newSessionInfo(user *user) *sessionInfo {
+func newSessionInfo(user *picnicer) *sessionInfo {
 	if user == nil || user.ID == 0 || !user.IsAuthenticated {
 		return &sessionInfo{}
 	}

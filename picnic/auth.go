@@ -28,6 +28,8 @@ const (
 )
 
 // lazily fetches the current session user
-func (p *PicnicApp) authenticate(r *http.Request, level authLevel) (*user, error) {
-
+func (p *PicnicApp) authenticate(r *http.Request, level authLevel) (picnicerI, error) {
+	var user picnicerI
+	user = newPicnicer()
+	return user, nil
 }

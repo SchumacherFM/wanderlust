@@ -31,9 +31,20 @@ type permissions struct {
 	Delete bool `json:"delete"`
 }
 
-// User represents users in database
-type user struct {
-	ID              int     `json:"id"`
+type picnicerI interface {
+	getNextId() int
+	PreparePicnicer() error
+	// validate(ctx *context, r *http.Request, errors map[string]string) error
+	generateRecoveryCode() (string, error)
+	resetRecoveryCode()
+	changePassword(password string) error
+	encryptPassword() error
+	checkPassword(password string) bool
+}
+
+// Picnicer represents users
+type picnicer struct {
+	ID              int       `json:"id"`
 	CreatedAt       time.Time `json:"createdAt"`
 	Name            string    `json:"name"`
 	Password        string    `json:""`
@@ -45,20 +56,28 @@ type user struct {
 	IsAuthenticated bool      `json:"isAuthenticated"`
 }
 
+func newPicnicer() *picnicer {
+	return &picnicer{}
+}
+
+func (p *picnicer) getNextId() int {
+	return 1
+}
+
 // PreInsert hook
-func (user *user) PrepareNewUser() error {
-	user.IsActive = true
-	user.CreatedAt = time.Now()
-	user.encryptPassword()
+func (p *picnicer) PreparePicnicer() error {
+	p.IsActive = true
+	p.CreatedAt = time.Now()
+	p.encryptPassword()
 	return nil
 }
 
-//func (user *user) validate(ctx *context, r *http.Request, errors map[string]string) error {
+//func (picnicer *picnicer) validate(ctx *context, r *http.Request, errors map[string]string) error {
 //
-//	if user.Name == "" {
+//	if picnicer.Name == "" {
 //		errors["name"] = "Name is missing"
 //	} else {
-//		ok, err := ctx.datamapper.isUserNameAvailable(user)
+//		ok, err := ctx.datamapper.isUserNameAvailable(picnicer)
 //		if err != nil {
 //			return err
 //		}
@@ -67,12 +86,12 @@ func (user *user) PrepareNewUser() error {
 //		}
 //	}
 //
-//	if user.Email == "" {
+//	if picnicer.Email == "" {
 //		errors["email"] = "Email is missing"
-//	} else if !validateEmail(user.Email) {
+//	} else if !validateEmail(picnicer.Email) {
 //		errors["email"] = "Invalid email address"
 //	} else {
-//		ok, err := ctx.datamapper.isUserEmailAvailable(user)
+//		ok, err := ctx.datamapper.isUserEmailAvailable(picnicer)
 //		if err != nil {
 //			return err
 //		}
@@ -82,45 +101,45 @@ func (user *user) PrepareNewUser() error {
 //
 //	}
 //
-//	// tbd: we need flag user is third-party
-//	if user.Password == "" {
+//	// tbd: we need flag picnicer is third-party
+//	if picnicer.Password == "" {
 //		errors["password"] = "Password is missing"
 //	}
 //
 //	return nil
 //}
 
-func (user *user) generateRecoveryCode() (string, error) {
+func (p *picnicer) generateRecoveryCode() (string, error) {
 	code := helpers.RandomString(RECOVERY_CODE_LENGTH)
-	user.RecoveryCode = code
+	p.RecoveryCode = code
 	return code, nil
 }
 
-func (user *user) resetRecoveryCode() {
-	user.RecoveryCode = ""
+func (p *picnicer) resetRecoveryCode() {
+	p.RecoveryCode = ""
 }
 
-func (user *user) changePassword(password string) error {
-	user.Password = password
-	return user.encryptPassword()
+func (p *picnicer) changePassword(password string) error {
+	p.Password = password
+	return p.encryptPassword()
 }
 
-func (user *user) encryptPassword() error {
-	if "" == user.Password {
+func (p *picnicer) encryptPassword() error {
+	if "" == p.Password {
 		return nil
 	}
-	hashed, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	hashed, err := bcrypt.GenerateFromPassword([]byte(p.Password), bcrypt.DefaultCost)
 	if nil != err {
 		return err
 	}
-	user.Password = string(hashed)
+	p.Password = string(hashed)
 	return nil
 }
 
-func (user *user) checkPassword(password string) bool {
-	if "" == user.Password {
+func (p *picnicer) checkPassword(password string) bool {
+	if "" == p.Password {
 		return false
 	}
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	err := bcrypt.CompareHashAndPassword([]byte(p.Password), []byte(password))
 	return err == nil
 }
