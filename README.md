@@ -32,7 +32,8 @@ Setup go/src for darwin, linux and windows [http://dave.cheney.net/2013/07/09/an
 
 Run `make build`. If you are interested in pre-compiled binaries, ping me.
 
-Dependencies to external packages are all included in this repository.
+Dependencies to external packages are all included in this repository. Yes there are apps like godep to handle this but
+I decided to implemented each package directly.
 
 # Contributing
 
