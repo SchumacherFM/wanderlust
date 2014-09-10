@@ -81,6 +81,8 @@ func (p *PicnicApp) getHandler() *negroni.Negroni {
 
 	// loads automatically the index.html
 	dashboardApi.PathPrefix("/").Handler(http.StripPrefix("/dashboard", http.FileServer(gzrice.MustFindBox("rd/dist/").HTTPBox())))
+	router.HandleFunc("/", handlerRedirectDashboard)
+	router.HandleFunc("/dashboard", handlerRedirectDashboard)
 	router.HandleFunc("/favicon.ico", handlerFavicon)
 
 	n := negroni.New(
@@ -91,6 +93,9 @@ func (p *PicnicApp) getHandler() *negroni.Negroni {
 	return n
 }
 
+func handlerRedirectDashboard(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/dashboard/", 301)
+}
 func handlerFavicon(w http.ResponseWriter, r *http.Request) {
 	w.Write(gzrice.MustFindBox("rd/dist/").MustBytes("img/favicon.ico"))
 }
