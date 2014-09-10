@@ -77,7 +77,8 @@ func (p *PicnicApp) getHandler() *negroni.Negroni {
 	provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}/save", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("PATCH") // save account data
 	provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}/urls", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")   // retrieve all urls associated
 
-	router.HandleFunc("/", dashBoardHandler).Methods("GET")
+	// loads automatically the index.html
+	router.Path("/").Handler( http.FileServer(gzrice.MustFindBox("rd/dist/dashboard").HTTPBox()))
 	router.HandleFunc("/favicon.ico", handlerFavicon).Methods("GET")
 
 	// due to the rice box regex when building embedded files we must use the full path in the MustFindBox method
@@ -97,10 +98,6 @@ func (p *PicnicApp) getHandler() *negroni.Negroni {
 
 func handlerFavicon(w http.ResponseWriter, r *http.Request) {
 	w.Write(gzrice.MustFindBox("rd/dist/img").MustBytes("favicon.ico"))
-}
-
-func dashBoardHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write(gzrice.MustFindBox("rd/dist").MustBytes("index.html"))
 }
 
 func noopHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {

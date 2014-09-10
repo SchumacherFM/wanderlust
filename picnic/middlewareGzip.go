@@ -43,13 +43,23 @@ const (
 	BestSpeed          = gzip.BestSpeed
 	DefaultCompression = gzip.DefaultCompression
 	NoCompression      = gzip.NoCompression
+
+	indexPage = "/index.html"
 )
+
+func prepareRequestUri(uri string) string {
+	if "/" == uri || "" == uri {
+		return indexPage
+	}
+	parts := strings.Split(uri, "?")
+	return parts[0]
+}
 
 // checks if files in gzricebox are already compressed
 // skips compression for binary files
 // compresses html content if client supports
 func GzipContentTypeMiddleware(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
-	isAllowed := gzrice.IsCompressingAllowed(req.RequestURI)
+	isAllowed := gzrice.IsCompressingAllowed(prepareRequestUri(req.RequestURI))
 	embeddedBoxesExists := gzrice.IsEmbedded() // only for dev ...
 	if false == embeddedBoxesExists && 1 == isAllowed {
 		isAllowed = 0

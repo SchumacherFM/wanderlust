@@ -8,8 +8,8 @@ import (
 type LocateMethod int
 
 const (
-	LocateFS       = LocateMethod(iota) // Locate on the filesystem.
-	LocateEmbedded                      // Locate embedded boxes.
+	LocateFS = LocateMethod(iota) // Locate on the filesystem.
+	LocateEmbedded                // Locate embedded boxes.
 )
 
 var (
@@ -17,17 +17,19 @@ var (
 	// -1 no
 	// 0 not found so could be a html page without extension
 	compressFileExt = map[string]int{
-		"css":  1,
-		"js":   1,
-		"eot":  1,
-		"svg":  1,
-		"png":  -1,
-		"gif":  -1,
-		"jpg":  -1,
-		"ttf":  -1,
-		"woff": -1,
-		"ico":	-1,
-	}
+	"htm":  1,
+	"html":  1,
+	"css":  1,
+	"js":   1,
+	"eot":  1,
+	"svg":  1,
+	"png":  -1,
+	"gif":  -1,
+	"jpg":  -1,
+	"ttf":  -1,
+	"woff": -1,
+	"ico":    -1,
+}
 )
 
 // Config allows customizing the box lookup behavior.
