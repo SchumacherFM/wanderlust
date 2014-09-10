@@ -25,10 +25,17 @@ import (
 )
 
 type RucksackApp struct {
-	ListenAddress string
-	db            *db.DB
-	DbDir         string
+	db            *RucksackDb
 	Logger        *log.Logger
+	ListenAddress string
+}
+
+func NewRucksackApp(listenAddress, dbDir string, logger *log.Logger) (*RucksackApp, error) {
+	rucksackApp := &RucksackApp{
+		ListenAddress: listenAddress,
+		Logger:        logger,
+	}
+	return rucksackApp, nil
 }
 
 func (r *RucksackApp) InitDb() {

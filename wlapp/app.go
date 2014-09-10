@@ -55,6 +55,33 @@ func (w *WanderlustApp) InitLogger(logFile string) {
 	}
 }
 
+// @todo remove this and add it to the picnic app as a feature to start and stop the DB backend via web panel
+// inits the rucksack and boots on the default http mux
+func (w *WanderlustApp) BootRucksack() {
+
+	rucksackApp, err := rucksack.NewRucksackApp(
+		w.CliContext.String("rucksack-listen-address"),
+		w.CliContext.String("rucksack-dir"),
+		w.Logger,
+	)
+
+	//	rucksackApp := &rucksack.RucksackApp{
+	//		ListenAddress: ,
+	//		DbDir:         ,
+	//		Logger:        w.Logger,
+	//	}
+	rucksackApp.InitDb()
+	w.db = rucksackApp.GetDb()
+	if "" != rucksackApp.ListenAddress {
+		w.waitGroup.Add(1)
+		go func() {
+			defer w.waitGroup.Done()
+			rucksackApp.StartHttp()
+		}()
+		w.Logger.Printf("Rucksack Running http://%s", rucksackApp.GetListenAddress())
+	}
+}
+
 // starts the HTTP server for the picnic web interface and runs it in a goroutine
 func (w *WanderlustApp) BootPicnic() {
 
@@ -81,32 +108,12 @@ func (w *WanderlustApp) BootPicnic() {
 	}
 }
 
-func (w *WanderlustApp) BootWanderer() {
-	w.Logger.Print("Booting Wanderer ... @todo")
-}
-
 func (w *WanderlustApp) BootBrotzeit() {
 	w.Logger.Print("Booting Brotzeit ... @todo")
 }
 
-// @todo remove this and add it to the picnic app as a feature to start and stop the DB backend via web panel
-// inits the rucksack and boots on the default http mux
-func (w *WanderlustApp) BootRucksack() {
-	rucksackApp := &rucksack.RucksackApp{
-		ListenAddress: w.CliContext.String("rucksack-listen-address"),
-		DbDir:         w.CliContext.String("rucksack-dir"),
-		Logger:        w.Logger,
-	}
-	rucksackApp.InitDb()
-	w.db = rucksackApp.GetDb()
-	if "" != rucksackApp.ListenAddress {
-		w.waitGroup.Add(1)
-		go func() {
-			defer w.waitGroup.Done()
-			rucksackApp.StartHttp()
-		}()
-		w.Logger.Printf("Rucksack Running http://%s", rucksackApp.GetListenAddress())
-	}
+func (w *WanderlustApp) BootWanderer() {
+	w.Logger.Print("Booting Wanderer ... @todo")
 }
 
 // catchSysCall ends the program correctly when receiving a sys call
