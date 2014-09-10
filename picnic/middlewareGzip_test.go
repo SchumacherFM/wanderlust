@@ -27,12 +27,14 @@ import (
 
 var (
 	prepareRequestUriTests = map[string]string{
-	"": "/index.html",
-	"/": "/index.html",
-	"/lib/bootstrap/css/bootstrap.css": "/lib/bootstrap/css/bootstrap.css",
-	"/lib/font-awesome/fonts/fontawesome-webfont.woff?v=4.1.0": "/lib/font-awesome/fonts/fontawesome-webfont.woff",
-	"/lib/angular/angular.js?v=2.1&a=b": "/lib/angular/angular.js",
-}
+		"":                                                         "/index.html",
+		"/":                                                        "/index.html",
+		"dashboard/":                                               "dashboard/index.html",
+		"dashboard":                                                "dashboard",
+		"/lib/bootstrap/css/bootstrap.css":                         "/lib/bootstrap/css/bootstrap.css",
+		"/lib/font-awesome/fonts/fontawesome-webfont.woff?v=4.1.0": "/lib/font-awesome/fonts/fontawesome-webfont.woff",
+		"/lib/angular/angular.js?v=2.1&a=b":                        "/lib/angular/angular.js",
+	}
 )
 
 func TestPrepareRequestUri(t *testing.T) {

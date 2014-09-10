@@ -77,16 +77,11 @@ func (p *PicnicApp) getHandler() *negroni.Negroni {
 	provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}/save", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("PATCH") // save account data
 	provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}/urls", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")   // retrieve all urls associated
 
-	// loads automatically the index.html
-	router.Path("/").Handler( http.FileServer(gzrice.MustFindBox("rd/dist/dashboard").HTTPBox()))
-	router.HandleFunc("/favicon.ico", handlerFavicon).Methods("GET")
+	dashboardApi := router.PathPrefix("/dashboard/").Subrouter()
 
-	// due to the rice box regex when building embedded files we must use the full path in the MustFindBox method
-	router.PathPrefix("/css/").Handler(http.StripPrefix("/css/", http.FileServer(gzrice.MustFindBox("rd/dist/css").HTTPBox())))
-	router.PathPrefix("/fonts/").Handler(http.StripPrefix("/fonts/", http.FileServer(gzrice.MustFindBox("rd/dist/fonts").HTTPBox())))
-	router.PathPrefix("/img/").Handler(http.StripPrefix("/img/", http.FileServer(gzrice.MustFindBox("rd/dist/img").HTTPBox())))
-	router.PathPrefix("/js/").Handler(http.StripPrefix("/js/", http.FileServer(gzrice.MustFindBox("rd/dist/js").HTTPBox())))
-	router.PathPrefix("/lib/").Handler(http.StripPrefix("/lib/", http.FileServer(gzrice.MustFindBox("rd/dist/lib").HTTPBox())))
+	// loads automatically the index.html
+	dashboardApi.PathPrefix("/").Handler(http.StripPrefix("/dashboard", http.FileServer(gzrice.MustFindBox("rd/dist/").HTTPBox())))
+	router.HandleFunc("/favicon.ico", handlerFavicon)
 
 	n := negroni.New(
 		negroni.HandlerFunc(corsMiddleware),
@@ -97,7 +92,7 @@ func (p *PicnicApp) getHandler() *negroni.Negroni {
 }
 
 func handlerFavicon(w http.ResponseWriter, r *http.Request) {
-	w.Write(gzrice.MustFindBox("rd/dist/img").MustBytes("favicon.ico"))
+	w.Write(gzrice.MustFindBox("rd/dist/").MustBytes("img/favicon.ico"))
 }
 
 func noopHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {

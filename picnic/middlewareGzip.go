@@ -44,14 +44,21 @@ const (
 	DefaultCompression = gzip.DefaultCompression
 	NoCompression      = gzip.NoCompression
 
-	indexPage = "/index.html"
+	indexPage = "index.html"
 )
 
 func prepareRequestUri(uri string) string {
-	if "/" == uri || "" == uri {
-		return indexPage
+	if "" == uri || "/" == uri {
+		return "/" + indexPage
 	}
 	parts := strings.Split(uri, "?")
+	lastChar := ""
+	if len(parts[0]) > 1 {
+		lastChar = uri[len(parts[0])-1:]
+	}
+	if "/" == lastChar {
+		return parts[0] + indexPage
+	}
 	return parts[0]
 }
 
