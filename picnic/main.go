@@ -112,7 +112,7 @@ func (p *PicnicApp) getTlsConfig() *tls.Config {
 		//		tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
 		tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
 	}
-	//tlsConfig.MinVersion = tls.VersionTLS12
+	tlsConfig.MinVersion = tls.VersionTLS12
 	// no need to disable session resumption http://chimera.labs.oreilly.com/books/1230000000545/ch04.html#TLS_RESUME
 
 	// https://twitter.com/karlseguin/status/508531717011820544
