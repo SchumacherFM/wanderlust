@@ -25,8 +25,8 @@ func init() {
 	{{range .Files}}{{.Identifier}} := &embedded.EmbeddedFile{
 		Filename:    ` + "`" + `{{.FileName}}` + "`" + `,
 		FileModTime: time.Unix({{.ModTime}}, 0),
-		Content:     {{.Content | printf "%#v"}},
 		IsGzipped:	 {{.IsGzipped | printf "%#v"}},
+		Content:     {{.Content | printf "%#v"}},
 	}
 	{{end}}
 
