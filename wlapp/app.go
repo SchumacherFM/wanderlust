@@ -17,10 +17,10 @@
 package wlapp
 
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/db"
 	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/cli"
 	"github.com/SchumacherFM/wanderlust/picnic"
 	"github.com/SchumacherFM/wanderlust/rucksack"
+	"github.com/SchumacherFM/wanderlust/rucksack/rucksackdb"
 	"log"
 	"os"
 	"os/signal"
@@ -33,7 +33,7 @@ type WanderlustApp struct {
 	CliContext *cli.Context
 	waitGroup  sync.WaitGroup
 	Logger     *log.Logger
-	db         *db.DB
+	db         rucksackdb.RDBI
 }
 
 // final method to wait on all the goroutines which are running mostly the HTTP server or other daemons
@@ -55,6 +55,30 @@ func (w *WanderlustApp) InitLogger(logFile string) {
 	}
 }
 
+// @todo remove this and add it to the picnic app as a feature to start and stop the DB backend via web panel
+// inits the rucksack and boots on the default http mux
+func (w *WanderlustApp) BootRucksack() {
+
+	rucksackApp, err := rucksack.NewRucksackApp(
+		w.CliContext.String("rucksack-listen-address"),
+		w.CliContext.String("rucksack-dir"),
+		w.Logger,
+	)
+
+	if nil != err {
+		w.Logger.Fatal(err)
+	}
+
+	w.db = rucksackApp.GetDb()
+	if "" != rucksackApp.ListenAddress {
+		w.waitGroup.Add(1)
+		go func() {
+			defer w.waitGroup.Done()
+			rucksackApp.StartHttp()
+		}()
+	}
+}
+
 // starts the HTTP server for the picnic web interface and runs it in a goroutine
 func (w *WanderlustApp) BootPicnic() {
 
@@ -71,8 +95,13 @@ func (w *WanderlustApp) BootPicnic() {
 	if "" != picnicApp.GetListenAddress() { // don't start if empty
 		w.waitGroup.Add(1)
 		go func() {
+			var err error
 			defer w.waitGroup.Done()
-			err := picnicApp.Execute()
+			err = picnicApp.InitUsers()
+			if nil != err {
+				w.Logger.Fatal(err)
+			}
+			err = picnicApp.Execute()
 			if nil != err {
 				w.Logger.Fatal(err)
 			}
@@ -81,32 +110,12 @@ func (w *WanderlustApp) BootPicnic() {
 	}
 }
 
-func (w *WanderlustApp) BootWanderer() {
-	w.Logger.Print("Booting Wanderer ... @todo")
-}
-
 func (w *WanderlustApp) BootBrotzeit() {
 	w.Logger.Print("Booting Brotzeit ... @todo")
 }
 
-// @todo remove this and add it to the picnic app as a feature to start and stop the DB backend via web panel
-// inits the rucksack and boots on the default http mux
-func (w *WanderlustApp) BootRucksack() {
-	rucksackApp := &rucksack.RucksackApp{
-		ListenAddress: w.CliContext.String("rucksack-listen-address"),
-		DbDir:         w.CliContext.String("rucksack-dir"),
-		Logger:        w.Logger,
-	}
-	rucksackApp.InitDb()
-	w.db = rucksackApp.GetDb()
-	if "" != rucksackApp.ListenAddress {
-		w.waitGroup.Add(1)
-		go func() {
-			defer w.waitGroup.Done()
-			rucksackApp.StartHttp()
-		}()
-		w.Logger.Printf("Rucksack Running http://%s", rucksackApp.GetListenAddress())
-	}
+func (w *WanderlustApp) BootWanderer() {
+	w.Logger.Print("Booting Wanderer ... @todo")
 }
 
 // catchSysCall ends the program correctly when receiving a sys call
@@ -122,8 +131,12 @@ func (w *WanderlustApp) catchSysCall() {
 	)
 	go func() {
 		for sig := range signalChannel {
-			w.Logger.Printf("Received signal: %s\n", sig.String())
-
+			w.Logger.Printf("Received signal: %s. Closing database ...\n", sig.String())
+			if err := w.db.Close(); nil != err {
+				w.Logger.Print(err)
+			} else {
+				w.Logger.Print("Database successful closed!")
+			}
 			os.Exit(0)
 		}
 	}()

@@ -17,42 +17,56 @@
 package rucksack
 
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/db"
-	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/httpapi"
-	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/webcp"
 	"github.com/SchumacherFM/wanderlust/helpers"
+	"github.com/SchumacherFM/wanderlust/rucksack/rucksackdb"
 	"log"
 )
 
+// @todo create maybe custom REST API instead of using the tiedot unsecure API
+
 type RucksackApp struct {
-	ListenAddress string
-	db            *db.DB
-	DbDir         string
+	rdb           rucksackdb.RDBI
 	Logger        *log.Logger
+	ListenAddress string
 }
 
-func (r *RucksackApp) InitDb() {
-	dbDir := r.DbDir
+func NewRucksackApp(listenAddress, dbDir string, logger *log.Logger) (*RucksackApp, error) {
+	rucksackApp := &RucksackApp{
+		ListenAddress: listenAddress,
+		Logger:        logger,
+	}
+	rucksackApp.initDb(dbDir)
+	return rucksackApp, nil
+}
+
+func (r *RucksackApp) initDb(dbDir string) error {
 	var err error
-	if "" == r.DbDir {
+	if "" == dbDir {
 		dbDir = helpers.GetTempDir() + "wldb_" + helpers.RandomString(10)
 		r.Logger.Printf("Database temp directory is %s", dbDir)
 	}
 	helpers.CreateDirectoryIfNotExists(dbDir)
-	r.db, err = db.OpenDB(dbDir)
+	r.rdb, err = rucksackdb.NewRDB(dbDir)
+	return err
+}
+
+func (r *RucksackApp) GetDb() rucksackdb.RDBI {
+	return r.rdb
+}
+
+// listens on the DefaultServeMux and runs in a goroutine
+func (r *RucksackApp) StartHttp() {
+	r.Logger.Printf("Database webinterface running: http://%s", r.GetListenAddress())
+	err := r.rdb.StartHttp(r.GetListenAddress())
 	if nil != err {
-		r.Logger.Fatalln("RucksackApp InitDB: ", err)
+		r.Logger.Fatal(err)
 	}
 }
 
-func (r *RucksackApp) GetDb() *db.DB {
-	return r.db
-}
-
-// listens on the DefaultServeMux
-func (r *RucksackApp) StartHttp() {
-	webcp.WebCp = "webcp"
-	httpapi.Start(r.db, r.GetListenAddress())
+// @todo How to implement a stopable http server
+// http://www.hydrogen18.com/blog/stop-listening-http-server-go.html
+func (r *RucksackApp) StopHttp() error {
+	return nil
 }
 
 func (r *RucksackApp) GetListenAddress() string {

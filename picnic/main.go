@@ -17,9 +17,9 @@
 package picnic
 
 import (
-	"crypto/tls"
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 	"github.com/SchumacherFM/wanderlust/helpers"
+	"github.com/SchumacherFM/wanderlust/rucksack/rucksackdb"
 	"log"
 	"net/http"
 )
@@ -35,9 +35,9 @@ type PicnicAppI interface {
 	getServer() *http.Server
 	generatePems() (certFile, keyFile string, err error)
 	Execute() error
-	getTlsConfig() *tls.Config
 	GetListenAddress() string
 	getPemDir() string
+	InitUsers() error
 }
 
 type PicnicApp struct {
@@ -45,6 +45,7 @@ type PicnicApp struct {
 	PemDir        string
 	Logger        *log.Logger
 	session       sessionManagerI
+	db            rucksackdb.RDBI
 	certFile      string
 	keyFile       string
 }
@@ -71,7 +72,7 @@ func (p *PicnicApp) getServer() *http.Server {
 	server := &http.Server{
 		Addr:      p.GetListenAddress(),
 		Handler:   p.getHandler(),
-		TLSConfig: p.getTlsConfig(),
+		TLSConfig: helpers.GetTlsConfig(),
 	}
 	return server
 }
@@ -99,32 +100,15 @@ func (p *PicnicApp) Execute() error {
 	return errgo.Mask(p.getServer().ListenAndServeTLS(p.certFile, p.keyFile))
 }
 
-func (p *PicnicApp) getTlsConfig() *tls.Config {
-	tlsConfig := &tls.Config{}
-	// @see http://www.hydrogen18.com/blog/your-own-pki-tls-golang.html
-	tlsConfig.CipherSuites = []uint16{
-		//		tls.TLS_RSA_WITH_AES_128_CBC_SHA,
-		tls.TLS_RSA_WITH_AES_256_CBC_SHA,
-		//		tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
-		tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
-		//		tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-		tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-		//		tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-		tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-	}
-	tlsConfig.MinVersion = tls.VersionTLS12
-	// no need to disable session resumption http://chimera.labs.oreilly.com/books/1230000000545/ch04.html#TLS_RESUME
-
-	// https://twitter.com/karlseguin/status/508531717011820544
-	tlsConfig.ClientSessionCache = tls.NewLRUClientSessionCache(DEFAULT_TLS_SESSION_CACHE_CAPACITY)
-
-	return tlsConfig
-}
-
 func (p *PicnicApp) GetListenAddress() string {
 	address, port, err := helpers.ValidateListenAddress(p.ListenAddress)
 	if nil != err {
 		p.Logger.Fatal(err, p.ListenAddress)
 	}
 	return address + ":" + port
+}
+
+func (p *PicnicApp) InitUsers() error {
+	// @todo create root user if none exists
+	return nil
 }

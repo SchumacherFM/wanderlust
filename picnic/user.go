@@ -24,6 +24,7 @@ import (
 
 const (
 	RECOVERY_CODE_LENGTH = 30
+	DB_COLLECTION_NAME   = "users"
 )
 
 type permissions struct {
@@ -40,6 +41,10 @@ type picnicerI interface {
 	changePassword(password string) error
 	encryptPassword() error
 	checkPassword(password string) bool
+}
+
+type picnicerCollection struct {
+	picnicer []picnicerI
 }
 
 // Picnicer represents users
