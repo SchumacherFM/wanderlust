@@ -24,7 +24,7 @@ import (
 
 const (
 	RECOVERY_CODE_LENGTH = 30
-	DB_COLLECTION_NAME = "users"
+	DB_COLLECTION_NAME   = "users"
 )
 
 type permissions struct {

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package rucksack
+package rucksackdb
 
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/db"
@@ -22,33 +22,33 @@ import (
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/webcp"
 )
 
-type RucksackDbI interface {
+type RDBI interface {
 	StartHttp(listenAddress string) error
 	Close() error
 	Query()
 }
 
-type RucksackDb struct {
+type RDB struct {
 	db            *db.DB
 	isHttpRunning bool
 }
 
-func NewRucksackDb(dbDir string) (RucksackDbI, error) {
-	rdb := &RucksackDb{}
+func NewRDB(dbDir string) (RDBI, error) {
+	rdb := &RDB{}
 	var err error
 	rdb.db, err = db.OpenDB(dbDir)
 	return rdb, err
 }
 
-func (rdb *RucksackDb) Close() error {
+func (rdb *RDB) Close() error {
 	return rdb.db.Close()
 }
 
-func (rdb *RucksackDb) Query() {
+func (rdb *RDB) Query() {
 
 }
 
-func (rdb *RucksackDb) StartHttp(listenAddress string) error {
+func (rdb *RDB) StartHttp(listenAddress string) error {
 	webcp.WebCp = "webcp"
 	if false == rdb.isHttpRunning {
 		rdb.isHttpRunning = true

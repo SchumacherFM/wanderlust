@@ -17,12 +17,11 @@
 package picnic
 
 import (
-	"crypto/tls"
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 	"github.com/SchumacherFM/wanderlust/helpers"
+	"github.com/SchumacherFM/wanderlust/rucksack/rucksackdb"
 	"log"
 	"net/http"
-	"errors"
 )
 
 const (
@@ -36,7 +35,6 @@ type PicnicAppI interface {
 	getServer() *http.Server
 	generatePems() (certFile, keyFile string, err error)
 	Execute() error
-	getTlsConfig() *tls.Config
 	GetListenAddress() string
 	getPemDir() string
 	InitUsers() error
@@ -47,6 +45,7 @@ type PicnicApp struct {
 	PemDir        string
 	Logger        *log.Logger
 	session       sessionManagerI
+	db            rucksackdb.RDBI
 	certFile      string
 	keyFile       string
 }
@@ -110,6 +109,6 @@ func (p *PicnicApp) GetListenAddress() string {
 }
 
 func (p *PicnicApp) InitUsers() error {
-
-	return errgo.Mask(errors.New("Test err"))
+	// @todo create root user if none exists
+	return nil
 }

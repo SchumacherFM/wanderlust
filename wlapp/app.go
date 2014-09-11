@@ -20,6 +20,7 @@ import (
 	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/cli"
 	"github.com/SchumacherFM/wanderlust/picnic"
 	"github.com/SchumacherFM/wanderlust/rucksack"
+	"github.com/SchumacherFM/wanderlust/rucksack/rucksackdb"
 	"log"
 	"os"
 	"os/signal"
@@ -32,7 +33,7 @@ type WanderlustApp struct {
 	CliContext *cli.Context
 	waitGroup  sync.WaitGroup
 	Logger     *log.Logger
-	db         rucksack.RucksackDbI
+	db         rucksackdb.RDBI
 }
 
 // final method to wait on all the goroutines which are running mostly the HTTP server or other daemons
@@ -94,8 +95,13 @@ func (w *WanderlustApp) BootPicnic() {
 	if "" != picnicApp.GetListenAddress() { // don't start if empty
 		w.waitGroup.Add(1)
 		go func() {
+			var err error
 			defer w.waitGroup.Done()
-			err := picnicApp.Execute()
+			err = picnicApp.InitUsers()
+			if nil != err {
+				w.Logger.Fatal(err)
+			}
+			err = picnicApp.Execute()
 			if nil != err {
 				w.Logger.Fatal(err)
 			}

@@ -18,13 +18,14 @@ package rucksack
 
 import (
 	"github.com/SchumacherFM/wanderlust/helpers"
+	"github.com/SchumacherFM/wanderlust/rucksack/rucksackdb"
 	"log"
 )
 
 // @todo create maybe custom REST API instead of using the tiedot unsecure API
 
 type RucksackApp struct {
-	rdb           RucksackDbI
+	rdb           rucksackdb.RDBI
 	Logger        *log.Logger
 	ListenAddress string
 }
@@ -35,12 +36,7 @@ func NewRucksackApp(listenAddress, dbDir string, logger *log.Logger) (*RucksackA
 		Logger:        logger,
 	}
 	rucksackApp.initDb(dbDir)
-	rucksackApp.createDefaultAdminUser()
 	return rucksackApp, nil
-}
-func (r *RucksackApp) createDefaultAdminUser() error {
-	// @todo
-	return nil
 }
 
 func (r *RucksackApp) initDb(dbDir string) error {
@@ -50,21 +46,27 @@ func (r *RucksackApp) initDb(dbDir string) error {
 		r.Logger.Printf("Database temp directory is %s", dbDir)
 	}
 	helpers.CreateDirectoryIfNotExists(dbDir)
-	r.rdb, err = NewRucksackDb(dbDir)
+	r.rdb, err = rucksackdb.NewRDB(dbDir)
 	return err
 }
 
-func (r *RucksackApp) GetDb() RucksackDbI {
+func (r *RucksackApp) GetDb() rucksackdb.RDBI {
 	return r.rdb
 }
 
 // listens on the DefaultServeMux and runs in a goroutine
 func (r *RucksackApp) StartHttp() {
-	r.Logger.Printf("Database webinterface running: %s", r.GetListenAddress())
+	r.Logger.Printf("Database webinterface running: http://%s", r.GetListenAddress())
 	err := r.rdb.StartHttp(r.GetListenAddress())
 	if nil != err {
 		r.Logger.Fatal(err)
 	}
+}
+
+// @todo How to implement a stopable http server
+// http://www.hydrogen18.com/blog/stop-listening-http-server-go.html
+func (r *RucksackApp) StopHttp() error {
+	return nil
 }
 
 func (r *RucksackApp) GetListenAddress() string {

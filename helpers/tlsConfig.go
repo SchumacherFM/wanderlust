@@ -21,9 +21,8 @@ import (
 )
 
 const (
-	DEFAULT_TLS_SESSION_CACHE_CAPACITY int    = 128
+	DEFAULT_TLS_SESSION_CACHE_CAPACITY int = 128
 )
-
 
 func GetTlsConfig() *tls.Config {
 	tlsConfig := &tls.Config{}
