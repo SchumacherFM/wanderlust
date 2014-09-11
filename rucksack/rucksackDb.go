@@ -18,9 +18,41 @@ package rucksack
 
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/db"
+	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/httpapi"
+	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/webcp"
 )
 
+type RucksackDbI interface {
+	StartHttp(listenAddress string) error
+	Close() error
+	Query()
+}
+
 type RucksackDb struct {
-	*db.DB
-	DbDir string
+	db            *db.DB
+	isHttpRunning bool
+}
+
+func NewRucksackDb(dbDir string) (RucksackDbI, error) {
+	rdb := &RucksackDb{}
+	var err error
+	rdb.db, err = db.OpenDB(dbDir)
+	return rdb, err
+}
+
+func (rdb *RucksackDb) Close() error {
+	return rdb.db.Close()
+}
+
+func (rdb *RucksackDb) Query() {
+
+}
+
+func (rdb *RucksackDb) StartHttp(listenAddress string) error {
+	webcp.WebCp = "webcp"
+	if false == rdb.isHttpRunning {
+		rdb.isHttpRunning = true
+		return httpapi.Start(rdb.db, listenAddress)
+	}
+	return nil
 }

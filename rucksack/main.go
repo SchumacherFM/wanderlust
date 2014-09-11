@@ -17,15 +17,14 @@
 package rucksack
 
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/db"
-	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/httpapi"
-	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/webcp"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"log"
 )
 
+// @todo create maybe custom REST API instead of using the tiedot unsecure API
+
 type RucksackApp struct {
-	db            *RucksackDb
+	rdb           RucksackDbI
 	Logger        *log.Logger
 	ListenAddress string
 }
@@ -35,31 +34,32 @@ func NewRucksackApp(listenAddress, dbDir string, logger *log.Logger) (*RucksackA
 		ListenAddress: listenAddress,
 		Logger:        logger,
 	}
+	rucksackApp.initDb(dbDir)
 	return rucksackApp, nil
 }
 
-func (r *RucksackApp) InitDb() {
-	dbDir := r.DbDir
+func (r *RucksackApp) initDb(dbDir string) error {
 	var err error
-	if "" == r.DbDir {
+	if "" == dbDir {
 		dbDir = helpers.GetTempDir() + "wldb_" + helpers.RandomString(10)
 		r.Logger.Printf("Database temp directory is %s", dbDir)
 	}
 	helpers.CreateDirectoryIfNotExists(dbDir)
-	r.db, err = db.OpenDB(dbDir)
-	if nil != err {
-		r.Logger.Fatalln("RucksackApp InitDB: ", err)
-	}
+	r.rdb, err = NewRucksackDb(dbDir)
+	return err
 }
 
-func (r *RucksackApp) GetDb() *db.DB {
-	return r.db
+func (r *RucksackApp) GetDb() RucksackDbI {
+	return r.rdb
 }
 
-// listens on the DefaultServeMux
+// listens on the DefaultServeMux and runs in a goroutine
 func (r *RucksackApp) StartHttp() {
-	webcp.WebCp = "webcp"
-	httpapi.Start(r.db, r.GetListenAddress())
+	r.Logger.Printf("Database webinterface running: %s", r.GetListenAddress())
+	err := r.rdb.StartHttp(r.GetListenAddress())
+	if nil != err {
+		r.Logger.Fatal(err)
+	}
 }
 
 func (r *RucksackApp) GetListenAddress() string {

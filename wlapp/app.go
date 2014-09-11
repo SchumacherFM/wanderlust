@@ -17,7 +17,6 @@
 package wlapp
 
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/db"
 	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/cli"
 	"github.com/SchumacherFM/wanderlust/picnic"
 	"github.com/SchumacherFM/wanderlust/rucksack"
@@ -33,7 +32,7 @@ type WanderlustApp struct {
 	CliContext *cli.Context
 	waitGroup  sync.WaitGroup
 	Logger     *log.Logger
-	db         *db.DB
+	db         rucksack.RucksackDbI
 }
 
 // final method to wait on all the goroutines which are running mostly the HTTP server or other daemons
@@ -65,12 +64,10 @@ func (w *WanderlustApp) BootRucksack() {
 		w.Logger,
 	)
 
-	//	rucksackApp := &rucksack.RucksackApp{
-	//		ListenAddress: ,
-	//		DbDir:         ,
-	//		Logger:        w.Logger,
-	//	}
-	rucksackApp.InitDb()
+	if nil != err {
+		w.Logger.Fatal(err)
+	}
+
 	w.db = rucksackApp.GetDb()
 	if "" != rucksackApp.ListenAddress {
 		w.waitGroup.Add(1)
@@ -78,7 +75,6 @@ func (w *WanderlustApp) BootRucksack() {
 			defer w.waitGroup.Done()
 			rucksackApp.StartHttp()
 		}()
-		w.Logger.Printf("Rucksack Running http://%s", rucksackApp.GetListenAddress())
 	}
 }
 
@@ -129,8 +125,12 @@ func (w *WanderlustApp) catchSysCall() {
 	)
 	go func() {
 		for sig := range signalChannel {
-			w.Logger.Printf("Received signal: %s\n", sig.String())
-
+			w.Logger.Printf("Received signal: %s. Closing database ...\n", sig.String())
+			if err := w.db.Close(); nil != err {
+				w.Logger.Print(err)
+			} else {
+				w.Logger.Print("Database successful closed!")
+			}
 			os.Exit(0)
 		}
 	}()
