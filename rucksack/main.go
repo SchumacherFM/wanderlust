@@ -35,7 +35,12 @@ func NewRucksackApp(listenAddress, dbDir string, logger *log.Logger) (*RucksackA
 		Logger:        logger,
 	}
 	rucksackApp.initDb(dbDir)
+	rucksackApp.createDefaultAdminUser()
 	return rucksackApp, nil
+}
+func (r *RucksackApp) createDefaultAdminUser() error {
+	// @todo
+	return nil
 }
 
 func (r *RucksackApp) initDb(dbDir string) error {
