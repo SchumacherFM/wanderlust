@@ -207,7 +207,7 @@ func initUsers() error {
 		return errgo.Mask(err)
 	}
 
-	pn := userModel{
+	um := userModel{
 		UserName: USER_ROOT,
 		Name:     "Default Root User",
 		Email:    USER_ROOT + "@localhost",
@@ -215,15 +215,15 @@ func initUsers() error {
 		IsAdmin:  true,
 		IsActive: true,
 	}
-	pn.generatePassword()
-	rootUser, _ = rsdb.FindOne(USER_DB_COLLECTION_NAME, pn.getId())
+	um.generatePassword()
+	rootUser, _ = rsdb.FindOne(USER_DB_COLLECTION_NAME, um.getId())
 
 	if nil == rootUser {
-		logger.Printf("Created new user %s with password: %s", pn.Email, pn.Password)
-		pn.prepareNew()
-		rsdb.InsertRecovery(USER_DB_COLLECTION_NAME, pn.getId(), pn.toStringInterface())
+		logger.Printf("Created new user %s with password: %s", um.UserName, um.Password)
+		um.prepareNew()
+		rsdb.InsertRecovery(USER_DB_COLLECTION_NAME, um.getId(), um.toStringInterface())
 	} else {
 		logger.Printf("Root user %s already exists!", USER_ROOT)
 	}
-	return err
+	return errgo.Mask(err)
 }
