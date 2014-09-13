@@ -27,7 +27,7 @@ const (
 	USER_PASSWORD_LENGTH      = 14
 	USER_RECOVERY_CODE_LENGTH = 30
 	USER_DB_COLLECTION_NAME   = "users"
-	USER_ROOT                 = "root@localhost"
+	USER_ROOT                 = "adiministrator"
 )
 
 type permissions struct {
@@ -39,13 +39,14 @@ type userIf interface {
 	getId() int
 	getEmail() string
 	getName() string
+	getUserName() string
 	isAuthenticated() bool
 	isAdmin() bool
 	prepareNew() error
 	// validate(ctx *context, r *http.Request, errors map[string]string) error
 	generateRecoveryCode() (string, error)
 	resetRecoveryCode()
-	generatePassword()
+	generatePassword() error
 	changePassword(password string) error
 	encryptPassword() error
 	checkPassword(password string) bool
@@ -55,29 +56,30 @@ type userIf interface {
 //	userModel []userIf
 //}
 
-// not sure if the json tag is needed
 type userModel struct {
-	CreatedAt       time.Time `json:"createdAt"`
-	Name            string    `json:"name"`
-	Email           string    `json:"email"`
-	Password        string    `json:"password"`
-	IsAdmin         bool      `json:"isAdmin"`
-	IsActive        bool      `json:"isActive"`
-	RecoveryCode    string    `json:""`
-	IsAuthenticated bool      `json:"isAuthenticated"`
+	CreatedAt       time.Time
+	UserName        string
+	Name            string
+	Email           string
+	Password        string
+	IsAdmin         bool
+	IsActive        bool
+	RecoveryCode    string
+	IsAuthenticated bool
 }
 
-func (p *userModel) getId() int            { return helpers.StringHash(p.Email) }
-func (p *userModel) getEmail() string      { return p.Email }
-func (p *userModel) getName() string       { return p.Name }
-func (p *userModel) isAuthenticated() bool { return p.IsAuthenticated }
-func (p *userModel) isAdmin() bool         { return p.IsAdmin }
+func (um *userModel) getId() int            { return helpers.StringHash(um.UserName) }
+func (um *userModel) getEmail() string      { return um.Email }
+func (um *userModel) getUserName() string   { return um.UserName }
+func (um *userModel) getName() string       { return um.Name }
+func (um *userModel) isAuthenticated() bool { return um.IsAuthenticated }
+func (um *userModel) isAdmin() bool         { return um.IsAdmin }
 
 // PreInsert hook
-func (p *userModel) prepareNew() error {
-	p.IsActive = true
-	p.CreatedAt = time.Now()
-	p.encryptPassword()
+func (um *userModel) prepareNew() error {
+	um.IsActive = true
+	um.CreatedAt = time.Now()
+	um.encryptPassword()
 	return nil
 }
 
@@ -118,62 +120,81 @@ func (p *userModel) prepareNew() error {
 //	return nil
 //}
 
-func (p *userModel) generateRecoveryCode() (string, error) {
+func (um *userModel) generateRecoveryCode() (string, error) {
 	code := helpers.RandomString(USER_RECOVERY_CODE_LENGTH)
-	p.RecoveryCode = code
+	um.RecoveryCode = code
 	return code, nil
 }
 
-func (p *userModel) resetRecoveryCode() {
-	p.RecoveryCode = ""
+func (um *userModel) resetRecoveryCode() {
+	um.RecoveryCode = ""
 }
 
 // generates an unencrypted password
-func (p *userModel) generatePassword() error {
+func (um *userModel) generatePassword() error {
 	var err error
-	p.Password, err = helpers.NewPassword(USER_PASSWORD_LENGTH)
+	um.Password, err = helpers.NewPassword(USER_PASSWORD_LENGTH)
 	return err
 }
 
-func (p *userModel) changePassword(password string) error {
-	p.Password = password
-	return p.encryptPassword()
+func (um *userModel) changePassword(password string) error {
+	um.Password = password
+	return um.encryptPassword()
 }
 
-func (p *userModel) encryptPassword() error {
-	if "" == p.Password {
+func (um *userModel) encryptPassword() error {
+	if "" == um.Password {
 		return nil
 	}
-	hashed, err := bcrypt.GenerateFromPassword([]byte(p.Password), bcrypt.DefaultCost)
+	hashed, err := bcrypt.GenerateFromPassword([]byte(um.Password), bcrypt.DefaultCost)
 	if nil != err {
 		return err
 	}
-	p.Password = string(hashed)
+	um.Password = string(hashed)
 	return nil
 }
 
-func (p *userModel) checkPassword(password string) bool {
-	if "" == p.Password {
+func (um *userModel) checkPassword(password string) bool {
+	if "" == um.Password {
 		return false
 	}
-	err := bcrypt.CompareHashAndPassword([]byte(p.Password), []byte(password))
+	err := bcrypt.CompareHashAndPassword([]byte(um.Password), []byte(password))
 	return err == nil
 }
 
-func (p *userModel) toStringInterface() map[string]interface{} {
+func (um *userModel) toStringInterface() map[string]interface{} {
 	return map[string]interface{}{
-		"CreatedAt":       p.CreatedAt.Unix(),
-		"Name":            p.Name,
-		"Email":           p.Email,
-		"Password":        p.Password,
-		"IsAdmin":         p.IsAdmin,
-		"IsActive":        p.IsActive,
-		"IsAuthenticated": p.IsAuthenticated,
+		"CreatedAt":       um.CreatedAt.Unix(),
+		"UserName":        um.UserName,
+		"Name":            um.Name,
+		"Email":           um.Email,
+		"Password":        um.Password,
+		"IsAdmin":         um.IsAdmin,
+		"IsActive":        um.IsActive,
+		"IsAuthenticated": um.IsAuthenticated,
 	}
 }
 
-func StringInterfaceToUser(data map[string]interface{}) userIf {
-	return nil
+func StringInterfaceToUser(data map[string]interface{}) *userModel {
+	tIsAdmin, _ := data["IsAdmin"].(bool)
+	tIsActive, _ := data["IsActive"].(bool)
+	tIsAuthenticated, _ := data["IsAuthenticated"].(bool)
+	tCreatedAt, _ := data["CreatedAt"].(int64)
+	tUserName, _ := data["UserName"].(string)
+	tName, _ := data["Name"].(string)
+	tEmail, _ := data["Email"].(string)
+	tPassword, _ := data["Password"].(string)
+	um := &userModel{
+		CreatedAt:       time.Unix(tCreatedAt, 0),
+		UserName:        tUserName,
+		Name:            tName,
+		Email:           tEmail,
+		Password:        tPassword,
+		IsAdmin:         tIsAdmin,
+		IsActive:        tIsActive,
+		IsAuthenticated: tIsAuthenticated,
+	}
+	return um
 }
 
 // initUsers() runs in NewPicnicApp() function
@@ -187,8 +208,9 @@ func initUsers() error {
 	}
 
 	pn := userModel{
+		UserName: USER_ROOT,
 		Name:     "Default Root User",
-		Email:    USER_ROOT,
+		Email:    USER_ROOT + "@localhost",
 		Password: password,
 		IsAdmin:  true,
 		IsActive: true,
@@ -201,8 +223,7 @@ func initUsers() error {
 		pn.prepareNew()
 		rsdb.InsertRecovery(USER_DB_COLLECTION_NAME, pn.getId(), pn.toStringInterface())
 	} else {
-		logger.Printf("Root user %s already exists! I don't know the password :-)", USER_ROOT)
+		logger.Printf("Root user %s already exists!", USER_ROOT)
 	}
-
 	return err
 }
