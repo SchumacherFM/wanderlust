@@ -29,98 +29,102 @@ import (
 	"syscall"
 )
 
-type WanderlustApp struct {
+var (
 	CliContext *cli.Context
 	waitGroup  sync.WaitGroup
-	Logger     *log.Logger
+	logger     *log.Logger
 	db         rucksackdb.RDBI
+)
+
+func Boot() {
+	BootRucksack()
+	BootPicnic() // depends on the rucksack
+	BootBrotzeit()
+	BootWanderer()
+	Finalizer()
 }
 
-// final method to wait on all the goroutines which are running mostly the HTTP server or other daemons
-func (w *WanderlustApp) Finalizer() {
-	w.Logger.Printf("GOMAXPROCS is set to %d", runtime.NumCPU())
-	w.catchSysCall()
-	w.waitGroup.Wait()
-}
-
-func (w *WanderlustApp) InitLogger(logFile string) {
+func InitLogger(logFile string) {
 	if "" != logFile {
 		logFilePointer, err := os.OpenFile(logFile, os.O_WRONLY|os.O_CREATE, 0600)
 		if err != nil {
 			panic(err)
 		}
-		w.Logger = log.New(logFilePointer, "", log.LstdFlags)
+		logger = log.New(logFilePointer, "", log.LstdFlags)
 	} else {
-		w.Logger = log.New(os.Stderr, "", log.LstdFlags)
+		logger = log.New(os.Stderr, "", log.LstdFlags)
 	}
 }
 
 // @todo remove this and add it to the picnic app as a feature to start and stop the DB backend via web panel
 // inits the rucksack and boots on the default http mux
-func (w *WanderlustApp) BootRucksack() {
+func BootRucksack() {
 
 	rucksackApp, err := rucksack.NewRucksackApp(
-		w.CliContext.String("rucksack-listen-address"),
-		w.CliContext.String("rucksack-dir"),
-		w.Logger,
+		CliContext.String("rucksack-listen-address"),
+		CliContext.String("rucksack-dir"),
+		logger,
 	)
-
 	if nil != err {
-		w.Logger.Fatal(err)
+		logger.Fatal(err)
 	}
 
-	w.db = rucksackApp.GetDb()
+	db = rucksackApp.GetDb()
 	if "" != rucksackApp.ListenAddress {
-		w.waitGroup.Add(1)
+		waitGroup.Add(1)
 		go func() {
-			defer w.waitGroup.Done()
+			defer waitGroup.Done()
 			rucksackApp.StartHttp()
 		}()
 	}
 }
 
 // starts the HTTP server for the picnic web interface and runs it in a goroutine
-func (w *WanderlustApp) BootPicnic() {
+func BootPicnic() {
 
 	picnicApp, err := picnic.NewPicnicApp(
-		w.CliContext.String("picnic-listen-address"),
-		w.CliContext.String("picnic-pem-dir"),
-		w.Logger,
+		CliContext.String("picnic-listen-address"),
+		CliContext.String("picnic-pem-dir"),
+		logger,
+		db,
 	)
 
 	if nil != err {
-		w.Logger.Fatal(err)
+		logger.Fatal(err)
 	}
 
 	if "" != picnicApp.GetListenAddress() { // don't start if empty
-		w.waitGroup.Add(1)
+		waitGroup.Add(1)
 		go func() {
 			var err error
-			defer w.waitGroup.Done()
-			err = picnicApp.InitUsers()
-			if nil != err {
-				w.Logger.Fatal(err)
-			}
+			defer waitGroup.Done()
 			err = picnicApp.Execute()
 			if nil != err {
-				w.Logger.Fatal(err)
+				logger.Fatal(err)
 			}
 		}()
-		w.Logger.Printf("Picnic Running https://%s", picnicApp.GetListenAddress())
+		logger.Printf("Picnic Running https://%s", picnicApp.GetListenAddress())
 	}
 }
 
-func (w *WanderlustApp) BootBrotzeit() {
-	w.Logger.Print("Booting Brotzeit ... @todo")
+func BootBrotzeit() {
+	logger.Print("Booting Brotzeit ... @todo")
 }
 
-func (w *WanderlustApp) BootWanderer() {
-	w.Logger.Print("Booting Wanderer ... @todo")
+func BootWanderer() {
+	logger.Print("Booting Wanderer ... @todo")
+}
+
+// final method to wait on all the goroutines which are running mostly the HTTP server or other daemons
+func Finalizer() {
+	logger.Printf("GOMAXPROCS is set to %d", runtime.NumCPU())
+	catchSysCall()
+	waitGroup.Wait()
 }
 
 // catchSysCall ends the program correctly when receiving a sys call
 // @todo add things like remove PEM dir, DB dir when no CLI value has been provided
-func (w *WanderlustApp) catchSysCall() {
+func catchSysCall() {
 	signalChannel := make(chan os.Signal, 1)
 	signal.Notify(
 		signalChannel,
@@ -131,11 +135,11 @@ func (w *WanderlustApp) catchSysCall() {
 	)
 	go func() {
 		for sig := range signalChannel {
-			w.Logger.Printf("Received signal: %s. Closing database ...\n", sig.String())
-			if err := w.db.Close(); nil != err {
-				w.Logger.Print(err)
+			logger.Printf("Received signal: %s. Closing database ...\n", sig.String())
+			if err := db.Close(); nil != err {
+				logger.Print(err)
 			} else {
-				w.Logger.Print("Database successful closed!")
+				logger.Print("Database successful closed!")
 			}
 			os.Exit(0)
 		}

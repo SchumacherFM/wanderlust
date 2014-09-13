@@ -23,21 +23,11 @@ import (
 	"runtime"
 )
 
-var wlApp *wlapp.WanderlustApp
-
-func init() {
-	wlApp = &wlapp.WanderlustApp{}
-}
-
 // mainAction will be executed when the CLI command run will be provided
 func mainAction(c *cli.Context) {
-	wlApp.CliContext = c
-	wlApp.InitLogger(c.String("logFile"))
-	wlApp.BootRucksack()
-	wlApp.BootPicnic() // depends on the rucksack
-	wlApp.BootBrotzeit()
-	wlApp.BootWanderer()
-	wlApp.Finalizer()
+	wlapp.CliContext = c
+	wlapp.InitLogger(c.String("logFile"))
+	wlapp.Boot()
 }
 
 func main() {

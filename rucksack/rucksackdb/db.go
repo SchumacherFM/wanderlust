@@ -23,9 +23,13 @@ import (
 )
 
 type RDBI interface {
-	StartHttp(listenAddress string) error
+	CreateDatabase(name string) error
 	Close() error
-	Query()
+	UseDatabase(name string) *db.Col
+	FindOne(dbName string, documentId int) (doc map[string]interface{}, err error)
+	Insert(dbName string, doc map[string]interface{}) (id int, err error)
+	InsertRecovery(dbName string, id int, doc map[string]interface{}) (err error)
+	StartHttp(listenAddress string) error
 }
 
 type RDB struct {
@@ -40,12 +44,34 @@ func NewRDB(dbDir string) (RDBI, error) {
 	return rdb, err
 }
 
+func (rdb *RDB) CreateDatabase(name string) error {
+	if nil == rdb.UseDatabase(name) {
+		return rdb.db.Create(name)
+	}
+	return nil
+}
+
+func (rdb *RDB) UseDatabase(name string) *db.Col {
+	return rdb.db.Use(name)
+}
+
 func (rdb *RDB) Close() error {
 	return rdb.db.Close()
 }
 
-func (rdb *RDB) Query() {
+func (rdb *RDB) FindOne(dbName string, documentId int) (doc map[string]interface{}, err error) {
+	doc, err = rdb.UseDatabase(dbName).Read(documentId)
+	return
+}
 
+func (rdb *RDB) Insert(dbName string, doc map[string]interface{}) (id int, err error) {
+	id, err = rdb.UseDatabase(dbName).Insert(doc)
+	return
+}
+
+func (rdb *RDB) InsertRecovery(dbName string, id int, doc map[string]interface{}) (err error) {
+	err = rdb.UseDatabase(dbName).InsertRecovery(id, doc)
+	return
 }
 
 func (rdb *RDB) StartHttp(listenAddress string) error {

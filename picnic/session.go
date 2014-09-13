@@ -37,19 +37,23 @@ type sessionManagerI interface {
 
 // Basic user session info
 type sessionInfo struct {
-	ID       int    `json:"id"`
 	Name     string `json:"name"`
 	Email    string `json:"email"`
 	IsAdmin  bool   `json:"isAdmin"`
 	LoggedIn bool   `json:"loggedIn"`
 }
 
-func newSessionInfo(user *picnicer) *sessionInfo {
-	if user == nil || user.ID == 0 || !user.IsAuthenticated {
+func newSessionInfo(user userIf) *sessionInfo {
+	if nil == user || "" == user.getEmail() || false == user.isAuthenticated() {
 		return &sessionInfo{}
 	}
 
-	return &sessionInfo{user.ID, user.Name, user.Email, user.IsAdmin, true}
+	return &sessionInfo{
+		Name:     user.getName(),
+		Email:    user.getEmail(),
+		IsAdmin:  user.isAdmin(),
+		LoggedIn: true,
+	}
 }
 
 func newSessionManager(publicKeyFilePath, privateKeyFilePath string) (sessionManagerI, error) {

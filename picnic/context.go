@@ -45,10 +45,10 @@ type requestContextI interface {
 	getApp() PicnicAppI
 	getParamString(name string) string
 	getParamInt64(name string) int64
-	getPicnicer() picnicerI
+	getPicnicer() userIf
 }
 
-func newRequestContext(app PicnicAppI, r *http.Request, user picnicerI) *requestContext {
+func newRequestContext(app PicnicAppI, r *http.Request, user userIf) *requestContext {
 	ctx := &requestContext{
 		app: app,
 		par: &requestParams{
@@ -64,7 +64,7 @@ func newRequestContext(app PicnicAppI, r *http.Request, user picnicerI) *request
 type requestContext struct {
 	app PicnicAppI
 	par requestParamsI
-	pic picnicerI
+	pic userIf
 }
 
 func (rc *requestContext) getApp() PicnicAppI {
@@ -76,7 +76,7 @@ func (rc *requestContext) getParamString(name string) string {
 func (rc *requestContext) getParamInt64(name string) int64 {
 	return rc.par.getInt(name)
 }
-func (rc *requestContext) getPicnicer() picnicerI {
+func (rc *requestContext) getPicnicer() userIf {
 	return rc.pic
 }
 

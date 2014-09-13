@@ -17,16 +17,32 @@
 package helpers
 
 import (
-	"math/rand"
+	crand "crypto/rand"
+	"errors"
+	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
+	"io"
+	mrand "math/rand"
 	"time"
 )
 
+// Hash a string using sdbm algorithm.
+func StringHash(str string) int {
+	var hash int
+	for _, c := range str {
+		hash = int(c) + (hash << 6) + (hash << 16) - hash
+	}
+	if hash < 0 {
+		return -hash
+	}
+	return hash
+}
+
 // randomString generates a pseudo-random alpha-numeric string with given length.
 func RandomString(length int) string {
-	rand.Seed(time.Now().UnixNano())
+	mrand.Seed(time.Now().UnixNano())
 	k := make([]rune, length)
 	for i := 0; i < length; i++ {
-		c := rand.Intn(35)
+		c := mrand.Intn(35)
 		if c < 10 {
 			c += 48 // numbers (0-9) (0+48 == 48 == '0', 9+48 == 57 == '9')
 		} else {
@@ -35,4 +51,35 @@ func RandomString(length int) string {
 		k[i] = rune(c)
 	}
 	return string(k)
+}
+
+var stdChars = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'\"!@#%^&*()-_=+,.?/:;{}[]`~")
+
+// generates a random string with the crypto package
+func NewPassword(length int) (string, error) {
+	return randChar(length, stdChars)
+}
+
+func randChar(length int, chars []byte) (string, error) {
+	newPword := make([]byte, length)
+	randomData := make([]byte, length+(length/4)) // storage for random bytes.
+	clen := byte(len(chars))
+	maxrb := byte(256 - (256 % len(chars)))
+	i := 0
+	for {
+		if _, err := io.ReadFull(crand.Reader, randomData); err != nil {
+			return "", err
+		}
+		for _, c := range randomData {
+			if c >= maxrb {
+				continue
+			}
+			newPword[i] = chars[c%clen]
+			i++
+			if i == length {
+				return string(newPword), nil
+			}
+		}
+	}
+	return "", errgo.Mask(errors.New("Unrechable point!"))
 }

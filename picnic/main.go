@@ -31,37 +31,44 @@ const (
 	DEFAULT_TLS_SESSION_CACHE_CAPACITY int    = 128
 )
 
+var (
+	rsdb   rucksackdb.RDBI
+	logger *log.Logger
+)
+
 type PicnicAppI interface {
 	getServer() *http.Server
 	generatePems() (certFile, keyFile string, err error)
 	Execute() error
 	GetListenAddress() string
 	getPemDir() string
-	InitUsers() error
 }
 
 type PicnicApp struct {
 	ListenAddress string
 	PemDir        string
-	Logger        *log.Logger
 	session       sessionManagerI
-	db            rucksackdb.RDBI
 	certFile      string
 	keyFile       string
 }
 
-func NewPicnicApp(listenAddress, pemDir string, logger *log.Logger) (PicnicAppI, error) {
+func NewPicnicApp(listenAddress, pemDir string, theLogger *log.Logger, theDb rucksackdb.RDBI) (PicnicAppI, error) {
 	var err error
+	rsdb = theDb
+	logger = theLogger
 	picnicApp := &PicnicApp{
 		ListenAddress: listenAddress,
 		PemDir:        pemDir,
-		Logger:        logger,
 	}
 	picnicApp.certFile, picnicApp.keyFile, err = picnicApp.generatePems()
 	if nil != err {
 		return nil, err
 	}
 	picnicApp.session, err = newSessionManager(picnicApp.certFile, picnicApp.keyFile)
+	if nil != err {
+		return nil, err
+	}
+	err = initUsers()
 	if nil != err {
 		return nil, err
 	}
@@ -88,7 +95,7 @@ func (p *PicnicApp) generatePems() (certFile, keyFile string, err error) {
 		return "", "", err
 	}
 	if "" != pemDir {
-		p.Logger.Printf("PEM certificate temp directory is %s", pemDir)
+		logger.Printf("PEM certificate temp directory is %s", pemDir)
 	}
 	p.PemDir = pemDir
 	certFile = pemDir + PEM_CERT
@@ -103,12 +110,7 @@ func (p *PicnicApp) Execute() error {
 func (p *PicnicApp) GetListenAddress() string {
 	address, port, err := helpers.ValidateListenAddress(p.ListenAddress)
 	if nil != err {
-		p.Logger.Fatal(err, p.ListenAddress)
+		logger.Fatal(err, p.ListenAddress)
 	}
 	return address + ":" + port
-}
-
-func (p *PicnicApp) InitUsers() error {
-	// @todo create root user if none exists
-	return nil
 }
