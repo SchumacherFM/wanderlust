@@ -57,7 +57,9 @@ func initLogger() {
 	} else {
 		logger = log.New(os.Stderr, log.DEBUG, "[WL] ")
 	}
-
+	if "" == logLevel{
+		logLevel = "debug"
+	}
 	if lerr := logger.SetLevelString(logLevel); nil != lerr {
 		panic(lerr)
 	}
@@ -142,7 +144,7 @@ func catchSysCall() {
 	)
 	go func() {
 		for sig := range signalChannel {
-			logger.Notice("Received signal: %s. Closing database ...\n", sig.String())
+			logger.Notice("Received signal: %s. Closing database ...", sig.String())
 			if err := db.Close(); nil != err {
 				logger.Check(err)
 			} else {

@@ -145,9 +145,11 @@ func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) er
 		return userErr
 	}
 	if false == userFound {
+		logger.Debug("loginHandler 148: user not found %#v", user)
 		return invalidLogin
 	}
 	if false == user.checkPassword(s.Password) {
+		logger.Debug("loginHandler 152: password incorrect %#v", user)
 		return invalidLogin
 	}
 

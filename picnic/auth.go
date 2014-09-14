@@ -16,7 +16,9 @@
 
 package picnic
 
-import "net/http"
+import (
+	"net/http"
+)
 
 type authLevel int
 
@@ -36,13 +38,13 @@ func checkAuthLevel(level authLevel, user userIf) error {
 	switch level {
 	case AUTH_LEVEL_LOGIN:
 		if nil == user || false == user.isAuthenticated() {
-			logger.Debug("L46: user is %#v", user)
+			logger.Debug("checkAuthLevel 41: user %#v", user)
 			return errLoginRequired
 		}
 		break
 	case AUTH_LEVEL_ADMIN:
 		if nil == user || false == user.isAuthenticated() {
-			logger.Debug("L52: user %#v", user)
+			logger.Debug("checkAuthLevel 47: user %#v", user)
 			return errLoginRequired
 		}
 		if false == user.isAdmin() {
@@ -69,11 +71,13 @@ func (p *PicnicApp) authenticate(r *http.Request, level authLevel) (userIf, erro
 	}
 	user := NewUserModel(userID)
 	if "" == userID {
+		logger.Debug("p.authenticate: userID from token is empty")
 		return nil, checkAuthLevel(level, nil)
 	}
 	var found bool
 	found, err = user.findMe()
 	if false == found || err != nil {
+		logger.Debug("p.authenticate: user not found in DB %#v", user)
 		return nil, checkAuthLevel(level, nil)
 	}
 	user.setAuthenticated(true)
