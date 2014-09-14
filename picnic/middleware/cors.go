@@ -17,7 +17,7 @@
 // Wanderlust uses go.rice package for serving static web content
 //
 
-package picnic
+package middleware
 
 // @todo add kr/secureheader
 
@@ -44,7 +44,7 @@ func getCorsAllowHeaders() string {
 	return strings.Join(headers, ", ")
 }
 
-func corsMiddleware(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
+func CorsMiddleware(res http.ResponseWriter, req *http.Request, next http.HandlerFunc) {
 	// Return CORS Headers and end
 	res.Header().Set("Access-Control-Allow-Origin", "*")
 	res.Header().Set("Access-Control-Allow-Headers", getCorsAllowHeaders())

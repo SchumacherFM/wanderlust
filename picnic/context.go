@@ -45,16 +45,18 @@ type requestContextI interface {
 	getApp() PicnicAppI
 	getParamString(name string) string
 	getParamInt64(name string) int64
-	getPicnicer() userIf
+	getUser() userIf
 }
 
-func newRequestContext(app PicnicAppI, r *http.Request, user userIf) *requestContext {
+// invoked in (p *PicnicApp) handler()
+// per request on context
+func newRequestContext(app PicnicAppI, r *http.Request, theUser userIf) *requestContext {
 	ctx := &requestContext{
 		app: app,
 		par: &requestParams{
 			vars: mux.Vars(r),
 		},
-		pic: user,
+		user: theUser,
 	}
 	return ctx
 }
@@ -62,9 +64,9 @@ func newRequestContext(app PicnicAppI, r *http.Request, user userIf) *requestCon
 // request-specific requestContext
 // contains the app config so we have access to all the objects we need
 type requestContext struct {
-	app PicnicAppI
-	par requestParamsI
-	pic userIf
+	app  PicnicAppI
+	par  requestParamsI
+	user userIf
 }
 
 func (rc *requestContext) getApp() PicnicAppI {
@@ -76,8 +78,8 @@ func (rc *requestContext) getParamString(name string) string {
 func (rc *requestContext) getParamInt64(name string) int64 {
 	return rc.par.getInt(name)
 }
-func (rc *requestContext) getPicnicer() userIf {
-	return rc.pic
+func (rc *requestContext) getUser() userIf {
+	return rc.user
 }
 
 //func (ctx *requestContext) validate(v validator, r *http.Request) error {

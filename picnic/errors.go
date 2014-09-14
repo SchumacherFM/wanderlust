@@ -34,6 +34,7 @@ func (h httpError) Error() string {
 	return h.Description
 }
 
+// final method in the handler chain
 func (p *PicnicApp) handleError(w http.ResponseWriter, r *http.Request, err error) {
 	if err == nil {
 		return

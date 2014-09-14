@@ -62,7 +62,7 @@ func TestValidateEmail(t *testing.T) {
 // diff between old/new: old code was the rune maps were returned by functions like in getEmailTestData()
 func BenchmarkValidateEmail(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		for email, _ := range getEmailTestData() {
+		for email := range getEmailTestData() {
 			ValidateEmail(email)
 		}
 	}

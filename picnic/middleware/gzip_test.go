@@ -19,7 +19,7 @@
 // Copyright (c) 2013 Jeremy Saenz; 2014 David O'Rourke
 // and modified by Cyrill
 
-package picnic
+package middleware
 
 import (
 	"testing"

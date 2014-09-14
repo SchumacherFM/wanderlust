@@ -41,8 +41,10 @@ type userIf interface {
 	getName() string
 	getUserName() string
 	isAuthenticated() bool
+	setAuthenticated(bool)
 	isAdmin() bool
 	prepareNew() error
+	validForSession() bool
 	// validate(ctx *context, r *http.Request, errors map[string]string) error
 	generateRecoveryCode() (string, error)
 	resetRecoveryCode()
@@ -68,19 +70,25 @@ type userModel struct {
 	IsAuthenticated bool
 }
 
-func (um *userModel) getId() int            { return helpers.StringHash(um.UserName) }
-func (um *userModel) getEmail() string      { return um.Email }
-func (um *userModel) getUserName() string   { return um.UserName }
-func (um *userModel) getName() string       { return um.Name }
-func (um *userModel) isAuthenticated() bool { return um.IsAuthenticated }
-func (um *userModel) isAdmin() bool         { return um.IsAdmin }
+func (um *userModel) getId() int                 { return helpers.StringHash(um.UserName) }
+func (um *userModel) getEmail() string           { return um.Email }
+func (um *userModel) getUserName() string        { return um.UserName }
+func (um *userModel) getName() string            { return um.Name }
+func (um *userModel) isAuthenticated() bool      { return um.IsAuthenticated }
+func (um *userModel) setAuthenticated(auth bool) { um.IsAuthenticated = auth }
+func (um *userModel) isAdmin() bool              { return um.IsAdmin }
 
-// PreInsert hook
+// PreInsert hook for new users
 func (um *userModel) prepareNew() error {
 	um.IsActive = true
 	um.CreatedAt = time.Now()
 	um.encryptPassword()
 	return nil
+}
+
+// validForSession() is only used in newSessionInfo()
+func (um *userModel) validForSession() bool {
+	return false == helpers.ValidateEmail(um.getEmail()) || "" == um.getUserName() || false == um.isAuthenticated()
 }
 
 //func (userModel *userModel) validate(ctx *context, r *http.Request, errors map[string]string) error {
@@ -175,6 +183,18 @@ func (um *userModel) toStringInterface() map[string]interface{} {
 	}
 }
 
+// finds a user in the database and fills the struct
+func (um *userModel) findMe() (bool, error) {
+	rootUser, _ := rsdb.FindOne(USER_DB_COLLECTION_NAME, um.getId())
+	if nil == rootUser {
+		return false, nil
+	}
+
+	um = StringInterfaceToUser(rootUser)
+
+	return true, nil
+}
+
 func StringInterfaceToUser(data map[string]interface{}) *userModel {
 	tIsAdmin, _ := data["IsAdmin"].(bool)
 	tIsActive, _ := data["IsActive"].(bool)
@@ -193,6 +213,14 @@ func StringInterfaceToUser(data map[string]interface{}) *userModel {
 		IsAdmin:         tIsAdmin,
 		IsActive:        tIsActive,
 		IsAuthenticated: tIsAuthenticated,
+	}
+	return um
+}
+
+// needed in auth when user tries to login
+func NewUserModel(userName string) *userModel {
+	um := &userModel{
+		UserName: userName,
 	}
 	return um
 }

@@ -30,7 +30,7 @@ func TestGenerate(t *testing.T) {
 	certFile := dir + "cert.pem"
 	keyFile := dir + "key.pem"
 
-	certGenerator := &GenerateCert{
+	certGenerator := &generateCert{
 		Host:         "127.0.0.1",
 		ValidFrom:    validFrom,
 		ValidFor:     duration,

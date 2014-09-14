@@ -19,9 +19,9 @@ package picnic
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/dgrijalva/jwt"
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
+	"github.com/SchumacherFM/wanderlust/picnic/middleware"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -30,25 +30,28 @@ const (
 )
 
 type sessionManagerI interface {
-	readToken(*http.Request) (int, error)
-	createToken(int) (string, error)
-	writeToken(http.ResponseWriter, int) error
+	readToken(*http.Request) (string, error)
+	_createToken(string) (string, error)
+	writeToken(http.ResponseWriter, string) error
 }
 
 // Basic user session info
 type sessionInfo struct {
+	UserName string `json:"username"`
 	Name     string `json:"name"`
 	Email    string `json:"email"`
 	IsAdmin  bool   `json:"isAdmin"`
 	LoggedIn bool   `json:"loggedIn"`
 }
 
+// newSessionInfo() is used in handlers login, logout, getSessionInfo and signup
 func newSessionInfo(user userIf) *sessionInfo {
-	if nil == user || "" == user.getEmail() || false == user.isAuthenticated() {
+	if nil == user || false == user.validForSession() {
 		return &sessionInfo{}
 	}
 
 	return &sessionInfo{
+		UserName: user.getUserName(),
 		Name:     user.getName(),
 		Email:    user.getEmail(),
 		IsAdmin:  user.isAdmin(),
@@ -74,10 +77,10 @@ type defaultSessionManager struct {
 	verifyKey, signKey []byte
 }
 
-func (m *defaultSessionManager) readToken(r *http.Request) (int, error) {
-	tokenString := r.Header.Get(HEADER_X_AUTH_TOKEN)
+func (m *defaultSessionManager) readToken(r *http.Request) (string, error) {
+	tokenString := r.Header.Get(middleware.HEADER_X_AUTH_TOKEN)
 	if tokenString == "" {
-		return 0, nil
+		return "", nil
 	}
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return m.verifyKey, nil
@@ -85,24 +88,24 @@ func (m *defaultSessionManager) readToken(r *http.Request) (int, error) {
 	switch err.(type) {
 	case nil:
 		if !token.Valid {
-			return 0, nil
+			return "", nil
 		}
 		token := token.Claims["uid"].(string)
-		userID, err := strconv.Atoi(token)
-		if err != nil {
-			return 0, nil
+		if "" == token {
+			return "", nil
 		}
-		return userID, nil
+		return token, nil
 	case *jwt.ValidationError:
-		return 0, nil
+		return "", nil
 	default:
-		return 0, errgo.Mask(err)
+		return "", errgo.Mask(err)
 	}
 }
 
-func (m *defaultSessionManager) createToken(userID int) (string, error) {
+// creates and signs a token, private method
+func (m *defaultSessionManager) _createToken(userID string) (string, error) {
 	token := jwt.New(jwt.GetSigningMethod("RS256"))
-	token.Claims["uid"] = strconv.Itoa(userID)
+	token.Claims["uid"] = userID
 	token.Claims["exp"] = time.Now().Add(time.Minute * TOKEN_EXPIRY).Unix()
 	tokenString, err := token.SignedString(m.signKey)
 	if err != nil {
@@ -111,11 +114,11 @@ func (m *defaultSessionManager) createToken(userID int) (string, error) {
 	return tokenString, nil
 }
 
-func (m *defaultSessionManager) writeToken(w http.ResponseWriter, userID int) error {
-	tokenString, err := m.createToken(userID)
+func (m *defaultSessionManager) writeToken(w http.ResponseWriter, userID string) error {
+	tokenString, err := m._createToken(userID)
 	if err != nil {
 		return err
 	}
-	w.Header().Set(HEADER_X_AUTH_TOKEN, tokenString)
+	w.Header().Set(middleware.HEADER_X_AUTH_TOKEN, tokenString)
 	return nil
 }

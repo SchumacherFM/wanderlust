@@ -19,7 +19,7 @@
 // Copyright (c) 2013 Jeremy Saenz; 2014 David O'Rourke
 // and modified by Cyrill
 
-package picnic
+package middleware
 
 import (
 	"compress/gzip"
@@ -38,11 +38,6 @@ const (
 	headerContentLength   = "Content-Length"
 	headerContentType     = "Content-Type"
 	headerVary            = "Vary"
-
-	BestCompression    = gzip.BestCompression
-	BestSpeed          = gzip.BestSpeed
-	DefaultCompression = gzip.DefaultCompression
-	NoCompression      = gzip.NoCompression
 
 	indexPage = "index.html"
 )
@@ -84,7 +79,7 @@ func GzipContentTypeMiddleware(res http.ResponseWriter, req *http.Request, next 
 	}
 
 	// 0 == isAllowed
-	h := newGzipHandler(BestSpeed)
+	h := newGzipHandler(gzip.BestSpeed)
 	h.ServeHTTP(res, req, next)
 }
 
@@ -105,7 +100,6 @@ func newGzipHandler(level int) *gzipHandler {
 // ServeHTTP wraps the http.ResponseWriter with a gzip.Writer.
 func (h *gzipHandler) ServeHTTP(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	// Skip compression if the client doesn't accept gzip encoding.
-	// @todo needs to be implemented in GzipContentTypeMiddleware
 	if !strings.Contains(r.Header.Get(headerAcceptEncoding), encodingGzip) {
 		next(w, r)
 		return

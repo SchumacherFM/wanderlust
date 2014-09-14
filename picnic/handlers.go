@@ -24,6 +24,7 @@ import (
 	gzrice "github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice"
 	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/negroni"
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
+	"github.com/SchumacherFM/wanderlust/picnic/middleware"
 	"net/http"
 )
 
@@ -51,8 +52,17 @@ func (p *PicnicApp) handler(h handlerFunc, level authLevel) http.HandlerFunc {
 func (p *PicnicApp) getHandler() *negroni.Negroni {
 	router := mux.NewRouter()
 
+	auth := router.PathPrefix("/auth/").Subrouter()
+
+	auth.HandleFunc("/", p.handler(sessionInfoHandler, AUTH_LEVEL_CHECK)).Methods("GET")
+	auth.HandleFunc("/", p.handler(loginHandler, AUTH_LEVEL_IGNORE)).Methods("POST")
+	//	auth.HandleFunc("/", p.handler(logout, AUTH_LEVEL_LOGIN)).Methods("DELETE")
+	//	auth.HandleFunc("/signup", p.handler(signup, AUTH_LEVEL_IGNORE)).Methods("POST")
+	//	auth.HandleFunc("/recoverpass", p.handler(recoverPassword, AUTH_LEVEL_IGNORE)).Methods("PUT")
+	//	auth.HandleFunc("/changepass", p.handler(changePassword, AUTH_LEVEL_IGNORE)).Methods("PUT")
+
 	brotzeitApi := router.PathPrefix("/brotzeit/").Subrouter()
-	brotzeitApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_IGNORE)).Methods("GET")
+	brotzeitApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
 	brotzeitApi.HandleFunc("/stop", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
 	brotzeitApi.HandleFunc("/purge", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET") // purges all collected URLs
 	brotzeitApi.HandleFunc("/concurrency", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("PUT")
@@ -86,8 +96,8 @@ func (p *PicnicApp) getHandler() *negroni.Negroni {
 	router.HandleFunc("/favicon.ico", handlerFavicon)
 
 	n := negroni.New(
-		negroni.HandlerFunc(corsMiddleware),
-		negroni.HandlerFunc(GzipContentTypeMiddleware),
+		negroni.HandlerFunc(middleware.CorsMiddleware),
+		negroni.HandlerFunc(middleware.GzipContentTypeMiddleware),
 	)
 	n.UseHandler(router)
 	return n
@@ -102,4 +112,50 @@ func handlerFavicon(w http.ResponseWriter, r *http.Request) {
 
 func noopHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
 	return renderString(w, 200, fmt.Sprintf("Found route \n%#v\n %#v\n", r, rc))
+}
+
+func sessionInfoHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
+	return renderJSON(w, newSessionInfo(rc.getUser()), http.StatusOK)
+}
+
+func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
+
+	var invalidLogin = httpError{
+		Status:      http.StatusBadRequest,
+		Description: "Invalid username or password",
+	}
+
+	s := &struct {
+		UserName string `json:"username"`
+		Password string `json:"password"`
+	}{}
+
+	if err := decodeJSON(r, s); err != nil {
+		return err
+	}
+
+	if s.UserName == "" || s.Password == "" {
+		return invalidLogin
+	}
+
+	// find user and login ...
+	user := NewUserModel(s.UserName)
+	userFound, userErr := user.findMe()
+	if nil != userErr {
+		return userErr
+	}
+	if false == userFound {
+		return invalidLogin
+	}
+	if false == user.checkPassword(s.Password) {
+		return invalidLogin
+	}
+
+	if err := rc.session.writeToken(w, user.ID); err != nil {
+		return err
+	}
+
+	user.setAuthenticated(true)
+
+	return renderJSON(w, newSessionInfo(rc.getUser()), http.StatusOK)
 }

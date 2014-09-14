@@ -27,10 +27,57 @@ const (
 	AUTH_LEVEL_ADMIN                   // admin required, 401 if no user, 403 if not admin
 )
 
+func checkAuthLevel(level authLevel, user userIf) error {
+	var errLoginRequired = httpError{
+		Status:      http.StatusUnauthorized,
+		Description: "You must be logged in!",
+	}
+
+	switch level {
+	case AUTH_LEVEL_LOGIN:
+		if nil == user || false == user.isAuthenticated() {
+			logger.Printf("L46: user is %#v", user)
+			return errLoginRequired
+		}
+		break
+	case AUTH_LEVEL_ADMIN:
+		if nil == user || false == user.isAuthenticated() {
+			logger.Printf("L52: user %#v", user)
+			return errLoginRequired
+		}
+		if false == user.isAdmin() {
+			return httpError{
+				Status:      http.StatusForbidden,
+				Description: "You must be an admin!",
+			}
+		}
+	}
+	return nil
+}
+
 // lazily fetches the current session user
 // check also JWT
 func (p *PicnicApp) authenticate(r *http.Request, level authLevel) (userIf, error) {
-	var user userIf
 
-	return user, nil
+	if level == AUTH_LEVEL_IGNORE {
+		return nil, nil
+	}
+
+	userID, err := p.session.readToken(r)
+	if err != nil {
+		return nil, err
+	}
+	user := NewUserModel(userID)
+	if "" == userID {
+		return nil, checkAuthLevel(level, nil)
+	}
+	var found bool
+	found, err = user.findMe()
+	if false == found || err != nil {
+		return nil, checkAuthLevel(level, nil)
+	}
+	user.setAuthenticated(true)
+
+	return user, checkAuthLevel(level, user)
+
 }
