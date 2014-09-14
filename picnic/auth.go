@@ -21,10 +21,10 @@ import "net/http"
 type authLevel int
 
 const (
-	AUTH_LEVEL_IGNORE authLevel = iota // we don't need the user in this handler
-	AUTH_LEVEL_CHECK                   // prefetch user, doesn't matter if not logged in
-	AUTH_LEVEL_LOGIN                   // user required, 401 if not available
-	AUTH_LEVEL_ADMIN                   // admin required, 401 if no user, 403 if not admin
+	AUTH_LEVEL_IGNORE authLevel = iota + 1 // we don't need the user in this handler
+	AUTH_LEVEL_CHECK                       // prefetch user, doesn't matter if not logged in
+	AUTH_LEVEL_LOGIN                       // user required, 401 if not available
+	AUTH_LEVEL_ADMIN                       // admin required, 401 if no user, 403 if not admin
 )
 
 func checkAuthLevel(level authLevel, user userIf) error {
@@ -36,13 +36,13 @@ func checkAuthLevel(level authLevel, user userIf) error {
 	switch level {
 	case AUTH_LEVEL_LOGIN:
 		if nil == user || false == user.isAuthenticated() {
-			logger.Printf("L46: user is %#v", user)
+			logger.Debug("L46: user is %#v", user)
 			return errLoginRequired
 		}
 		break
 	case AUTH_LEVEL_ADMIN:
 		if nil == user || false == user.isAuthenticated() {
-			logger.Printf("L52: user %#v", user)
+			logger.Debug("L52: user %#v", user)
 			return errLoginRequired
 		}
 		if false == user.isAdmin() {

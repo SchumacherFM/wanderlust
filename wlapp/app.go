@@ -18,10 +18,10 @@ package wlapp
 
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/cli"
+	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/picnic"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 	"github.com/SchumacherFM/wanderlust/rucksack/rucksackdb"
-	"log"
 	"os"
 	"os/signal"
 	"runtime"
@@ -37,6 +37,7 @@ var (
 )
 
 func Boot() {
+	initLogger()
 	BootRucksack()
 	BootPicnic() // depends on the rucksack
 	BootBrotzeit()
@@ -44,15 +45,21 @@ func Boot() {
 	Finalizer()
 }
 
-func InitLogger(logFile string) {
+func initLogger() {
+	logFile := CliContext.String("logFile")
+	logLevel := CliContext.String("logLevel")
 	if "" != logFile {
 		logFilePointer, err := os.OpenFile(logFile, os.O_WRONLY|os.O_CREATE, 0600)
 		if err != nil {
 			panic(err)
 		}
-		logger = log.New(logFilePointer, "", log.LstdFlags)
+		logger = log.New(logFilePointer, log.DEBUG, "[WL] ")
 	} else {
-		logger = log.New(os.Stderr, "", log.LstdFlags)
+		logger = log.New(os.Stderr, log.DEBUG, "[WL] ")
+	}
+
+	if lerr := logger.SetLevelString(logLevel); nil != lerr {
+		panic(lerr)
 	}
 }
 
@@ -66,7 +73,7 @@ func BootRucksack() {
 		logger,
 	)
 	if nil != err {
-		logger.Fatal(err)
+		logger.Check(err)
 	}
 
 	db = rucksackApp.GetDb()
@@ -90,7 +97,7 @@ func BootPicnic() {
 	)
 
 	if nil != err {
-		logger.Fatal(err)
+		logger.Check(err)
 	}
 
 	if "" != picnicApp.GetListenAddress() { // don't start if empty
@@ -100,24 +107,24 @@ func BootPicnic() {
 			defer waitGroup.Done()
 			err = picnicApp.Execute()
 			if nil != err {
-				logger.Fatal(err)
+				logger.Check(err)
 			}
 		}()
-		logger.Printf("Picnic Running https://%s", picnicApp.GetListenAddress())
+		logger.Notice("Picnic Running https://%s", picnicApp.GetListenAddress())
 	}
 }
 
 func BootBrotzeit() {
-	logger.Print("Booting Brotzeit ... @todo")
+	logger.Notice("Booting Brotzeit ... @todo")
 }
 
 func BootWanderer() {
-	logger.Print("Booting Wanderer ... @todo")
+	logger.Notice("Booting Wanderer ... @todo")
 }
 
 // final method to wait on all the goroutines which are running mostly the HTTP server or other daemons
 func Finalizer() {
-	logger.Printf("GOMAXPROCS is set to %d", runtime.NumCPU())
+	logger.Notice("GOMAXPROCS is set to %d", runtime.NumCPU())
 	catchSysCall()
 	waitGroup.Wait()
 }
@@ -135,11 +142,11 @@ func catchSysCall() {
 	)
 	go func() {
 		for sig := range signalChannel {
-			logger.Printf("Received signal: %s. Closing database ...\n", sig.String())
+			logger.Notice("Received signal: %s. Closing database ...\n", sig.String())
 			if err := db.Close(); nil != err {
-				logger.Print(err)
+				logger.Check(err)
 			} else {
-				logger.Print("Database successful closed!")
+				logger.Notice("Database successful closed!")
 			}
 			os.Exit(0)
 		}

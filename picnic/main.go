@@ -18,9 +18,9 @@ package picnic
 
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
+	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/rucksack/rucksackdb"
-	"log"
 	"net/http"
 )
 
@@ -100,7 +100,7 @@ func (p *PicnicApp) generatePems() (certFile, keyFile string, err error) {
 		return "", "", err
 	}
 	if "" != pemDir {
-		logger.Printf("PEM certificate temp directory is %s", pemDir)
+		logger.Notice("PEM certificate temp directory is %s", pemDir)
 	}
 	p.PemDir = pemDir
 	certFile = pemDir + PEM_CERT
@@ -115,7 +115,7 @@ func (p *PicnicApp) Execute() error {
 func (p *PicnicApp) GetListenAddress() string {
 	address, port, err := helpers.ValidateListenAddress(p.ListenAddress)
 	if nil != err {
-		logger.Fatal(err, p.ListenAddress)
+		logger.Check(err)
 	}
 	return address + ":" + port
 }

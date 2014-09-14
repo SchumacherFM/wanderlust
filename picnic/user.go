@@ -247,11 +247,11 @@ func initUsers() error {
 	rootUser, _ = rsdb.FindOne(USER_DB_COLLECTION_NAME, um.getId())
 
 	if nil == rootUser {
-		logger.Printf("Created new user %s with password: %s", um.UserName, um.Password)
+		logger.Emergency("Created new user %s with password: %s", um.UserName, um.Password)
 		um.prepareNew()
 		rsdb.InsertRecovery(USER_DB_COLLECTION_NAME, um.getId(), um.toStringInterface())
 	} else {
-		logger.Printf("Root user %s already exists!", USER_ROOT)
+		logger.Emergency("Root user %s already exists!", USER_ROOT)
 	}
 	return errgo.Mask(err)
 }

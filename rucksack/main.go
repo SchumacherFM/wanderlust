@@ -17,9 +17,9 @@
 package rucksack
 
 import (
+	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/rucksack/rucksackdb"
-	"log"
 )
 
 // @todo create maybe custom REST API instead of using the tiedot unsecure API
@@ -43,7 +43,7 @@ func (r *RucksackApp) initDb(dbDir string) error {
 	var err error
 	if "" == dbDir {
 		dbDir = helpers.GetTempDir() + "wldb_" + helpers.RandomString(10)
-		r.Logger.Printf("Database temp directory is %s", dbDir)
+		r.Logger.Notice("Database temp directory is %s", dbDir)
 	}
 	helpers.CreateDirectoryIfNotExists(dbDir)
 	r.rdb, err = rucksackdb.NewRDB(dbDir)
@@ -56,10 +56,10 @@ func (r *RucksackApp) GetDb() rucksackdb.RDBI {
 
 // listens on the DefaultServeMux and runs in a goroutine
 func (r *RucksackApp) StartHttp() {
-	r.Logger.Printf("Database webinterface running: http://%s", r.GetListenAddress())
+	r.Logger.Notice("Database webinterface running: http://%s", r.GetListenAddress())
 	err := r.rdb.StartHttp(r.GetListenAddress())
 	if nil != err {
-		r.Logger.Fatal(err)
+		r.Logger.Check(err)
 	}
 }
 
@@ -72,7 +72,7 @@ func (r *RucksackApp) StopHttp() error {
 func (r *RucksackApp) GetListenAddress() string {
 	address, port, err := helpers.ValidateListenAddress(r.ListenAddress)
 	if nil != err {
-		r.Logger.Fatal(err, r.ListenAddress)
+		r.Logger.Check(err)
 	}
 	return address + ":" + port
 }

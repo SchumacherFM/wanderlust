@@ -26,7 +26,6 @@ import (
 // mainAction will be executed when the CLI command run will be provided
 func mainAction(c *cli.Context) {
 	wlapp.CliContext = c
-	wlapp.InitLogger(c.String("logFile"))
 	wlapp.Boot()
 }
 
@@ -68,6 +67,11 @@ func main() {
 					Name:  "logFile,lf",
 					Value: "",
 					Usage: "Log to file or if empty to os.Stderr",
+				},
+				cli.StringFlag{
+					Name:  "logLevel,ll",
+					Value: "",
+					Usage: "Log level: debug, info, notice, warning, error, critical, alert, emergency. Default: debug",
 				},
 			},
 		},

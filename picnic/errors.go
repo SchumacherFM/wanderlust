@@ -52,10 +52,10 @@ func (p *PicnicApp) handleError(w http.ResponseWriter, r *http.Request, err erro
 	//	}
 
 	s := fmt.Sprintf("Error:%s", err)
-	if err, ok := err.(errgo.Locationer); ok {
+	if err, ok := err.(errgo.Locationer); ok { // type casting
 		s += fmt.Sprintf(" %s", err.Location())
 	}
-	logger.Println(s)
+	logger.Debug(s)
 
 	http.Error(w, "Sorry, an error occurred", http.StatusInternalServerError)
 }
