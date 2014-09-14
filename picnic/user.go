@@ -49,9 +49,9 @@ type userIf interface {
 	generateRecoveryCode() (string, error)
 	resetRecoveryCode()
 	generatePassword() error
-	changePassword(password string) error
+	changePassword(string) error
 	encryptPassword() error
-	checkPassword(password string) bool
+	checkPassword(string) bool
 }
 
 //type userModelCollection struct {

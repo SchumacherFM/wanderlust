@@ -37,6 +37,7 @@ var (
 )
 
 type PicnicAppI interface {
+	getSessionManager() sessionManagerI
 	getServer() *http.Server
 	generatePems() (certFile, keyFile string, err error)
 	Execute() error
@@ -73,6 +74,10 @@ func NewPicnicApp(listenAddress, pemDir string, theLogger *log.Logger, theDb ruc
 		return nil, err
 	}
 	return picnicApp, nil
+}
+
+func (p *PicnicApp) getSessionManager() sessionManagerI {
+	return p.session
 }
 
 func (p *PicnicApp) getServer() *http.Server {

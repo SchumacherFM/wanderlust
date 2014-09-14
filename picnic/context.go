@@ -43,8 +43,8 @@ func (r *requestParams) getInt(name string) int64 {
 
 type requestContextI interface {
 	getApp() PicnicAppI
-	getParamString(name string) string
-	getParamInt64(name string) int64
+	getParamString(string) string
+	getParamInt64(string) int64
 	getUser() userIf
 }
 

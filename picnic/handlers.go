@@ -56,7 +56,7 @@ func (p *PicnicApp) getHandler() *negroni.Negroni {
 
 	auth.HandleFunc("/", p.handler(sessionInfoHandler, AUTH_LEVEL_CHECK)).Methods("GET")
 	auth.HandleFunc("/", p.handler(loginHandler, AUTH_LEVEL_IGNORE)).Methods("POST")
-	//	auth.HandleFunc("/", p.handler(logout, AUTH_LEVEL_LOGIN)).Methods("DELETE")
+	auth.HandleFunc("/", p.handler(logoutHandler, AUTH_LEVEL_LOGIN)).Methods("DELETE")
 	//	auth.HandleFunc("/signup", p.handler(signup, AUTH_LEVEL_IGNORE)).Methods("POST")
 	//	auth.HandleFunc("/recoverpass", p.handler(recoverPassword, AUTH_LEVEL_IGNORE)).Methods("PUT")
 	//	auth.HandleFunc("/changepass", p.handler(changePassword, AUTH_LEVEL_IGNORE)).Methods("PUT")
@@ -151,11 +151,20 @@ func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) er
 		return invalidLogin
 	}
 
-	if err := rc.session.writeToken(w, user.ID); err != nil {
+	if err := rc.getApp().getSessionManager().writeToken(w, user.UserName); err != nil {
 		return err
 	}
 
 	user.setAuthenticated(true)
-
+	// @todo use websocket to send message
 	return renderJSON(w, newSessionInfo(rc.getUser()), http.StatusOK)
+}
+
+func logoutHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
+
+	if err := rc.getApp().getSessionManager().writeToken(w, ""); err != nil {
+		return err
+	}
+	// @todo use websocket to send message
+	return renderJSON(w, newSessionInfo(nil), http.StatusOK)
 }
