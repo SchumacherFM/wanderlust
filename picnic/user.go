@@ -52,6 +52,8 @@ type userIf interface {
 	changePassword(string) error
 	encryptPassword() error
 	checkPassword(string) bool
+	findMe() (bool, error)
+	applyDbData(map[string]interface{})
 }
 
 //type userModelCollection struct {
@@ -70,13 +72,13 @@ type userModel struct {
 	IsAuthenticated bool
 }
 
-func (um *userModel) getId() int                 { return helpers.StringHash(um.UserName) }
-func (um *userModel) getEmail() string           { return um.Email }
-func (um *userModel) getUserName() string        { return um.UserName }
-func (um *userModel) getName() string            { return um.Name }
-func (um *userModel) isAuthenticated() bool      { return um.IsAuthenticated }
+func (um *userModel) getId() int { return helpers.StringHash(um.UserName) }
+func (um *userModel) getEmail() string { return um.Email }
+func (um *userModel) getUserName() string { return um.UserName }
+func (um *userModel) getName() string { return um.Name }
+func (um *userModel) isAuthenticated() bool { return um.IsAuthenticated }
 func (um *userModel) setAuthenticated(auth bool) { um.IsAuthenticated = auth }
-func (um *userModel) isAdmin() bool              { return um.IsAdmin }
+func (um *userModel) isAdmin() bool { return um.IsAdmin }
 
 // PreInsert hook for new users
 func (um *userModel) prepareNew() error {
@@ -162,6 +164,7 @@ func (um *userModel) encryptPassword() error {
 	return nil
 }
 
+// not sure if it is a good idea to carry the whole time the bcrypted password with the userModel object ...
 func (um *userModel) checkPassword(password string) bool {
 	if "" == um.Password {
 		return false
@@ -185,17 +188,17 @@ func (um *userModel) toStringInterface() map[string]interface{} {
 
 // finds a user in the database and fills the struct
 func (um *userModel) findMe() (bool, error) {
-	rootUser, _ := rsdb.FindOne(USER_DB_COLLECTION_NAME, um.getId())
-	if nil == rootUser {
+	searchedUser, _ := rsdb.FindOne(USER_DB_COLLECTION_NAME, um.getId())
+	if nil == searchedUser {
 		return false, nil
 	}
-
-	um = StringInterfaceToUser(rootUser)
+	um.applyDbData(searchedUser)
 
 	return true, nil
 }
 
-func StringInterfaceToUser(data map[string]interface{}) *userModel {
+func (um *userModel) applyDbData(data map[string]interface{}) {
+	// panic free type conversion
 	tIsAdmin, _ := data["IsAdmin"].(bool)
 	tIsActive, _ := data["IsActive"].(bool)
 	tIsAuthenticated, _ := data["IsAuthenticated"].(bool)
@@ -204,17 +207,15 @@ func StringInterfaceToUser(data map[string]interface{}) *userModel {
 	tName, _ := data["Name"].(string)
 	tEmail, _ := data["Email"].(string)
 	tPassword, _ := data["Password"].(string)
-	um := &userModel{
-		CreatedAt:       time.Unix(tCreatedAt, 0),
-		UserName:        tUserName,
-		Name:            tName,
-		Email:           tEmail,
-		Password:        tPassword,
-		IsAdmin:         tIsAdmin,
-		IsActive:        tIsActive,
-		IsAuthenticated: tIsAuthenticated,
-	}
-	return um
+
+	um.CreatedAt = time.Unix(tCreatedAt, 0)
+	um.UserName = tUserName
+	um.Name = tName
+	um.Email = tEmail
+	um.Password = tPassword
+	um.IsAdmin = tIsAdmin
+	um.IsActive = tIsActive
+	um.IsAuthenticated = tIsAuthenticated
 }
 
 // needed in auth when user tries to login

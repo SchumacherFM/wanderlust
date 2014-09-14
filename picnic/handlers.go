@@ -145,11 +145,11 @@ func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) er
 		return userErr
 	}
 	if false == userFound {
-		logger.Debug("loginHandler 148: user not found %#v", user)
+		logger.Debug("loginHandler 148: user not found %#v", userFound)
 		return invalidLogin
 	}
 	if false == user.checkPassword(s.Password) {
-		logger.Debug("loginHandler 152: password incorrect %#v", user)
+		logger.Debug("loginHandler 152: password incorrect %#v", userFound)
 		return invalidLogin
 	}
 
@@ -159,7 +159,8 @@ func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) er
 
 	user.setAuthenticated(true)
 	// @todo use websocket to send message
-	return renderJSON(w, newSessionInfo(rc.getUser()), http.StatusOK)
+	// @todo still a bug here
+	return renderJSON(w, newSessionInfo(user), http.StatusOK)
 }
 
 func logoutHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
