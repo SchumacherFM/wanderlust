@@ -17,7 +17,7 @@
     </p>
   </body>
 </html></richcontent>
-<node CREATED="1408226077809" ID="ID_1082254437" MODIFIED="1408431998370" POSITION="right">
+<node CREATED="1408226077809" ID="ID_1082254437" MODIFIED="1410908421899" POSITION="right">
 <richcontent TYPE="NODE"><html>
   <head>
     
@@ -27,7 +27,7 @@
       <b>Picnic</b>
     </p>
     <p>
-      The web interface
+      The web interface (Angular.js)
     </p>
     <p>
       - Watches DB for new URLs and already processed.
@@ -39,7 +39,8 @@
       - Handles configurations
     </p>
   </body>
-</html></richcontent>
+</html>
+</richcontent>
 <cloud COLOR="#ff9966"/>
 <node CREATED="1408228814250" ID="ID_1818745543" MODIFIED="1408665089248" TEXT="Actions">
 <cloud COLOR="#ffcc66"/>
@@ -48,6 +49,7 @@
 <node CREATED="1408229470319" ID="ID_1737173709" MODIFIED="1408229482405" TEXT="Purge URLs collected from Brotzeit by provisioner"/>
 <node CREATED="1408229490288" ID="ID_1374484413" MODIFIED="1408229493396" TEXT="Purge all data"/>
 <node CREATED="1408665089999" ID="ID_686051620" MODIFIED="1408665139322" TEXT="Configure internal Cron Scheduler for each or all provisioners"/>
+<node CREATED="1410907631357" ID="ID_1779739970" MODIFIED="1410907647276" TEXT="User Management: Login, Logout, SignUp, Permissions"/>
 </node>
 <node CREATED="1408229245604" ID="ID_1214455075" MODIFIED="1408229284099" TEXT="Views">
 <cloud COLOR="#ffff66"/>
@@ -213,7 +215,7 @@
 </node>
 </node>
 </node>
-<node CREATED="1408227030201" ID="ID_310886734" MODIFIED="1408321579967" POSITION="right">
+<node CREATED="1408227030201" ID="ID_310886734" MODIFIED="1410907338502" POSITION="right">
 <richcontent TYPE="NODE"><html>
   <head>
     
@@ -223,17 +225,18 @@
       <b>The Rucksack</b>
     </p>
     <p>
-      KV? Database for storage. No 3rd party. Compiled into.
+      Database for storage. Compiled into.
     </p>
   </body>
-</html></richcontent>
+</html>
+</richcontent>
 <cloud COLOR="#ccccff"/>
 <node CREATED="1408321536418" ID="ID_1460198452" MODIFIED="1408321667611" TEXT="https://code.google.com/p/leveldb-go/"/>
 <node CREATED="1408321580596" ID="ID_1138239741" MODIFIED="1408321924122" TEXT="https://github.com/cznic/kv"/>
 <node CREATED="1408321633191" ID="ID_1710461451" MODIFIED="1408321634751" TEXT="https://github.com/boltdb/bolt"/>
 <node CREATED="1408321676751" ID="ID_1351308280" MODIFIED="1408321677811" TEXT="https://github.com/syndtr/goleveldb"/>
-<node CREATED="1408321894169" ID="ID_681319205" MODIFIED="1408321895953" TEXT="https://github.com/HouzuoGuo/tiedot">
-<node CREATED="1408321895954" ID="ID_869537289" MODIFIED="1408321898412" TEXT="+1"/>
+<node CREATED="1408321894169" ID="ID_681319205" MODIFIED="1410907371304" TEXT="https://github.com/HouzuoGuo/tiedot">
+<node CREATED="1410907415803" ID="ID_146269911" MODIFIED="1410907428823" TEXT="Stores JSON, like Mongodb ;-)"/>
 </node>
 </node>
 <node CREATED="1408227268529" ID="ID_1662394047" MODIFIED="1408232458793" POSITION="left">
@@ -266,7 +269,7 @@
 </node>
 <node CREATED="1408231265873" ID="ID_525514306" MODIFIED="1408231279512" TEXT="The only write access to the HDD is for saving the DB"/>
 <node CREATED="1408231312099" ID="ID_1235551636" MODIFIED="1408231334046" TEXT="Wanderlust can run anywhere"/>
-<node CREATED="1408231240797" ID="ID_225989754" MODIFIED="1408231258328" TEXT="All CSS, JS, HTML files are compiled into"/>
+<node CREATED="1408231240797" ID="ID_225989754" MODIFIED="1410908446002" TEXT="All CSS, JS, HTML files are compiled into (via gz.rice)"/>
 <node CREATED="1408321328218" ID="ID_970423774" MODIFIED="1408321486226">
 <richcontent TYPE="NODE"><html>
   <head>
@@ -288,6 +291,8 @@
   </body>
 </html></richcontent>
 </node>
+<node CREATED="1410907657982" ID="ID_1984817677" MODIFIED="1410908393960" TEXT="Maybe: Wanderer, Brotzeit and Rucksack communicate via Pub/Sub (bullhorn lib)"/>
+<node CREATED="1410908458912" ID="ID_421948385" MODIFIED="1410908491476" TEXT="Only accessible via SSL"/>
 </node>
 </node>
 </map>
