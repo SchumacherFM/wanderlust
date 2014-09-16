@@ -57,7 +57,7 @@ func initLogger() {
 	} else {
 		logger = log.New(os.Stderr, log.DEBUG, "[WL] ")
 	}
-	if "" == logLevel{
+	if "" == logLevel {
 		logLevel = "debug"
 	}
 	if lerr := logger.SetLevelString(logLevel); nil != lerr {

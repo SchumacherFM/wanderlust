@@ -24,7 +24,7 @@ import (
 )
 
 const (
-	USER_PASSWORD_LENGTH      = 14
+	USER_PASSWORD_LENGTH      = 24
 	USER_RECOVERY_CODE_LENGTH = 30
 	USER_DB_COLLECTION_NAME   = "users"
 	USER_ROOT                 = "adiministrator"
@@ -44,7 +44,7 @@ type userIf interface {
 	setAuthenticated(bool)
 	isAdmin() bool
 	prepareNew() error
-	validForSession() bool
+	isValidForSession() bool
 	// validate(ctx *context, r *http.Request, errors map[string]string) error
 	generateRecoveryCode() (string, error)
 	resetRecoveryCode()
@@ -72,25 +72,24 @@ type userModel struct {
 	IsAuthenticated bool
 }
 
-func (um *userModel) getId() int { return helpers.StringHash(um.UserName) }
-func (um *userModel) getEmail() string { return um.Email }
-func (um *userModel) getUserName() string { return um.UserName }
-func (um *userModel) getName() string { return um.Name }
-func (um *userModel) isAuthenticated() bool { return um.IsAuthenticated }
+func (um *userModel) getId() int                 { return helpers.StringHash(um.UserName) }
+func (um *userModel) getEmail() string           { return um.Email }
+func (um *userModel) getUserName() string        { return um.UserName }
+func (um *userModel) getName() string            { return um.Name }
+func (um *userModel) isAuthenticated() bool      { return um.IsAuthenticated }
 func (um *userModel) setAuthenticated(auth bool) { um.IsAuthenticated = auth }
-func (um *userModel) isAdmin() bool { return um.IsAdmin }
+func (um *userModel) isAdmin() bool              { return um.IsAdmin }
 
 // PreInsert hook for new users
 func (um *userModel) prepareNew() error {
 	um.IsActive = true
 	um.CreatedAt = time.Now()
-	um.encryptPassword()
-	return nil
+	return um.encryptPassword()
 }
 
-// validForSession() is only used in newSessionInfo()
-func (um *userModel) validForSession() bool {
-	return false == helpers.ValidateEmail(um.getEmail()) || "" == um.getUserName() || false == um.isAuthenticated()
+// isValidForSession() is only used in newSessionInfo()
+func (um *userModel) isValidForSession() bool {
+	return true == helpers.ValidateEmail(um.getEmail()) && "" != um.getUserName() && true == um.isAuthenticated()
 }
 
 //func (userModel *userModel) validate(ctx *context, r *http.Request, errors map[string]string) error {

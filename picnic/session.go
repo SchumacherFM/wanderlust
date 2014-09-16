@@ -46,7 +46,7 @@ type sessionInfo struct {
 
 // newSessionInfo() is used in handlers login, logout, getSessionInfo and signup
 func newSessionInfo(user userIf) *sessionInfo {
-	if nil == user || false == user.validForSession() {
+	if nil == user || false == user.isValidForSession() {
 		return &sessionInfo{}
 	}
 
