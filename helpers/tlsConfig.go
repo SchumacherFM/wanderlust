@@ -27,6 +27,7 @@ const (
 func GetTlsConfig() *tls.Config {
 	tlsConfig := &tls.Config{}
 	// @see http://www.hydrogen18.com/blog/your-own-pki-tls-golang.html
+	// @see https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html @todo
 	tlsConfig.CipherSuites = []uint16{
 		//		tls.TLS_RSA_WITH_AES_128_CBC_SHA,
 		tls.TLS_RSA_WITH_AES_256_CBC_SHA,
