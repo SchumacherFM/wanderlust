@@ -52,14 +52,7 @@ func (p *PicnicApp) handler(h handlerFunc, level authLevel) http.HandlerFunc {
 func (p *PicnicApp) getHandler() *negroni.Negroni {
 	router := mux.NewRouter()
 
-	auth := router.PathPrefix("/auth/").Subrouter()
-
-	auth.HandleFunc("/", p.handler(sessionInfoHandler, AUTH_LEVEL_CHECK)).Methods("GET")
-	auth.HandleFunc("/", p.handler(loginHandler, AUTH_LEVEL_IGNORE)).Methods("POST")
-	auth.HandleFunc("/", p.handler(logoutHandler, AUTH_LEVEL_LOGIN)).Methods("DELETE")
-	//	auth.HandleFunc("/signup", p.handler(signup, AUTH_LEVEL_IGNORE)).Methods("POST")
-	//	auth.HandleFunc("/recoverpass", p.handler(recoverPassword, AUTH_LEVEL_IGNORE)).Methods("PUT")
-	//	auth.HandleFunc("/changepass", p.handler(changePassword, AUTH_LEVEL_IGNORE)).Methods("PUT")
+	p.initRoutesAuth(router)
 
 	brotzeitApi := router.PathPrefix("/brotzeit/").Subrouter()
 	brotzeitApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
@@ -112,62 +105,4 @@ func handlerFavicon(w http.ResponseWriter, r *http.Request) {
 
 func noopHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
 	return renderString(w, 200, fmt.Sprintf("Found route \n%#v\n %#v\n", r, rc))
-}
-
-func sessionInfoHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
-	return renderJSON(w, newSessionInfo(rc.getUser()), http.StatusOK)
-}
-
-func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
-
-	var invalidLogin = httpError{
-		Status:      http.StatusBadRequest,
-		Description: "Invalid username or password",
-	}
-
-	s := &struct {
-		UserName string `json:"username"`
-		Password string `json:"password"`
-	}{}
-
-	if err := decodeJSON(r, s); err != nil {
-		return err
-	}
-
-	if s.UserName == "" || s.Password == "" {
-		return invalidLogin
-	}
-
-	// find user and login ...
-	user := NewUserModel(s.UserName)
-	userFound, userErr := user.findMe()
-	if nil != userErr {
-		return userErr
-	}
-	if false == userFound {
-		logger.Debug("loginHandler 148: user not found %#v", userFound)
-		return invalidLogin
-	}
-	if false == user.checkPassword(s.Password) {
-		logger.Debug("loginHandler 152: password incorrect %#v", userFound)
-		return invalidLogin
-	}
-
-	if err := rc.getApp().getSessionManager().writeToken(w, user.UserName); err != nil {
-		return err
-	}
-
-	user.setAuthenticated(true)
-	// @todo use websocket to send message
-	// @todo still a bug here
-	return renderJSON(w, newSessionInfo(user), http.StatusOK)
-}
-
-func logoutHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
-
-	if err := rc.getApp().getSessionManager().writeToken(w, ""); err != nil {
-		return err
-	}
-	// @todo use websocket to send message
-	return renderJSON(w, newSessionInfo(nil), http.StatusOK)
 }
