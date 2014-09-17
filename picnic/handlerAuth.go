@@ -24,6 +24,11 @@ import (
 	"net/http"
 )
 
+type loginPostData struct {
+	UserName string `json:"username"`
+	Password string `json:"password"`
+}
+
 func (p *PicnicApp) initRoutesAuth(router *mux.Router) error {
 	auth := router.PathPrefix("/auth/").Subrouter()
 
@@ -38,7 +43,7 @@ func (p *PicnicApp) initRoutesAuth(router *mux.Router) error {
 }
 
 func sessionInfoHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
-	return renderJSON(w, newSessionInfo(rc.getUser()), http.StatusOK)
+	return renderFFJSON(w, newSessionInfo(rc.getUser()), http.StatusOK)
 }
 
 func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
@@ -48,21 +53,18 @@ func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) er
 		Description: "Invalid username or password",
 	}
 
-	s := &struct {
-		UserName string `json:"username"`
-		Password string `json:"password"`
-	}{}
+	lpd := &loginPostData{}
 
-	if err := decodeJSON(r, s); err != nil {
+	if err := decodeJSON(r, lpd); err != nil {
 		return err
 	}
 
-	if s.UserName == "" || s.Password == "" {
+	if lpd.UserName == "" || lpd.Password == "" {
 		return invalidLogin
 	}
 
 	// find user and login ...
-	user := NewUserModel(s.UserName)
+	user := NewUserModel(lpd.UserName)
 	userFound, userErr := user.findMe()
 	if nil != userErr {
 		return userErr
@@ -71,7 +73,7 @@ func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) er
 		logger.Debug("loginHandler 148: user not found %#v", userFound)
 		return invalidLogin
 	}
-	if false == user.checkPassword(s.Password) {
+	if false == user.checkPassword(lpd.Password) {
 		logger.Debug("loginHandler 152: password incorrect %#v", userFound)
 		return invalidLogin
 	}
@@ -82,7 +84,7 @@ func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) er
 
 	user.setAuthenticated(true)
 	// @todo use websocket to send message
-	return renderJSON(w, newSessionInfo(user), http.StatusOK)
+	return renderFFJSON(w, newSessionInfo(user), http.StatusOK)
 }
 
 func logoutHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
@@ -91,5 +93,5 @@ func logoutHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) e
 		return err
 	}
 	// @todo use websocket to send message
-	return renderJSON(w, newSessionInfo(nil), http.StatusOK)
+	return renderFFJSON(w, newSessionInfo(nil), http.StatusOK)
 }

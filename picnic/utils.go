@@ -23,6 +23,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
+	"github.com/SchumacherFM/wanderlust/helpers"
 	"net/http"
 	"strconv"
 )
@@ -33,6 +34,14 @@ func writeBody(w http.ResponseWriter, body []byte, status int, contentType strin
 	w.WriteHeader(status)
 	_, err := w.Write(body)
 	return errgo.Mask(err)
+}
+
+func renderFFJSON(w http.ResponseWriter, value helpers.FfjsonIf, status int) error {
+	body, err := value.MarshalJSON()
+	if nil != err {
+		return errgo.Mask(err)
+	}
+	return writeBody(w, body, status, "application/json")
 }
 
 func renderJSON(w http.ResponseWriter, value interface{}, status int) error {

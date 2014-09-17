@@ -14,30 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package picnic
+package helpers
 
-import ()
+import "bytes"
 
-// Basic user session info
-type SessionInfo struct {
-	UserName string `json:"username"`
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	IsAdmin  bool   `json:"isAdmin"`
-	LoggedIn bool   `json:"loggedIn"`
-}
-
-// newSessionInfo() is used in handlers login, logout, getSessionInfo and signup
-func newSessionInfo(user userIf) *SessionInfo {
-	if nil == user || false == user.isValidForSession() {
-		return &SessionInfo{}
-	}
-
-	return &SessionInfo{
-		UserName: user.getUserName(),
-		Name:     user.getName(),
-		Email:    user.getEmail(),
-		IsAdmin:  user.isAdmin(),
-		LoggedIn: true,
-	}
+type FfjsonIf interface {
+	MarshalJSON() ([]byte, error)
+	MarshalJSONBuf(buf *bytes.Buffer) error
 }
