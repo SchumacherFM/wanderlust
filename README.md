@@ -2,7 +2,8 @@
 
 ### Cache warmer with priorities
 
-Wanderlust, the yearning to travel through Google Analytics, Piwik, REST endpoints, sitemap.xml, etc to warm up the caches of your website.
+Wanderlust, the yearning to travel through Google Analytics, Piwik, 
+REST endpoints, sitemap.xml, etc to warm up the caches of your website.
 
 ### Cold Cache vs. Warm Cache ?
 
@@ -10,19 +11,20 @@ Wanderlust, the yearning to travel through Google Analytics, Piwik, REST endpoin
 
 There is analogy with cold engine and warm engine of the car. 
 
-When the cache is empty or has irrelevant data, so that CPU needs to do a slower read from main memory for your program data requirement.
+When the cache is empty or has irrelevant data, 
+so that CPU needs to do a slower read from main memory 
+for your program data requirement.
 
 #### Warm Cache
 
-When the cache contains relevant data, and all the reads for your program are satisfied from the cache itself.
+When the cache contains relevant data, 
+and all the reads for your program are satisfied from the cache itself.
 
 ## Architectural Overview
 
 ![mindmap](https://raw.githubusercontent.com/SchumacherFM/wanderlust/master/mindmap/wanderlust.png)
 
 - Ideas: [https://github.com/GordonLesti/Lesti_Fpc/issues/25](https://github.com/GordonLesti/Lesti_Fpc/issues/25)
-- Rucksack: Database [https://github.com/HouzuoGuo/tiedot](https://github.com/HouzuoGuo/tiedot)
-- Picnic: Web Router: [https://github.com/codegangsta/negroni](https://github.com/codegangsta/negroni)
 
 ## Build
 
@@ -32,8 +34,10 @@ Setup go/src for darwin, linux and windows [http://dave.cheney.net/2013/07/09/an
 
 Run `make build`. If you are interested in pre-compiled binaries, ping me.
 
-Dependencies to external packages are all included in this repository. Yes there are apps like godep to handle this but
-I decided to implemented each package directly.
+Dependencies to external packages are all included in this repository. 
+Yes there are apps like `godep` to handle this but I decided 
+to implement each package directly. Maybe some parts will be moved out of the 
+repository, mainly those which are on github and keep those which needs hg or bzr.
 
 # Contributing
 
