@@ -29,7 +29,7 @@ const (
 	AUTH_LEVEL_ADMIN                       // admin required, 401 if no user, 403 if not admin
 )
 
-func checkAuthLevel(level authLevel, user userIf) error {
+func checkAuthLevel(level authLevel, user userPermissionsIf) error {
 	var errLoginRequired = httpError{
 		Status:      http.StatusUnauthorized,
 		Description: "You must be logged in!",

@@ -16,19 +16,17 @@
 
 package picnic
 
-import ()
-
 // Basic user session info
 type SessionInfo struct {
-	UserName string `json:"username"`
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	IsAdmin  bool   `json:"isAdmin"`
-	LoggedIn bool   `json:"loggedIn"`
+	UserName string
+	Name     string
+	Email    string
+	IsAdmin  bool
+	LoggedIn bool
 }
 
 // newSessionInfo() is used in handlers login, logout, getSessionInfo and signup
-func newSessionInfo(user userIf) *SessionInfo {
+func newSessionInfo(user userSessionIf) *SessionInfo {
 	if nil == user || false == user.isValidForSession() {
 		return &SessionInfo{}
 	}

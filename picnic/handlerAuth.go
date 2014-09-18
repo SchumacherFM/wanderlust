@@ -55,11 +55,11 @@ func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) er
 
 	lpd := &loginPostData{}
 
-	if err := decodeJSON(r, lpd); err != nil {
+	if err := decodeJSON(r, lpd); nil != err {
 		return err
 	}
 
-	if lpd.UserName == "" || lpd.Password == "" {
+	if "" == lpd.UserName || "" == lpd.Password {
 		return invalidLogin
 	}
 
@@ -78,7 +78,7 @@ func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) er
 		return invalidLogin
 	}
 
-	if err := rc.getApp().getSessionManager().writeToken(w, user.UserName); err != nil {
+	if err := rc.getApp().getSessionManager().writeToken(w, user.getUserName()); nil != err {
 		return err
 	}
 

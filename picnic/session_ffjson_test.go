@@ -9,24 +9,12 @@ import (
 type testUser struct {
 }
 
-// that's a whole lot of function to fullfil the interface :-( needs rethinking ...
-func (tu *testUser) getId() int                            { return 1 }
-func (tu *testUser) getEmail() string                      { return "root@localhost.dev" }
-func (tu *testUser) getName() string                       { return "Joanna Gopher" }
-func (tu *testUser) getUserName() string                   { return "gopher" }
-func (tu *testUser) isAuthenticated() bool                 { return true }
-func (tu *testUser) setAuthenticated(bool)                 {}
-func (tu *testUser) isAdmin() bool                         { return true }
-func (tu *testUser) prepareNew() error                     { return nil }
-func (tu *testUser) isValidForSession() bool               { return true }
-func (tu *testUser) generateRecoveryCode() (string, error) { return "", nil }
-func (tu *testUser) resetRecoveryCode()                    {}
-func (tu *testUser) generatePassword() error               { return nil }
-func (tu *testUser) changePassword(string) error           { return nil }
-func (tu *testUser) encryptPassword() error                { return nil }
-func (tu *testUser) checkPassword(string) bool             { return true }
-func (tu *testUser) findMe() (bool, error)                 { return true, nil }
-func (tu *testUser) applyDbData(map[string]interface{})    {}
+// satisfy interface userSessionIf
+func (tu *testUser) getEmail() string        { return "root@localhost.dev" }
+func (tu *testUser) getName() string         { return "Joanna Gopher" }
+func (tu *testUser) getUserName() string     { return "gopher" }
+func (tu *testUser) isAdmin() bool           { return true }
+func (tu *testUser) isValidForSession() bool { return true }
 
 var expected = []byte(`{"email":"root@localhost.dev","isAdmin":true,"loggedIn":true,"name":"Joanna Gopher","username":"gopher"}`)
 

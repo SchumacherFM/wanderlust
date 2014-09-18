@@ -30,39 +30,62 @@ const (
 	USER_ROOT                 = "adiministrator"
 )
 
-type permissions struct {
-	Edit   bool `json:"edit"`
-	Delete bool `json:"delete"`
-}
+//type permissions struct {
+//	Edit   bool `json:"edit"`
+//	Delete bool `json:"delete"`
+//}
 
 type userIf interface {
+	userGetterIf
+	userSetterIf
+	userPermissionsIf
+}
+
+// userGetPermIf is for GetterPermissions Interface
+type userGetPermIf interface {
+	userGetterIf
+	userPermissionsIf
+}
+
+// userSessionIf is special interface only used when requesting the session in a handler
+type userSessionIf interface {
+	getEmail() string
+	getName() string
+	getUserName() string
+	isAdmin() bool
+	isValidForSession() bool
+}
+
+type userGetterIf interface {
 	getId() int
 	getEmail() string
 	getName() string
 	getUserName() string
-	isAuthenticated() bool
-	setAuthenticated(bool)
-	isAdmin() bool
+	toStringInterface() map[string]interface{}
+	findMe() (bool, error)
+}
+
+type userSetterIf interface {
+	setEmail(string) error
+	setName(string) error
+	setUserName(string) error
+	setAuthenticated(bool) error
 	prepareNew() error
-	isValidForSession() bool
+	applyDbData(map[string]interface{}) error
 	// validate(ctx *context, r *http.Request, errors map[string]string) error
 	generateRecoveryCode() (string, error)
 	resetRecoveryCode()
 	generatePassword() error
 	changePassword(string) error
 	encryptPassword() error
-	checkPassword(string) bool
-	findMe() (bool, error)
-	applyDbData(map[string]interface{})
 }
 
-type userGetterSetter interface {
-	getId() int
-	getEmail() string
-	getName() string
-	getUserName() string
+type userPermissionsIf interface {
 	isAuthenticated() bool
-	setAuthenticated(bool)
+	isAdmin() bool
+	isActive() bool
+	checkPassword(string) bool
+	isValidForSession() bool
 }
 
 //type userModelCollection struct {
@@ -81,13 +104,19 @@ type userModel struct {
 	IsAuthenticated bool
 }
 
-func (um *userModel) getId() int                 { return helpers.StringHash(um.UserName) }
-func (um *userModel) getEmail() string           { return um.Email }
-func (um *userModel) getUserName() string        { return um.UserName }
-func (um *userModel) getName() string            { return um.Name }
-func (um *userModel) isAuthenticated() bool      { return um.IsAuthenticated }
-func (um *userModel) setAuthenticated(auth bool) { um.IsAuthenticated = auth }
-func (um *userModel) isAdmin() bool              { return um.IsAdmin }
+func (um *userModel) getId() int          { return helpers.StringHash(um.UserName) }
+func (um *userModel) getEmail() string    { return um.Email }
+func (um *userModel) getUserName() string { return um.UserName }
+func (um *userModel) getName() string     { return um.Name }
+
+func (um *userModel) setEmail(e string) error          { um.Email = e; return nil }
+func (um *userModel) setName(n string) error           { um.Name = n; return nil }
+func (um *userModel) setUserName(u string) error       { um.UserName = u; return nil }
+func (um *userModel) setAuthenticated(auth bool) error { um.IsAuthenticated = auth; return nil }
+
+func (um *userModel) isAuthenticated() bool { return um.IsAuthenticated }
+func (um *userModel) isAdmin() bool         { return um.IsAdmin }
+func (um *userModel) isActive() bool        { return um.IsActive }
 
 // PreInsert hook for new users
 func (um *userModel) prepareNew() error {
@@ -205,7 +234,7 @@ func (um *userModel) findMe() (bool, error) {
 	return true, nil
 }
 
-func (um *userModel) applyDbData(data map[string]interface{}) {
+func (um *userModel) applyDbData(data map[string]interface{}) error {
 	// panic free type conversion
 	tIsAdmin, _ := data["IsAdmin"].(bool)
 	tIsActive, _ := data["IsActive"].(bool)
@@ -224,6 +253,7 @@ func (um *userModel) applyDbData(data map[string]interface{}) {
 	um.IsAdmin = tIsAdmin
 	um.IsActive = tIsActive
 	um.IsAuthenticated = tIsAuthenticated
+	return nil
 }
 
 // needed in auth when user tries to login

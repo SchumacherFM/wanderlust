@@ -45,12 +45,12 @@ type requestContextI interface {
 	getApp() PicnicAppI
 	getParamString(string) string
 	getParamInt64(string) int64
-	getUser() userIf
+	getUser() userGetPermIf
 }
 
 // invoked in (p *PicnicApp) handler()
 // per request on context
-func newRequestContext(app PicnicAppI, r *http.Request, theUser userIf) *requestContext {
+func newRequestContext(app PicnicAppI, r *http.Request, theUser userGetPermIf) *requestContext {
 	ctx := &requestContext{
 		app: app,
 		par: &requestParams{
@@ -66,7 +66,7 @@ func newRequestContext(app PicnicAppI, r *http.Request, theUser userIf) *request
 type requestContext struct {
 	app  PicnicAppI
 	par  requestParamsI
-	user userIf
+	user userGetPermIf
 }
 
 func (rc *requestContext) getApp() PicnicAppI {
@@ -78,7 +78,7 @@ func (rc *requestContext) getParamString(name string) string {
 func (rc *requestContext) getParamInt64(name string) int64 {
 	return rc.par.getInt(name)
 }
-func (rc *requestContext) getUser() userIf {
+func (rc *requestContext) getUser() userGetPermIf {
 	return rc.user
 }
 
