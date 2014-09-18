@@ -56,6 +56,15 @@ type userIf interface {
 	applyDbData(map[string]interface{})
 }
 
+type userGetterSetter interface {
+	getId() int
+	getEmail() string
+	getName() string
+	getUserName() string
+	isAuthenticated() bool
+	setAuthenticated(bool)
+}
+
 //type userModelCollection struct {
 //	userModel []userIf
 //}
