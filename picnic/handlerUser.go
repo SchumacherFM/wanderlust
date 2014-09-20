@@ -27,11 +27,11 @@ import (
 func (p *PicnicApp) initRoutesUsers(router *mux.Router) error {
 	user := router.PathPrefix("/users/").Subrouter()
 
-	user.HandleFunc("/", p.handler(userCollectionHandler, AUTH_LEVEL_CHECK)).Methods("GET")
-	//	user.HandleFunc("/", p.handler(userCreateHandler, AUTH_LEVEL_CHECK)).Methods("POST")
-	//	user.HandleFunc("/{id:[0-9]+}", p.handler(userGetHandler, AUTH_LEVEL_CHECK)).Methods("GET")
-	//	user.HandleFunc("/{id:[0-9]+}", p.handler(userUpdateHandler, AUTH_LEVEL_CHECK)).Methods("PUT")
-	//	user.HandleFunc("/{id:[0-9]+}", p.handler(userDeleteHandler, AUTH_LEVEL_CHECK)).Methods("DELETE")
+	user.HandleFunc("/", p.handler(userCollectionHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
+	//	user.HandleFunc("/", p.handler(userCreateHandler, AUTH_LEVEL_LOGIN)).Methods("POST")
+	//	user.HandleFunc("/{id:[0-9]+}", p.handler(userGetHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
+	//	user.HandleFunc("/{id:[0-9]+}", p.handler(userUpdateHandler, AUTH_LEVEL_LOGIN)).Methods("PUT")
+	//	user.HandleFunc("/{id:[0-9]+}", p.handler(userDeleteHandler, AUTH_LEVEL_LOGIN)).Methods("DELETE")
 
 	return nil
 }
