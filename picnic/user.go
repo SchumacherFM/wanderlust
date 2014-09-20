@@ -63,6 +63,7 @@ type userGetterIf interface {
 	getUserName() string
 	toStringInterface() map[string]interface{}
 	findMe() (bool, error)
+	helpers.FfjsonIf
 }
 
 type userSetterIf interface {
@@ -78,6 +79,7 @@ type userSetterIf interface {
 	generatePassword() error
 	changePassword(string) error
 	encryptPassword() error
+	unsetPassword()
 }
 
 type userPermissionsIf interface {
@@ -88,11 +90,11 @@ type userPermissionsIf interface {
 	isValidForSession() bool
 }
 
-//type userModelCollection struct {
-//	userModel []userIf
-//}
+type UserModelCollection struct {
+	Users []userIf
+}
 
-type userModel struct {
+type UserModel struct {
 	CreatedAt       time.Time
 	UserName        string
 	Name            string
@@ -104,38 +106,38 @@ type userModel struct {
 	IsAuthenticated bool
 }
 
-func (um *userModel) getId() int          { return helpers.StringHash(um.UserName) }
-func (um *userModel) getEmail() string    { return um.Email }
-func (um *userModel) getUserName() string { return um.UserName }
-func (um *userModel) getName() string     { return um.Name }
+func (um *UserModel) getId() int          { return helpers.StringHash(um.UserName) }
+func (um *UserModel) getEmail() string    { return um.Email }
+func (um *UserModel) getUserName() string { return um.UserName }
+func (um *UserModel) getName() string     { return um.Name }
 
-func (um *userModel) setEmail(e string) error          { um.Email = e; return nil }
-func (um *userModel) setName(n string) error           { um.Name = n; return nil }
-func (um *userModel) setUserName(u string) error       { um.UserName = u; return nil }
-func (um *userModel) setAuthenticated(auth bool) error { um.IsAuthenticated = auth; return nil }
+func (um *UserModel) setEmail(e string) error          { um.Email = e; return nil }
+func (um *UserModel) setName(n string) error           { um.Name = n; return nil }
+func (um *UserModel) setUserName(u string) error       { um.UserName = u; return nil }
+func (um *UserModel) setAuthenticated(auth bool) error { um.IsAuthenticated = auth; return nil }
 
-func (um *userModel) isAuthenticated() bool { return um.IsAuthenticated }
-func (um *userModel) isAdmin() bool         { return um.IsAdmin }
-func (um *userModel) isActive() bool        { return um.IsActive }
+func (um *UserModel) isAuthenticated() bool { return um.IsAuthenticated }
+func (um *UserModel) isAdmin() bool         { return um.IsAdmin }
+func (um *UserModel) isActive() bool        { return um.IsActive }
 
 // PreInsert hook for new users
-func (um *userModel) prepareNew() error {
+func (um *UserModel) prepareNew() error {
 	um.IsActive = true
 	um.CreatedAt = time.Now()
 	return um.encryptPassword()
 }
 
 // isValidForSession() is only used in newSessionInfo()
-func (um *userModel) isValidForSession() bool {
+func (um *UserModel) isValidForSession() bool {
 	return true == helpers.ValidateEmail(um.getEmail()) && "" != um.getUserName() && true == um.isAuthenticated()
 }
 
-//func (userModel *userModel) validate(ctx *context, r *http.Request, errors map[string]string) error {
+//func (UserModel *UserModel) validate(ctx *context, r *http.Request, errors map[string]string) error {
 //
-//	if userModel.Name == "" {
+//	if UserModel.Name == "" {
 //		errors["name"] = "Name is missing"
 //	} else {
-//		ok, err := ctx.datamapper.isUserNameAvailable(userModel)
+//		ok, err := ctx.datamapper.isUserNameAvailable(UserModel)
 //		if err != nil {
 //			return err
 //		}
@@ -144,12 +146,12 @@ func (um *userModel) isValidForSession() bool {
 //		}
 //	}
 //
-//	if userModel.Email == "" {
+//	if UserModel.Email == "" {
 //		errors["email"] = "Email is missing"
-//	} else if !validateEmail(userModel.Email) {
+//	} else if !validateEmail(UserModel.Email) {
 //		errors["email"] = "Invalid email address"
 //	} else {
-//		ok, err := ctx.datamapper.isUserEmailAvailable(userModel)
+//		ok, err := ctx.datamapper.isUserEmailAvailable(UserModel)
 //		if err != nil {
 //			return err
 //		}
@@ -159,37 +161,41 @@ func (um *userModel) isValidForSession() bool {
 //
 //	}
 //
-//	// tbd: we need flag userModel is third-party
-//	if userModel.Password == "" {
+//	// tbd: we need flag UserModel is third-party
+//	if UserModel.Password == "" {
 //		errors["password"] = "Password is missing"
 //	}
 //
 //	return nil
 //}
 
-func (um *userModel) generateRecoveryCode() (string, error) {
+func (um *UserModel) generateRecoveryCode() (string, error) {
 	code := helpers.RandomString(USER_RECOVERY_CODE_LENGTH)
 	um.RecoveryCode = code
 	return code, nil
 }
 
-func (um *userModel) resetRecoveryCode() {
+func (um *UserModel) resetRecoveryCode() {
 	um.RecoveryCode = ""
 }
 
 // generates an unencrypted password
-func (um *userModel) generatePassword() error {
+func (um *UserModel) generatePassword() error {
 	var err error
 	um.Password, err = helpers.NewPassword(USER_PASSWORD_LENGTH)
 	return err
 }
 
-func (um *userModel) changePassword(password string) error {
+func (um *UserModel) changePassword(password string) error {
 	um.Password = password
 	return um.encryptPassword()
 }
 
-func (um *userModel) encryptPassword() error {
+func (um *UserModel) unsetPassword() {
+	um.Password = ""
+}
+
+func (um *UserModel) encryptPassword() error {
 	if "" == um.Password {
 		return nil
 	}
@@ -201,8 +207,8 @@ func (um *userModel) encryptPassword() error {
 	return nil
 }
 
-// not sure if it is a good idea to carry the whole time the bcrypted password with the userModel object ...
-func (um *userModel) checkPassword(password string) bool {
+// not sure if it is a good idea to carry the whole time the bcrypted password with the UserModel object ...
+func (um *UserModel) checkPassword(password string) bool {
 	if "" == um.Password {
 		return false
 	}
@@ -210,7 +216,7 @@ func (um *userModel) checkPassword(password string) bool {
 	return err == nil
 }
 
-func (um *userModel) toStringInterface() map[string]interface{} {
+func (um *UserModel) toStringInterface() map[string]interface{} {
 	return map[string]interface{}{
 		"CreatedAt":       um.CreatedAt.Unix(),
 		"UserName":        um.UserName,
@@ -224,7 +230,7 @@ func (um *userModel) toStringInterface() map[string]interface{} {
 }
 
 // finds a user in the database and fills the struct
-func (um *userModel) findMe() (bool, error) {
+func (um *UserModel) findMe() (bool, error) {
 	searchedUser, _ := rsdb.FindOne(USER_DB_COLLECTION_NAME, um.getId())
 	if nil == searchedUser {
 		return false, nil
@@ -234,7 +240,7 @@ func (um *userModel) findMe() (bool, error) {
 	return true, nil
 }
 
-func (um *userModel) applyDbData(data map[string]interface{}) error {
+func (um *UserModel) applyDbData(data map[string]interface{}) error {
 	// panic free type conversion
 	tIsAdmin, _ := data["IsAdmin"].(bool)
 	tIsActive, _ := data["IsActive"].(bool)
@@ -257,11 +263,24 @@ func (um *userModel) applyDbData(data map[string]interface{}) error {
 }
 
 // needed in auth when user tries to login
-func NewUserModel(userName string) *userModel {
-	um := &userModel{
+func NewUserModel(userName string) *UserModel {
+	um := &UserModel{
 		UserName: userName,
 	}
 	return um
+}
+
+// GetAllUsers returns a user collection with empty passwords
+func GetAllUsers() (*UserModelCollection, error) {
+	dbUserCollection, err := rsdb.FindAll(USER_DB_COLLECTION_NAME)
+	umc := &UserModelCollection{}
+	for _, rawUser := range dbUserCollection {
+		newUser := NewUserModel("")
+		newUser.applyDbData(rawUser)
+		newUser.unsetPassword()
+		umc.Users = append(umc.Users, newUser)
+	}
+	return umc, err
 }
 
 // initUsers() runs in NewPicnicApp() function
@@ -274,7 +293,7 @@ func initUsers() error {
 		return errgo.Mask(err)
 	}
 
-	um := userModel{
+	um := UserModel{
 		UserName: USER_ROOT,
 		Name:     "Default Root User",
 		Email:    USER_ROOT + "@localhost",

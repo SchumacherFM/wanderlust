@@ -53,6 +53,7 @@ func (p *PicnicApp) getHandler() *negroni.Negroni {
 	router := mux.NewRouter()
 
 	p.initRoutesAuth(router)
+	p.initRoutesUsers(router)
 
 	brotzeitApi := router.PathPrefix("/brotzeit/").Subrouter()
 	brotzeitApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")

@@ -31,14 +31,9 @@ type loginPostData struct {
 
 func (p *PicnicApp) initRoutesAuth(router *mux.Router) error {
 	auth := router.PathPrefix("/auth/").Subrouter()
-
 	auth.HandleFunc("/", p.handler(sessionInfoHandler, AUTH_LEVEL_CHECK)).Methods("GET")
 	auth.HandleFunc("/", p.handler(loginHandler, AUTH_LEVEL_IGNORE)).Methods("POST")
 	auth.HandleFunc("/", p.handler(logoutHandler, AUTH_LEVEL_LOGIN)).Methods("DELETE")
-	//	auth.HandleFunc("/signup", p.handler(signup, AUTH_LEVEL_IGNORE)).Methods("POST")
-	//	auth.HandleFunc("/recoverpass", p.handler(recoverPassword, AUTH_LEVEL_IGNORE)).Methods("PUT")
-	//	auth.HandleFunc("/changepass", p.handler(changePassword, AUTH_LEVEL_IGNORE)).Methods("PUT")
-
 	return nil
 }
 
