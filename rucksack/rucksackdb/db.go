@@ -20,6 +20,7 @@ import (
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/db"
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/httpapi"
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/webcp"
+	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 )
 
 type RDBI interface {
@@ -27,6 +28,7 @@ type RDBI interface {
 	Close() error
 	UseDatabase(name string) *db.Col
 	FindOne(dbName string, documentId int) (doc map[string]interface{}, err error)
+	FindAll(dbName string) (doc []map[string]interface{}, err error)
 	Insert(dbName string, doc map[string]interface{}) (id int, err error)
 	InsertRecovery(dbName string, id int, doc map[string]interface{}) (err error)
 	StartHttp(listenAddress string) error
@@ -61,6 +63,31 @@ func (rdb *RDB) Close() error {
 
 func (rdb *RDB) FindOne(dbName string, documentId int) (doc map[string]interface{}, err error) {
 	doc, err = rdb.UseDatabase(dbName).Read(documentId)
+	return
+}
+
+func (rdb *RDB) FindAll(dbName string) (docs []map[string]interface{}, err error) {
+	var currentDb *db.Col
+	err = nil
+	currentDb = rdb.UseDatabase(dbName)
+	queryResult := make(map[int]struct{}) // query result (document IDs) goes into map keys
+	err = db.EvalAllIDs(currentDb, &queryResult)
+	if nil != err {
+		return nil, errgo.Mask(err)
+	}
+
+	docs = make([]map[string]interface{}, len(queryResult))
+
+	// Query result are document IDs
+	c := 0
+	for id, _ := range queryResult {
+		d, err := currentDb.Read(id)
+		if nil != err {
+			return nil, err
+		}
+		docs[c] = d
+		c++
+	}
 	return
 }
 
