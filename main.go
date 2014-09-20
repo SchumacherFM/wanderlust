@@ -19,6 +19,7 @@ package main
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/cli"
 	"github.com/SchumacherFM/wanderlust/wlapp"
+	"github.com/SchumacherFM/wanderlust/github.com/davecheney/profile"
 	"os"
 	"runtime"
 )
@@ -31,6 +32,14 @@ func mainAction(c *cli.Context) {
 
 func main() {
 	setMaxParallelism()
+
+	if "" != os.Getenv("WL_PPROF_CPU") {
+		defer profile.Start(profile.CPUProfile).Stop()
+	}
+	if "" != os.Getenv("WL_PPROF_MEM") {
+		defer profile.Start(profile.MemProfile).Stop()
+	}
+
 	app := cli.NewApp()
 	app.Name = "Wanderlust"
 	app.Version = "0.0.1"

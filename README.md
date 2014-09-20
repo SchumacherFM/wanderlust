@@ -39,6 +39,24 @@ Yes there are apps like `godep` to handle this but I decided
 to implement each package directly. Maybe some parts will be moved out of the 
 repository, mainly those which are on github and keep those which needs hg or bzr.
 
+## Profiling
+
+To start the program with CPU profiling: `$ WL_PPROF_CPU=1 ./wanderlust [options] [arguments]`
+
+To start the program with Memory profiling: `$ WL_PPROF_MEM=1 ./wanderlust [options] [arguments]`
+
+To read the generated profile:
+
+```
+$ go tool pprof ./wanderlust /path/to/cpu.pprof
+```
+
+To generated fancy graphics to stdout:
+
+```
+$ go tool pprof [--pdf|svg|gif] ./wanderlust /path/to/cpu.pprof
+```
+
 # Contributing
 
 Please do not hesitate to send pull requests.
