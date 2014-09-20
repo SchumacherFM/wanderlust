@@ -156,4 +156,3 @@ func (mj *UserModel) MarshalJSONBuf(buf *bytes.Buffer) error {
 	buf.WriteString(`}`)
 	return nil
 }
-
