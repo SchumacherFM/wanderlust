@@ -16,6 +16,8 @@
 
 package rucksackdb
 
+// tiedot is pretty slow database. but lets replace it later
+
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/db"
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/httpapi"
