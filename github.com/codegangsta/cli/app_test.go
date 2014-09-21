@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/codegangsta/cli"
+	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/cli"
 )
 
 func ExampleApp() {

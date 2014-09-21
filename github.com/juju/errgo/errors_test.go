@@ -12,7 +12,7 @@ import (
 
 	gc "launchpad.net/gocheck"
 
-	"github.com/juju/errgo"
+	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 )
 
 var (

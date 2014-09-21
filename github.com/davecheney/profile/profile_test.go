@@ -1,7 +1,7 @@
 package profile_test
 
 import (
-	"github.com/davecheney/profile"
+	"github.com/SchumacherFM/wanderlust/github.com/davecheney/profile"
 )
 
 func ExampleStart() {
