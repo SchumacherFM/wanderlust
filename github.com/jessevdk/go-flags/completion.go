@@ -44,7 +44,7 @@ type Completer interface {
 type completion struct {
 	parser *Parser
 
-	ShowDescriptions bool `short:"d" long:"show-descriptions" description:"Show descriptions next to completion items"`
+	ShowDescriptions bool
 }
 
 // Filename is a string alias which provides filename completion.
@@ -141,6 +141,16 @@ func (c *completion) completeValue(value reflect.Value, prefix string, match str
 	return ret
 }
 
+func (c *completion) completeArg(arg *Arg, prefix string, match string) []Completion {
+	if arg.isRemaining() {
+		// For remaining positional args (that are parsed into a slice), complete
+		// based on the element type.
+		return c.completeValue(reflect.New(arg.value.Type().Elem()), prefix, match)
+	}
+
+	return c.completeValue(arg.value, prefix, match)
+}
+
 func (c *completion) complete(args []string) []Completion {
 	if len(args) == 0 {
 		args = []string{""}
@@ -205,7 +215,11 @@ func (c *completion) complete(args []string) []Completion {
 			}
 		} else {
 			if len(s.positional) > 0 {
-				s.positional = s.positional[1:]
+				if !s.positional[0].isRemaining() {
+					// Don't advance beyond a remaining positional arg (because
+					// it consumes all subsequent args).
+					s.positional = s.positional[1:]
+				}
 			} else if cmd, ok := s.lookup.commands[arg]; ok {
 				cmd.fillParseState(s)
 			}
@@ -251,7 +265,7 @@ func (c *completion) complete(args []string) []Completion {
 		}
 	} else if len(s.positional) > 0 {
 		// Complete for positional argument
-		ret = c.completeValue(s.positional[0].value, "", lastarg)
+		ret = c.completeArg(s.positional[0], "", lastarg)
 	} else if len(s.command.commands) > 0 {
 		// Complete for command
 		ret = c.completeCommands(s, lastarg)
@@ -261,7 +275,7 @@ func (c *completion) complete(args []string) []Completion {
 	return ret
 }
 
-func (c *completion) Execute(args []string) error {
+func (c *completion) execute(args []string) {
 	ret := c.complete(args)
 
 	if c.ShowDescriptions && len(ret) > 1 {
@@ -287,6 +301,4 @@ func (c *completion) Execute(args []string) error {
 			fmt.Println(v.Item)
 		}
 	}
-
-	return nil
 }

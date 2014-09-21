@@ -196,17 +196,18 @@ command line argument. It should be noted that this `executes` your application,
 and it is up to the user to make sure there are no negative side effects (for
 example from init functions).
 
-Completion works by setting the environment variable
-`GO_FLAGS_COMPLETION=1`, which enables a builtin flags command (named
-`__complete`) which can be used to output a list of completions for the
-passed arguments. The basic invocation to complete a set of arguments is
-therefore:
+Setting the environment variable `GO_FLAGS_COMPLETION=1` enables completion
+by replacing the argument parsing routine with the completion routine which
+outputs completions for the passed arguments. The basic invocation to
+complete a set of arguments is therefore:
 
-    GO_FLAGS_COMPLETION=1 ./completion-example __complete -- arg1 arg2 arg3
+    GO_FLAGS_COMPLETION=1 ./completion-example arg1 arg2 arg3
 
 where `completion-example` is the binary, `arg1` and `arg2` are
 the current arguments, and `arg3` (the last argument) is the argument
-to be completed.
+to be completed. If the GO_FLAGS_COMPLETION is set to "verbose", then
+descriptions of possible completion items will also be shown, if there
+are more than 1 completion items.
 
 To use this with bash completion, a simple file can be written which
 calls the binary which supports go-flags completion:
@@ -220,7 +221,7 @@ calls the binary which supports go-flags completion:
 
         # Call completion (note that the first element of COMP_WORDS is
         # the executable itself)
-        COMPREPLY=($(GO_FLAGS_COMPLETION=1 ${COMP_WORDS[0]} __complete -- "${args[@]}"))
+        COMPREPLY=($(GO_FLAGS_COMPLETION=1 ${COMP_WORDS[0]} "${args[@]}"))
         return 0
     }
 
@@ -231,6 +232,7 @@ Completion requires the parser option PassDoubleDash and is therefore enforced i
 Customized completion for argument values is supported by implementing
 the flags.Completer interface for the argument value type. An example
 of a type which does so is the flags.Filename type, an alias of string
-allowing simple filename completion.
+allowing simple filename completion. A slice or array argument value
+whose element type implements flags.Completer will also be completed.
 */
 package flags
