@@ -2,7 +2,7 @@ package rice
 
 import (
 	"archive/zip"
-	"github.com/SchumacherFM/wanderlust/github.com/daaku/go.zipexe"
+	zipexe "github.com/SchumacherFM/wanderlust/github.com/daaku/go.zipexe"
 	"github.com/SchumacherFM/wanderlust/github.com/kardianos/osext"
 	"log"
 	"os"

@@ -3,8 +3,7 @@ package main
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/GeertJohan/go.rice"
-	"github.com/davecgh/go-spew/spew"
+	"github.com/SchumacherFM/wanderlust/github.com/GeertJohan/go.rice"
 	"log"
 	"net/http"
 	"os"
@@ -19,7 +18,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("error opening rice.Box: %s\n", err)
 	}
-	// spew.Dump(box)
 
 	contentString, err := box.String("file.txt")
 	if err != nil {
@@ -37,7 +35,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("could not open file: %s\n", err)
 	}
-	spew.Dump(file)
 
 	// find/create a rice.Box
 	templateBox, err := rice.FindBox("example-templates")
