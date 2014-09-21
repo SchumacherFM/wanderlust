@@ -7,13 +7,38 @@ angular
   'MasterCtrl',
   [
     '$scope',
+    '$state',
     '$cookieStore',
+    '$timeout',
     'Session',
-    'Auth',
-    function ($scope, $cookieStore,Session,Auth) {
+    'AuthResource',
+    'Alert',
+    function ($scope, $state, $cookieStore, $timeout, Session, AuthResource, Alert) {
 
+      //<Alerts>
+      $scope.alert = Alert;
+      $scope.$watchCollection('alert.messages', function (newValue, oldValue) {
+        $timeout(function () {
+          Alert.dismissLast();
+        }, 3000);
+      });
+      //</Alerts>
+
+      //<Sessions>
+      Session.init(AuthResource);
       $scope.session = Session;
-      Session.init(Auth);
+
+      $scope.logout = function () {
+        Session.logout().then(function () {
+          $state.go("/");
+        });
+      };
+
+      $scope.login = function () {
+        Session.setLastLoginUrl();
+        $state.go("login");
+      };
+      //</Sessions>
 
       /**
        * Sidebar Toggle & Cookie Control
@@ -42,13 +67,6 @@ angular
       };
       window.onresize = function () {
         $scope.$apply();
-      };
-
-      $scope.login = function () {
-        alert("@todo login")
-      };
-      $scope.logout = function () {
-        alert("@todo logout")
       };
 
     }

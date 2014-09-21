@@ -1,0 +1,21 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-6 col-md-4 col-md-offset-4">
+      <h1 class="text-center login-title">Log in to Wanderlust</h1>
+
+      <div class="account-wall">
+        <img class="profile-img" src="/dashboard/img/loginPhoto.jpg" alt="anon guy">
+
+        <form name="loginForm" role="form" class="form-signin" novalidate>
+          <input data-ng-model="formData.username" type="text" class="form-control" placeholder="Username" required autofocus data-ng-minlength="5">
+          <input type="password" class="form-control" placeholder="Password" required data-ng-model="formData.password" data-ng-minlength="5">
+          <button class="btn btn-lg btn-primary btn-block" type="button" data-ng-click="login()" data-ng-disabled="loginForm.$invalid">
+            Log in
+          </button>
+          <a href="#/recoverpass" class="pull-right need-help">Forgot your password?</a><span class="clearfix"></span>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
