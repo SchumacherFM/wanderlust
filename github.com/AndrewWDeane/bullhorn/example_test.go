@@ -1,8 +1,8 @@
 package bullhorn_test
 
 import (
-	. "github.com/SchumacherFM/wanderlust/github.com/AndrewWDeane/bullhorn"
 	"fmt"
+	. "github.com/SchumacherFM/wanderlust/github.com/AndrewWDeane/bullhorn"
 	"time"
 )
 
