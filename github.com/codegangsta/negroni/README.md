@@ -128,7 +128,7 @@ router := mux.NewRouter()
 adminRoutes := mux.NewRouter()
 // add admin routes here
 
-Create a new negroni for the admin middleware
+// Create a new negroni for the admin middleware
 router.Handle("/admin", negroni.New(
   Middleware1, 
   Middleware2, 
@@ -152,7 +152,11 @@ Here is a current list of Negroni compatible middlware. Feel free to put up a PR
 | [gzip](https://github.com/phyber/negroni-gzip) | [phyber](https://github.com/phyber) | GZIP response compression |
 | [oauth2](https://github.com/goincremental/negroni-oauth2) | [David Bochenski](https://github.com/bochenski) | oAuth2 middleware |
 | [sessions](https://github.com/goincremental/negroni-sessions) | [David Bochenski](https://github.com/bochenski) | Session Management |
+| [permissions](https://github.com/xyproto/permissions) | [Alexander Rødseth](https://github.com/xyproto) | Cookies, users and permissions |
+| [onthefly](https://github.com/xyproto/onthefly) | [Alexander Rødseth](https://github.com/xyproto) | Package for generating TinySVG, HTML and CSS on the fly |
 
+## Examples
+[Alexander Rødseth](https://github.com/xyproto) created [mooseware](https://github.com/xyproto/mooseware), a skeleton for writing a Negroni middleware handler.
 
 ## Live code reload?
 [gin](https://github.com/codegangsta/gin) and [fresh](https://github.com/pilu/fresh) both live reload negroni apps.
