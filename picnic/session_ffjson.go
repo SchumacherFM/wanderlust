@@ -68,7 +68,7 @@ func (mj *SessionInfo) MarshalJSONBuf(buf *bytes.Buffer) error {
 	} else {
 		buf.WriteString(`,`)
 	}
-	buf.WriteString(`"username":`)
+	buf.WriteString(`"userName":`)
 	helpers.Ffjson_WriteJsonString(buf, mj.UserName)
 	buf.WriteString(`}`)
 	return nil
