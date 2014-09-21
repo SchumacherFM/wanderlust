@@ -203,6 +203,7 @@ div.input-mask {
 .row.header .user > .item ul.dropdown-menu li.link a {
   padding-left: 7px;
   padding-right: 7px;
+  cursor: pointer;
 }
 .row.header .user > .item ul.dropdown-menu:before {
   position: absolute;

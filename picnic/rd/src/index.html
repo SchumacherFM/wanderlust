@@ -30,22 +30,32 @@
   <!-- build:js lib/angular/angular.js -->
   <script type="text/javascript" src="bower_components/angular/angular.js"></script>
   <!-- endbuild -->
-  <!-- build:js lib/angular-cookies/angular-cookies.js -->
+  <!-- build:js lib/angular/angular-resource.js -->
+  <script type="text/javascript" src="bower_components/angular-resource/angular-resource.js"></script>
+  <!-- endbuild -->
+  <!-- build:js lib/angular/angular-cookies.js -->
   <script type="text/javascript" src="bower_components/angular-cookies/angular-cookies.js"></script>
   <!-- endbuild -->
-  <!-- build:js lib/angular-bootstrap/ui-bootstrap.js -->
+  <!-- build:js lib/angular/ui-bootstrap.js -->
   <script type="text/javascript" src="bower_components/angular-bootstrap/ui-bootstrap.js"></script>
   <!-- endbuild -->
-  <!-- build:js lib/angular-bootstrap/ui-bootstrap-tpls.js -->
+  <!-- build:js lib/angular/ui-bootstrap-tpls.js -->
   <script type="text/javascript" src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
   <!-- endbuild -->
-  <!-- build:js lib/angular-ui-router/angular-ui-router.js -->
+  <!-- build:js lib/angular/angular-ui-router.js -->
   <script type="text/javascript" src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+  <!-- endbuild -->
+  <!-- build:js lib/angular/gravatar-md5.js -->
+  <script type="text/javascript" src="bower_components/angular-gravatar/build/md5.js"></script>
+  <!-- endbuild -->
+  <!-- build:js lib/angular/gravatar.js -->
+  <script type="text/javascript" src="bower_components/angular-gravatar/build/angular-gravatar.js"></script>
   <!-- endbuild -->
 
   <!-- build:js js/dashboard.js -->
   <script type="text/javascript" src="js/dashboard/module.js"></script>
   <script type="text/javascript" src="js/dashboard/routes.js"></script>
+  <script type="text/javascript" src="js/dashboard/services.js"></script>
   <script type="text/javascript" src="js/dashboard/controllers/master-ctrl.js"></script>
   <script type="text/javascript" src="js/dashboard/controllers/alerts-ctrl.js"></script>
   <script type="text/javascript" src="js/dashboard/directives/loading.js"></script>
@@ -119,10 +129,15 @@
         <div class="col-xs-12">
           <div class="user pull-right">
             <div class="item dropdown">
-              <a href="#" class="dropdown-toggle">
+
+              <a href="#" class="dropdown-toggle" data-ng-show="session.isLoggedIn">
+                <img gravatar-src="session.email" />
+              </a>
+              <a href="#" class="dropdown-toggle" data-ng-show="!session.isLoggedIn">
                 <img src="img/avatar.jpg">
               </a>
-              <ul class="dropdown-menu dropdown-menu-right">
+
+              <ul data-ng-show="session.isLoggedIn" class="dropdown-menu dropdown-menu-right">
                 <li class="dropdown-header"> Joe Bloggs</li>
                 <li class="divider"></li>
                 <li class="link">
@@ -136,9 +151,16 @@
                 </li>
                 <li class="divider"></li>
                 <li class="link">
-                  <a href="#"> Logout </a>
+                  <a data-ng-click="logout()" class="fa fa-sign-out"> Logout </a>
                 </li>
               </ul>
+
+              <ul data-ng-show="!session.isLoggedIn" class="dropdown-menu dropdown-menu-right">
+                <li class="link">
+                  <a data-ng-click="login()" class="fa fa-sign-in">  Login </a>
+                </li>
+              </ul>
+
             </div>
             <div class="item dropdown">
               <a href="#" class="dropdown-toggle">
