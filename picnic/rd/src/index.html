@@ -52,6 +52,10 @@
   <!-- build:js lib/angular/gravatar.js -->
   <script type="text/javascript" src="bower_components/angular-gravatar/build/angular-gravatar.js"></script>
   <!-- endbuild -->
+  <!-- build:js lib/angular/angulartics-piwik.js -->
+  <script type="text/javascript" src="bower_components/angulartics/src/angulartics.js"></script>
+  <script type="text/javascript" src="bower_components/angulartics/src/angulartics-piwik.js"></script>
+  <!-- endbuild -->
 
   <!-- build:js js/dashboard.js -->
   <script type="text/javascript" src="js/dashboard/module.js"></script>
@@ -93,27 +97,32 @@
       </li>
       <li class="sidebar-title separator"><span>QUICK LINKS</span></li>
       <li class="sidebar-list">
-        <a href="https://developers.google.com/analytics/devguides/reporting/" target="_blank">Google Analytics <span
+        <a href="https://developers.google.com/analytics/devguides/reporting/"
+           analytics-on="click" analytics-event="GA" analytics-category="Exit"
+           target="_blank">Google Analytics <span
             class="menu-icon fa fa-external-link"></span></a>
       </li>
       <li class="sidebar-list">
-        <a href="http://piwik.org/docs/analytics-api/" target="_blank">Piwik Analytics <span class="menu-icon fa fa-external-link"></span></a>
+        <a href="http://piwik.org/docs/analytics-api/"
+           analytics-on="click" analytics-event="Piwik" analytics-category="Exit"
+           target="_blank">Piwik Analytics <span class="menu-icon fa fa-external-link"></span></a>
       </li>
 
     </ul>
     <div class="sidebar-footer">
       <div class="col-xs-4">
-        <a href="https://github.com/SchumacherFM/wanderlust" target="_blank">
+        <a href="https://github.com/SchumacherFM/wanderlust" target="_blank" analytics-on="click" analytics-event="GHWL" analytics-category="Exit">
           Github
         </a>
       </div>
       <div class="col-xs-4">
-        <a href="https://github.com/SchumacherFM/wanderlust" target="_blank">
+        <a href="https://github.com/SchumacherFM/wanderlust" target="_blank" analytics-on="click" analytics-event="GHWL" analytics-category="Exit">
           About
         </a>
       </div>
       <div class="col-xs-4">
-        <a href="https://github.com/SchumacherFM/wanderlust/issues" target="_blank">
+        <a href="https://github.com/SchumacherFM/wanderlust/issues" target="_blank" analytics-on="click" analytics-event="GHWL Issues"
+           analytics-category="Exit">
           Support
         </a>
       </div>
@@ -135,7 +144,8 @@
               <a href="#" class="dropdown-toggle" data-ng-show="session.isLoggedIn">
                 <img gravatar-src="session.email"/>
               </a>
-              <a href="#" data-ng-click="login()" class="dropdown-toggle" data-ng-show="!session.isLoggedIn">
+              <a href="#" data-ng-click="login()" class="dropdown-toggle" data-ng-show="!session.isLoggedIn"
+                 analytics-on="click" analytics-event="Login" analytics-category="Auth">
                 <img src="img/avatar.jpg" alt="Please Login" title="Please log in">
               </a>
 
@@ -153,7 +163,7 @@
                 </li>
                 <li class="divider"></li>
                 <li class="link">
-                  <a data-ng-click="logout()" class="fa fa-sign-out"> Logout </a>
+                  <a data-ng-click="logout()" class="fa fa-sign-out" analytics-on="click" analytics-event="Logout" analytics-category="Auth"> Logout </a>
                 </li>
               </ul>
 
@@ -199,6 +209,24 @@
   <!-- End Content Wrapper -->
 </div>
 <!-- End Page Wrapper -->
+<!-- Piwik -->
+<script type="text/javascript">
+  var _paq = _paq || [];
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function () {
+    var u = "https://ssl.webpack.de/www.schumacher.fm/piwik/";
+    _paq.push(['setTrackerUrl', u + 'piwik.php']);
+    _paq.push(['setSiteId', 4]);
+    var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+    g.type = 'text/javascript';
+    g.async = true;
+    g.defer = true;
+    g.src = u + 'piwik.js';
+    s.parentNode.insertBefore(g, s);
+  })();
+</script>
+<!-- End Piwik Code -->
 
 </body>
 </html>

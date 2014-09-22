@@ -7,7 +7,9 @@ angular
     'ngResource',
     'ui.gravatar',
     'ui.bootstrap',
-    'picnic.services'
+    'picnic.services',
+    'angulartics',
+    'angulartics.piwik'
   ])
   .constant('picnicUrls', {
     auth: '/auth/',
