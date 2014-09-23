@@ -274,15 +274,17 @@ angular
     '$state',
     '$cookieStore',
     '$timeout',
+    '$analytics',
     'Session',
     'AuthResource',
     'Alert',
-    function ($scope, $state, $cookieStore, $timeout, Session, AuthResource, Alert) {
+    function ($scope, $state, $cookieStore, $timeout, $analytics, Session, AuthResource, Alert) {
 
       //<Alerts>
       $scope.alert = Alert;
       $scope.$watchCollection('alert.messages', function (newValue, oldValue) {
         $timeout(function () {
+            //  @todo        $analytics.eventTrack('alert.messages', {  category: 'category' });
           Alert.dismissLast();
         }, 3000);
       });

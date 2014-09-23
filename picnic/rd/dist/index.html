@@ -26,6 +26,25 @@
   <script src="js/dashboard.js"></script>
   <!-- SCRIPTS -->
 
+    <!-- Piwik -->
+    <script type="text/javascript">
+      var _paq = _paq || [];
+      _paq.push(['trackPageView']);
+      _paq.push(['enableLinkTracking']);
+      (function () {
+        var u = "https://ssl.webpack.de/www.schumacher.fm/piwik/";
+        _paq.push(['setTrackerUrl', u + 'piwik.php']);
+        _paq.push(['setSiteId', 4]);
+        var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+        g.type = 'text/javascript';
+        g.async = true;
+        g.defer = true;
+        g.src = u + 'piwik.js';
+        s.parentNode.insertBefore(g, s);
+      })();
+    </script>
+    <!-- End Piwik Code -->
+
 </head>
 <body ng-controller="MasterCtrl">
 <div id="page-wrapper" ng-class="{'active': toggle}" ng-cloak>
@@ -42,45 +61,51 @@
       </li>
       <li class="sidebar-title"><span>NAVIGATION</span></li>
       <li class="sidebar-list">
-        <a href="#">Dashboard <span class="menu-icon fa fa-tachometer"></span></a>
+        <a href="#" data-analytics-on="click" data-analytics-event="dashboard"
+           data-analytics-category="navigation">Dashboard <span class="menu-icon fa fa-tachometer"></span></a>
       </li>
       <li class="sidebar-list">
-        <a href="#/tables">Tables <span class="menu-icon fa fa-table"></span></a>
+        <a href="#/tables" data-analytics-on="click" data-analytics-event="tables"
+           data-analytics-category="navigation">Tables <span class="menu-icon fa fa-table"></span></a>
       </li>
       <li class="sidebar-list">
-        <a href="#">Servers <span class="menu-icon fa fa-tasks"></span></a>
+        <a href="#" data-analytics-on="click" data-analytics-event="servers"
+           data-analytics-category="navigation">Servers <span class="menu-icon fa fa-tasks"></span></a>
       </li>
       <li class="sidebar-list">
-        <a href="#">Settings <span class="menu-icon fa fa-cogs"></span></a>
+        <a href="#" data-analytics-on="click" data-analytics-event="settings"
+           data-analytics-category="navigation">Settings <span class="menu-icon fa fa-cogs"></span></a>
       </li>
       <li class="sidebar-title separator"><span>QUICK LINKS</span></li>
       <li class="sidebar-list">
         <a href="https://developers.google.com/analytics/devguides/reporting/"
-           analytics-on="click" analytics-event="GA" analytics-category="Exit"
+           data-analytics-on="click" data-analytics-event="googleanalytics" data-analytics-category="quicklinks"
            target="_blank">Google Analytics <span
             class="menu-icon fa fa-external-link"></span></a>
       </li>
       <li class="sidebar-list">
-        <a href="http://piwik.org/docs/analytics-api/"
-           analytics-on="click" analytics-event="Piwik" analytics-category="Exit"
+        <a href="http://piwik.org/docs/data-analytics-api/"
+           data-analytics-on="click" data-analytics-event="piwik" data-analytics-category="quicklinks"
            target="_blank">Piwik Analytics <span class="menu-icon fa fa-external-link"></span></a>
       </li>
 
     </ul>
     <div class="sidebar-footer">
       <div class="col-xs-4">
-        <a href="https://github.com/SchumacherFM/wanderlust" target="_blank" analytics-on="click" analytics-event="GHWL" analytics-category="Exit">
+        <a href="https://github.com/SchumacherFM/wanderlust" target="_blank"
+           data-analytics-on="click" data-analytics-event="repo" data-analytics-category="help">
           Github
         </a>
       </div>
       <div class="col-xs-4">
-        <a href="https://github.com/SchumacherFM/wanderlust" target="_blank" analytics-on="click" analytics-event="GHWL" analytics-category="Exit">
+        <a href="https://github.com/SchumacherFM/wanderlust" target="_blank"
+           data-analytics-on="click" data-analytics-event="about" data-analytics-category="help">
           About
         </a>
       </div>
       <div class="col-xs-4">
-        <a href="https://github.com/SchumacherFM/wanderlust/issues" target="_blank" analytics-on="click" analytics-event="GHWL Issues"
-           analytics-category="Exit">
+        <a href="https://github.com/SchumacherFM/wanderlust/issues" target="_blank"
+           data-analytics-on="click" data-analytics-event="issues" data-analytics-category="help">
           Support
         </a>
       </div>
@@ -103,7 +128,7 @@
                 <img gravatar-src="session.email"/>
               </a>
               <a href="#" data-ng-click="login()" class="dropdown-toggle" data-ng-show="!session.isLoggedIn"
-                 analytics-on="click" analytics-event="Login" analytics-category="Auth">
+                 data-analytics-on="click" data-analytics-event="login" data-analytics-category="auth">
                 <img src="img/avatar.jpg" alt="Please Login" title="Please log in">
               </a>
 
@@ -111,17 +136,20 @@
                 <li class="dropdown-header"> Joe Bloggs</li>
                 <li class="divider"></li>
                 <li class="link">
-                  <a href="#"> Profile </a>
+                  <a href="#" data-analytics-on="click" data-analytics-event="profile"
+                     data-analytics-category="auth"> Profile </a>
                 </li>
                 <li class="link">
-                  <a href="#"> Menu Item </a>
+                  <a href="#" data-analytics-on="click" data-analytics-event="menuitem"
+                     data-analytics-category="auth"> Menu Item </a>
                 </li>
                 <li class="link">
                   <a href="#"> Menu Item </a>
                 </li>
                 <li class="divider"></li>
                 <li class="link">
-                  <a data-ng-click="logout()" class="fa fa-sign-out" analytics-on="click" analytics-event="Logout" analytics-category="Auth"> Logout </a>
+                  <a data-ng-click="logout()" class="fa fa-sign-out" data-analytics-on="click"
+                     data-analytics-event="logout" data-analytics-category="auth"> Logout </a>
                 </li>
               </ul>
 
@@ -167,24 +195,5 @@
   <!-- End Content Wrapper -->
 </div>
 <!-- End Page Wrapper -->
-<!-- Piwik -->
-<script type="text/javascript">
-  var _paq = _paq || [];
-  _paq.push(['trackPageView']);
-  _paq.push(['enableLinkTracking']);
-  (function () {
-    var u = "https://ssl.webpack.de/www.schumacher.fm/piwik/";
-    _paq.push(['setTrackerUrl', u + 'piwik.php']);
-    _paq.push(['setSiteId', 4]);
-    var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
-    g.type = 'text/javascript';
-    g.async = true;
-    g.defer = true;
-    g.src = u + 'piwik.js';
-    s.parentNode.insertBefore(g, s);
-  })();
-</script>
-<!-- End Piwik Code -->
-
 </body>
 </html>

@@ -9,10 +9,14 @@
         <form name="loginForm" role="form" class="form-signin" novalidate>
           <input data-ng-model="formData.username" type="text" class="form-control" placeholder="Username" required autofocus data-ng-minlength="5">
           <input type="password" class="form-control" placeholder="Password" required data-ng-model="formData.password" data-ng-minlength="5">
-          <button class="btn btn-lg btn-primary btn-block" type="button" data-ng-click="login()" data-ng-disabled="loginForm.$invalid">
+          <button class="btn btn-lg btn-primary btn-block" type="button"
+                  data-analytics-on="click" data-analytics-event="submitlogin" data-analytics-category="auth"
+                  data-ng-click="login()" data-ng-disabled="loginForm.$invalid">
             Log in
           </button>
-          <a href="#/recoverpass" class="pull-right need-help">Forgot your password?</a><span class="clearfix"></span>
+          <a href="#/recoverpass" class="pull-right need-help"
+             data-analytics-on="click" data-analytics-event="recoverpass" data-analytics-category="auth">
+            Forgot your password?</a><span class="clearfix"></span>
         </form>
 
       </div>
