@@ -27,6 +27,7 @@ angular.module('Dashboard').config([
         templateUrl: 'partials/tables.html'
       });
 
+    $httpProvider.interceptors.push('AuthInterceptor');
     $httpProvider.interceptors.push('ErrorInterceptor');
 
   }]);

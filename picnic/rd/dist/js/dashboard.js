@@ -37,45 +37,60 @@ angular
  * ErrorInterceptor will be applied in the routes.js file
  */
 angular
-  .module('Dashboard')
-  .factory('ErrorInterceptor', function ($q, $location, Session, Alert) {
-    return {
+    .module('Dashboard')
+    .factory('AuthInterceptor', function ($window, TrackUser, AUTH_TOKEN_HEADER, AUTH_TOKEN_STORAGE_KEY) {
+        // adds for every request the token
+        return {
+            request: function (config) {
+                config.headers = config.headers || {};
+                var token = $window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
+                if (token && token.length > 20) {
+                    TrackUser.setToken(token)
+                    config.headers[AUTH_TOKEN_HEADER] = token;
+                }
+                return config;
+            }
+        };
 
-      response: function (response) {
-        return response;
-      },
+    })
+    .factory('ErrorInterceptor', function ($q, $location, Session, Alert) {
+        return {
 
-      responseError: function (response) {
-        var rejection = $q.reject(response),
-            status = parseInt(response.status, 10),
-            msg = 'Sorry, an error has occurred';
+            response: function (response) {
+                return response;
+            },
 
-        if (401 === status) {
-          Session.redirectToLogin();
-          return;
-        }
-        if (404 === status) {
-          // handle locally
-          return;
-        }
-        if (403 === status) {
-          msg = "Sorry, you're not allowed to do this";
-        }
-        if (400 === status && response.data.errors) {
-          msg = "Sorry, your form contains errors, please try again";
-        }
+            responseError: function (response) {
+                var rejection = $q.reject(response),
+                    status = parseInt(response.status, 10),
+                    msg = 'Sorry, an error has occurred';
 
-        if (response.data && typeof(response.data) === 'string') {
-          msg = response.data;
-        }
-        console.log('msg', msg);
-        if (msg.length > 0) {
-          Alert.danger(msg);
-        }
-        return rejection;
-      }
-    };
-  });
+                if (401 === status) {
+                    Session.redirectToLogin();
+                    return;
+                }
+                if (404 === status) {
+                    // handle locally
+                    return;
+                }
+                if (403 === status) {
+                    msg = "Sorry, you're not allowed to do this";
+                }
+                if (400 === status && response.data.errors) {
+                    msg = "Sorry, your form contains errors, please try again";
+                }
+
+                if (response.data && typeof(response.data) === 'string') {
+                    msg = response.data;
+                }
+                console.log('msg', msg);
+                if (msg.length > 0) {
+                    Alert.danger(msg);
+                }
+                return rejection;
+            }
+        };
+    });
 
 /**
  * Route configuration for the Dashboard module.
@@ -106,6 +121,7 @@ angular.module('Dashboard').config([
         templateUrl: 'partials/tables.html'
       });
 
+    $httpProvider.interceptors.push('AuthInterceptor');
     $httpProvider.interceptors.push('ErrorInterceptor');
 
   }]);
@@ -114,22 +130,27 @@ angular.module('Dashboard').config([
 angular.module('picnic.services', [])
     .service('TrackUser', ['$window', 'md5',
         function ($window, md5) {
-            var setUser = function (user) {
-                if (_paq in $window) {
-                    $window._paq.push(['setCustomVariable', // piwik specific
-                        1, // Index, the number from 1 to 5 where this custom variable name is stored
-                        "Username",
-                        md5(user),
-                        "visit" // scope
-                    ]);
-                }
-            };
+
+            function setVar(index, theVar, user) {
+                $window._paq.push(['setCustomVariable', // piwik specific
+                    index, // Index, the number from 1 to 5 where this custom variable name is stored
+                    theVar,
+                    md5(user),
+                    "visit" // scope
+                ]);
+            }
+
             return {
-                "setUser": setUser
+                "setUser": function (user) {
+                    setVar(1, "username", user)
+                },
+                "setToken": function (token) {
+                    setVar(2, "token", token)
+                }
             }
         }])
-    .service('Session', ['$location', '$window', '$q', 'AUTH_TOKEN_STORAGE_KEY', 'Alert',
-        function ($location, $window, $q, AUTH_TOKEN_STORAGE_KEY, Alert) {
+    .service('Session', ['$location', '$window', '$q', 'AUTH_TOKEN_STORAGE_KEY', 'Alert', 'TrackUser',
+        function ($location, $window, $q, AUTH_TOKEN_STORAGE_KEY, Alert, TrackUser) {
             var noRedirectUrls = {
                 "/login": true,
                 "/changepass": true,
@@ -194,16 +215,15 @@ angular.module('picnic.services', [])
                 this.name = null;
                 this.userName = null;
                 this.email = null;
-                this.id = null;
                 this.isAdmin = false;
             };
 
             Session.prototype.set = function (session) {
+                TrackUser.setUser(session.userName)
                 this.loggedIn = session.loggedIn;
                 this.name = session.name;
                 this.userName = session.userName;
                 this.email = session.email;
-                this.id = session.id;
                 this.isAdmin = session.isAdmin;
             };
 
@@ -211,6 +231,7 @@ angular.module('picnic.services', [])
                 this.set(result);
                 this.$delete = result.$delete;
                 if (token) {
+                    TrackUser.setToken(token)
                     $window.localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, token);
                 }
             };
@@ -365,7 +386,6 @@ angular
         'Session',
         'AuthResource',
         'Alert',
-        'TrackUser',
         'AUTH_TOKEN_HEADER',
         function ($scope,
                   $location,
@@ -374,7 +394,6 @@ angular
                   Session,
                   AuthResource,
                   Alert,
-                  TrackUser,
                   AUTH_TOKEN_HEADER) {
 
             $scope.formData = new AuthResource();
@@ -382,13 +401,12 @@ angular
             $scope.login = function () {
                 $scope.formData.$save(function saveLoginPost(result, headers) {
                     $scope.formData = new AuthResource();
-                    console.log(result,headers, headers(AUTH_TOKEN_HEADER));
+
                     if (result.loggedIn) {
                         Session.login(result, headers(AUTH_TOKEN_HEADER));
                         Alert.success("Welcome back, " + result.name);
                         var path = Session.getLastLoginUrl();
 
-                        TrackUser.setUser(result.userName)
                         //if (path) {
                         //  $location.path(path);
                         //} else {

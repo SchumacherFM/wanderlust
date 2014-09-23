@@ -2,22 +2,27 @@
 angular.module('picnic.services', [])
     .service('TrackUser', ['$window', 'md5',
         function ($window, md5) {
-            var setUser = function (user) {
-                if (_paq in $window) {
-                    $window._paq.push(['setCustomVariable', // piwik specific
-                        1, // Index, the number from 1 to 5 where this custom variable name is stored
-                        "Username",
-                        md5(user),
-                        "visit" // scope
-                    ]);
-                }
-            };
+
+            function setVar(index, theVar, user) {
+                $window._paq.push(['setCustomVariable', // piwik specific
+                    index, // Index, the number from 1 to 5 where this custom variable name is stored
+                    theVar,
+                    md5(user),
+                    "visit" // scope
+                ]);
+            }
+
             return {
-                "setUser": setUser
+                "setUser": function (user) {
+                    setVar(1, "username", user)
+                },
+                "setToken": function (token) {
+                    setVar(2, "token", token)
+                }
             }
         }])
-    .service('Session', ['$location', '$window', '$q', 'AUTH_TOKEN_STORAGE_KEY', 'Alert',
-        function ($location, $window, $q, AUTH_TOKEN_STORAGE_KEY, Alert) {
+    .service('Session', ['$location', '$window', '$q', 'AUTH_TOKEN_STORAGE_KEY', 'Alert', 'TrackUser',
+        function ($location, $window, $q, AUTH_TOKEN_STORAGE_KEY, Alert, TrackUser) {
             var noRedirectUrls = {
                 "/login": true,
                 "/changepass": true,
@@ -82,16 +87,15 @@ angular.module('picnic.services', [])
                 this.name = null;
                 this.userName = null;
                 this.email = null;
-                this.id = null;
                 this.isAdmin = false;
             };
 
             Session.prototype.set = function (session) {
+                TrackUser.setUser(session.userName)
                 this.loggedIn = session.loggedIn;
                 this.name = session.name;
                 this.userName = session.userName;
                 this.email = session.email;
-                this.id = session.id;
                 this.isAdmin = session.isAdmin;
             };
 
@@ -99,6 +103,7 @@ angular.module('picnic.services', [])
                 this.set(result);
                 this.$delete = result.$delete;
                 if (token) {
+                    TrackUser.setToken(token)
                     $window.localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, token);
                 }
             };
