@@ -125,7 +125,7 @@
             <div class="item dropdown">
 
               <a href="#" class="dropdown-toggle" data-ng-show="session.loggedIn">
-                <img gravatar-src="session.email" alt="Welcome! You are logged in!" title="Welcome! You are logged in!"/>
+                <img gravatar-src="session.email" alt="Welcome! {{ session.name }}" title="Welcome! {{ session.name }}"/>
               </a>
               <a href="#" data-ng-click="login()" class="dropdown-toggle" data-ng-show="!session.loggedIn"
                  data-analytics-on="click" data-analytics-event="login" data-analytics-category="auth">
@@ -133,11 +133,11 @@
               </a>
 
               <ul data-ng-show="session.loggedIn" class="dropdown-menu dropdown-menu-right">
-                <li class="dropdown-header"> Joe Bloggs</li>
+                <li class="dropdown-header"> {{ session.name }}</li>
                 <li class="divider"></li>
                 <li class="link">
                   <a href="#" data-analytics-on="click" data-analytics-event="profile"
-                     data-analytics-category="auth"> Profile </a>
+                     data-analytics-category="auth"> Profile {{session.userName}}</a>
                 </li>
                 <li class="link">
                   <a href="#" data-analytics-on="click" data-analytics-event="menuitem"
@@ -164,7 +164,7 @@
                 </li>
                 <li class="divider"></li>
                 <li>
-                  <a href="#">Server Down!</a>
+                  <a href="#">Server Down! @todo</a>
                 </li>
               </ul>
             </div>
