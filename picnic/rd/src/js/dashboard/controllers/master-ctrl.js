@@ -20,7 +20,7 @@ angular
       $scope.alert = Alert;
       $scope.$watchCollection('alert.messages', function (newValue, oldValue) {
         $timeout(function () {
-            //  @todo        $analytics.eventTrack('alert.messages', {  category: 'category' });
+          //  @todo        $analytics.eventTrack('alert.messages', {  category: 'category' });
           Alert.dismissLast();
         }, 3000);
       });
@@ -32,13 +32,13 @@ angular
 
       $scope.logout = function () {
         Session.logout().then(function () {
-          $state.go("/");
+          $state.go('index');
         });
       };
 
       $scope.login = function () {
         Session.setLastLoginUrl();
-        $state.go("login");
+        $state.go('login');
       };
       //</Sessions>
 
