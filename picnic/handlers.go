@@ -54,6 +54,7 @@ func (p *PicnicApp) getHandler() *negroni.Negroni {
 
 	p.initRoutesAuth(router)
 	p.initRoutesUsers(router)
+	p.initRoutesSystemInfo(router)
 
 	brotzeitApi := router.PathPrefix("/brotzeit/").Subrouter()
 	brotzeitApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")

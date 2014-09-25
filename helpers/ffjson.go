@@ -88,3 +88,79 @@ func Ffjson_WriteJsonString(buf *bytes.Buffer, s string) {
 	}
 	buf.WriteByte('"')
 }
+
+func Ffjson_FormatBits(dst *bytes.Buffer, u uint64, base int, neg bool) {
+	const (
+		digits   = "0123456789abcdefghijklmnopqrstuvwxyz"
+		digits01 = "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
+		digits10 = "0000000000111111111122222222223333333333444444444455555555556666666666777777777788888888889999999999"
+	)
+
+	var shifts = [len(digits) + 1]uint{
+		1 << 1: 1,
+		1 << 2: 2,
+		1 << 3: 3,
+		1 << 4: 4,
+		1 << 5: 5,
+	}
+
+	if base < 2 || base > len(digits) {
+		panic("strconv: illegal AppendInt/FormatInt base")
+	}
+
+	var a [64 + 1]byte
+	i := len(a)
+
+	if neg {
+		u = -u
+	}
+
+	if base == 10 {
+
+		for u >= 100 {
+			i -= 2
+			q := u / 100
+			j := uintptr(u - q*100)
+			a[i+1] = digits01[j]
+			a[i+0] = digits10[j]
+			u = q
+		}
+		if u >= 10 {
+			i--
+			q := u / 10
+			a[i] = digits[uintptr(u-q*10)]
+			u = q
+		}
+
+	} else if s := shifts[base]; s > 0 {
+
+		b := uint64(base)
+		m := uintptr(b) - 1
+		for u >= b {
+			i--
+			a[i] = digits[uintptr(u)&m]
+			u >>= s
+		}
+
+	} else {
+
+		b := uint64(base)
+		for u >= b {
+			i--
+			a[i] = digits[uintptr(u%b)]
+			u /= b
+		}
+	}
+
+	i--
+	a[i] = digits[uintptr(u)]
+
+	if neg {
+		i--
+		a[i] = '-'
+	}
+
+	dst.Write(a[i:])
+
+	return
+}

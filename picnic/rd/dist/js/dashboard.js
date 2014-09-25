@@ -304,9 +304,7 @@ angular.module('picnic.services', [])
  */
 angular
   .module('Dashboard')
-  .controller(
-  'MasterCtrl',
-  [
+  .controller('MasterCtrl', [
     '$scope',
     '$state',
     '$cookieStore',
@@ -373,8 +371,13 @@ angular
       };
 
     }
-  ]
-);
+  ])
+  .controller('systemInfo', [
+    '$scope',
+    function ($scope) {
+
+    }
+  ]);
 
 angular
   .module('Dashboard')
