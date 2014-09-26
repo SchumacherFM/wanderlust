@@ -27,7 +27,7 @@ const (
 	USER_PASSWORD_LENGTH      = 24
 	USER_RECOVERY_CODE_LENGTH = 30
 	USER_DB_COLLECTION_NAME   = "users"
-	USER_ROOT                 = "adiministrator"
+	USER_ROOT                 = "administrator"
 )
 
 //type permissions struct {
