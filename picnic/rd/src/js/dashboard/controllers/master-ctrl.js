@@ -8,15 +8,14 @@ angular
     '$state',
     '$cookieStore',
     '$timeout',
-    '$analytics',
     'Session',
     'AuthResource',
     'Alert',
-    function ($scope, $state, $cookieStore, $timeout, $analytics, Session, AuthResource, Alert) {
+    function ($scope, $state, $cookieStore, $timeout, Session, AuthResource, Alert) {
 
       //<Alerts>
       $scope.alert = Alert;
-      $scope.$watchCollection('alert.messages', function (newValue, oldValue) {
+      $scope.$watchCollection('alert.messages', function () {
         $timeout(function () {
           //  @todo        $analytics.eventTrack('alert.messages', {  category: 'category' });
           Alert.dismissLast();
@@ -47,16 +46,14 @@ angular
       $scope.getWidth = function () {
         return window.innerWidth;
       };
-      $scope.$watch($scope.getWidth, function (newValue, oldValue) {
+      $scope.$watch($scope.getWidth, function (newValue) {
         if (newValue >= mobileView) {
           if (angular.isDefined($cookieStore.get('toggle'))) {
             $scope.toggle = !$cookieStore.get('toggle');
-          }
-          else {
+          } else {
             $scope.toggle = true;
           }
-        }
-        else {
+        } else {
           $scope.toggle = false;
         }
       });
@@ -75,47 +72,43 @@ angular
     '$scope',
     '$timeout',
     'SysInfoResource',
-    function ($scope, $timeout, SysInfoResource) {
-      var loggedOut = !$scope.session.loggedIn;
+    'SysInfoWidgets',
+    function ($scope, $timeout, SysInfoResource, SysInfoWidgets) {
+      var loggedIn = $scope.session.isLoggedIn(),
+          timeoutSecs = 3000,
+          timeoutPromise;
 
-      (function tick() { // @todo should be websocket
-        $scope.xdata = SysInfoResource.get(function () {
-          $timeout(tick, 1000);
+      function tick() { // @todo should be websocket
+        SysInfoResource.get().$promise.then(function success(data) {
+          angular.forEach(data, function (v, k) {
+            if (SysInfoWidgets[k]) {
+              SysInfoWidgets[k].title = parseInt(v, 10); // fight against all evil ;-)
+            }
+          });
+          $scope.sysInfoWidgets = SysInfoWidgets;
+          timeoutPromise = $timeout(tick, timeoutSecs);
+        }, function error() {
+          // this interval cancels itself when the user logs out
+          loggedIn = $scope.session.isLoggedIn();
+          angular.forEach(SysInfoWidgets, function (obj) {
+            obj.loading = !loggedIn;
+          });
+          $scope.sysInfoWidgets = SysInfoWidgets;
         });
+      }
 
-        console.log($scope.xdata)
+      if (true === loggedIn) {
+        tick();
+      }
+      $scope.sysInfoWidgets = SysInfoWidgets;
 
-      })();
-
-      $scope.sysInfoWidgets = [
-        {
-          "icon": "fa-gears",
-          "title": 80,
-          "comment": "Workers",
-          "loading": loggedOut,
-          iconColor: "green"
-        },
-        {
-          "icon": "fa-globe",
-          "title": 136,
-          "comment": "Wanderers",
-          "loading": loggedOut,
-          iconColor: "orange"
-        },
-        {
-          "icon": "fa-download",
-          "title": 16,
-          "comment": "Brotzeit",
-          "loading": loggedOut,
-          iconColor: "red"
-        },
-        {
-          "icon": "fa-database",
-          "title": 3,
-          "comment": "Provisioners",
-          "loading": loggedOut,
-          iconColor: "blue"
+      // Cancel interval on page changes
+      $scope.$on('$destroy', function () {
+        if (angular.isDefined(timeoutPromise)) {
+          $timeout.cancel(timeoutPromise);
+          timeoutPromise = undefined;
         }
-      ];
+      });
+
     }
   ]);

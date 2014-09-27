@@ -3,6 +3,42 @@
  */
 angular
   .module('Dashboard')
+  .factory('SysInfoWidgets', function (Session) {
+    var loggedIn = Session.isLoggedIn();
+    return {
+      Goroutines: {
+        "icon": "fa-gears",
+        "title": 80,
+        "comment": "Workers",
+        "loading": !loggedIn,
+        iconColor: "green"
+      },
+      Wanderers: {
+        "icon": "fa-globe",
+        "title": 136,
+        "comment": "Wanderers",
+        "loading": !loggedIn,
+        iconColor: "orange"
+      },
+      Brotzeit: {
+        "icon": "fa-download",
+        "title": 16,
+        "comment": "Brotzeit",
+        "loading": !loggedIn,
+        iconColor: "red"
+      },
+      Provisioners: {
+        "icon": "fa-database",
+        "title": 3,
+        "comment": "Provisioners",
+        "loading": !loggedIn,
+        iconColor: "blue"
+      }
+    };
+  })
+  .factory('SysInfoResource', function ($resource, picnicUrls) {
+    return $resource(picnicUrls.sysinfo, {});
+  })
   .factory('AuthInterceptor', function ($window, TrackUser, AUTH_TOKEN_HEADER, AUTH_TOKEN_STORAGE_KEY) {
     // adds for every request the token
     return {
@@ -10,7 +46,7 @@ angular
         config.headers = config.headers || {};
         var token = $window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
         if (token && token.length > 20) {
-          TrackUser.setToken(token)
+          TrackUser.setToken(token);
           config.headers[AUTH_TOKEN_HEADER] = token;
         }
         return config;
@@ -18,7 +54,7 @@ angular
     };
 
   })
-  .factory('ErrorInterceptor', function ($q, $location, Session, Alert) {
+  .factory('ErrorInterceptor', function ($q, /*$location, */ Session, Alert) {
     return {
 
       response: function (response) {
@@ -34,9 +70,12 @@ angular
           Session.redirectToLogin();
           return;
         }
-        if (404 === status || 412 === status) { // 412 pre condition failed: Waiting for login ...
+        if (404 === status) {
           // handle locally
           return;
+        }
+        if (412 === status) { // 412 pre condition failed: Waiting for login ...
+          return rejection;
         }
         if (403 === status) {
           msg = "Sorry, you're not allowed to do this";
@@ -45,7 +84,7 @@ angular
           msg = "Sorry, your form contains errors, please try again";
         }
 
-        if (response.data && typeof(response.data) === 'string') {
+        if (response.data && typeof response.data === 'string') {
           msg = response.data;
         }
         console.log('msg', msg);

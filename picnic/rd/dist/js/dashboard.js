@@ -1,4 +1,5 @@
 (function(){ 
+'use strict';
 angular
   .module('Dashboard', [
     'ui.bootstrap',
@@ -39,6 +40,42 @@ angular
  */
 angular
   .module('Dashboard')
+  .factory('SysInfoWidgets', function (Session) {
+    var loggedIn = Session.isLoggedIn();
+    return {
+      Goroutines: {
+        "icon": "fa-gears",
+        "title": 80,
+        "comment": "Workers",
+        "loading": !loggedIn,
+        iconColor: "green"
+      },
+      Wanderers: {
+        "icon": "fa-globe",
+        "title": 136,
+        "comment": "Wanderers",
+        "loading": !loggedIn,
+        iconColor: "orange"
+      },
+      Brotzeit: {
+        "icon": "fa-download",
+        "title": 16,
+        "comment": "Brotzeit",
+        "loading": !loggedIn,
+        iconColor: "red"
+      },
+      Provisioners: {
+        "icon": "fa-database",
+        "title": 3,
+        "comment": "Provisioners",
+        "loading": !loggedIn,
+        iconColor: "blue"
+      }
+    };
+  })
+  .factory('SysInfoResource', function ($resource, picnicUrls) {
+    return $resource(picnicUrls.sysinfo, {});
+  })
   .factory('AuthInterceptor', function ($window, TrackUser, AUTH_TOKEN_HEADER, AUTH_TOKEN_STORAGE_KEY) {
     // adds for every request the token
     return {
@@ -46,7 +83,7 @@ angular
         config.headers = config.headers || {};
         var token = $window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
         if (token && token.length > 20) {
-          TrackUser.setToken(token)
+          TrackUser.setToken(token);
           config.headers[AUTH_TOKEN_HEADER] = token;
         }
         return config;
@@ -54,7 +91,7 @@ angular
     };
 
   })
-  .factory('ErrorInterceptor', function ($q, $location, Session, Alert) {
+  .factory('ErrorInterceptor', function ($q, /*$location, */ Session, Alert) {
     return {
 
       response: function (response) {
@@ -70,9 +107,12 @@ angular
           Session.redirectToLogin();
           return;
         }
-        if (404 === status || 412 === status) { // 412 pre condition failed: Waiting for login ...
+        if (404 === status) {
           // handle locally
           return;
+        }
+        if (412 === status) { // 412 pre condition failed: Waiting for login ...
+          return rejection;
         }
         if (403 === status) {
           msg = "Sorry, you're not allowed to do this";
@@ -81,7 +121,7 @@ angular
           msg = "Sorry, your form contains errors, please try again";
         }
 
-        if (response.data && typeof(response.data) === 'string') {
+        if (response.data && typeof response.data === 'string') {
           msg = response.data;
         }
         console.log('msg', msg);
@@ -228,11 +268,15 @@ angular.module('picnic.services', [])
         this.isAdmin = session.isAdmin;
       };
 
+      Session.prototype.isLoggedIn = function () {
+        return this.loggedIn === true;
+      };
+
       Session.prototype.login = function (result, token) {
         this.set(result);
         this.$delete = result.$delete;
         if (token) {
-          TrackUser.setToken(token)
+          TrackUser.setToken(token);
           $window.localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, token);
         }
       };
@@ -298,13 +342,6 @@ angular.module('picnic.services', [])
       return new Alert();
 
     }
-  ])
-  .service('SysInfoResource', [
-    '$resource',
-    'picnicUrls',
-    function ($resource, picnicUrls) {
-      return $resource(picnicUrls.sysinfo, {});
-    }
   ]);
 
 /**
@@ -317,15 +354,14 @@ angular
     '$state',
     '$cookieStore',
     '$timeout',
-    '$analytics',
     'Session',
     'AuthResource',
     'Alert',
-    function ($scope, $state, $cookieStore, $timeout, $analytics, Session, AuthResource, Alert) {
+    function ($scope, $state, $cookieStore, $timeout, Session, AuthResource, Alert) {
 
       //<Alerts>
       $scope.alert = Alert;
-      $scope.$watchCollection('alert.messages', function (newValue, oldValue) {
+      $scope.$watchCollection('alert.messages', function () {
         $timeout(function () {
           //  @todo        $analytics.eventTrack('alert.messages', {  category: 'category' });
           Alert.dismissLast();
@@ -356,16 +392,14 @@ angular
       $scope.getWidth = function () {
         return window.innerWidth;
       };
-      $scope.$watch($scope.getWidth, function (newValue, oldValue) {
+      $scope.$watch($scope.getWidth, function (newValue) {
         if (newValue >= mobileView) {
           if (angular.isDefined($cookieStore.get('toggle'))) {
             $scope.toggle = !$cookieStore.get('toggle');
-          }
-          else {
+          } else {
             $scope.toggle = true;
           }
-        }
-        else {
+        } else {
           $scope.toggle = false;
         }
       });
@@ -384,48 +418,44 @@ angular
     '$scope',
     '$timeout',
     'SysInfoResource',
-    function ($scope, $timeout, SysInfoResource) {
-      var loggedOut = !$scope.session.loggedIn;
+    'SysInfoWidgets',
+    function ($scope, $timeout, SysInfoResource, SysInfoWidgets) {
+      var loggedIn = $scope.session.isLoggedIn(),
+          timeoutSecs = 3000,
+          timeoutPromise;
 
-      (function tick() { // @todo should be websocket
-        $scope.xdata = SysInfoResource.get(function () {
-          $timeout(tick, 1000);
+      function tick() { // @todo should be websocket
+        SysInfoResource.get().$promise.then(function success(data) {
+          angular.forEach(data, function (v, k) {
+            if (SysInfoWidgets[k]) {
+              SysInfoWidgets[k].title = parseInt(v, 10); // fight against all evil ;-)
+            }
+          });
+          $scope.sysInfoWidgets = SysInfoWidgets;
+          timeoutPromise = $timeout(tick, timeoutSecs);
+        }, function error() {
+          // this interval cancels itself when the user logs out
+          loggedIn = $scope.session.isLoggedIn();
+          angular.forEach(SysInfoWidgets, function (obj) {
+            obj.loading = !loggedIn;
+          });
+          $scope.sysInfoWidgets = SysInfoWidgets;
         });
+      }
 
-        console.log($scope.xdata)
+      if (true === loggedIn) {
+        tick();
+      }
+      $scope.sysInfoWidgets = SysInfoWidgets;
 
-      })();
-
-      $scope.sysInfoWidgets = [
-        {
-          "icon": "fa-gears",
-          "title": 80,
-          "comment": "Workers",
-          "loading": loggedOut,
-          iconColor: "green"
-        },
-        {
-          "icon": "fa-globe",
-          "title": 136,
-          "comment": "Wanderers",
-          "loading": loggedOut,
-          iconColor: "orange"
-        },
-        {
-          "icon": "fa-download",
-          "title": 16,
-          "comment": "Brotzeit",
-          "loading": loggedOut,
-          iconColor: "red"
-        },
-        {
-          "icon": "fa-database",
-          "title": 3,
-          "comment": "Provisioners",
-          "loading": loggedOut,
-          iconColor: "blue"
+      // Cancel interval on page changes
+      $scope.$on('$destroy', function () {
+        if (angular.isDefined(timeoutPromise)) {
+          $timeout.cancel(timeoutPromise);
+          timeoutPromise = undefined;
         }
-      ];
+      });
+
     }
   ]);
 

@@ -99,11 +99,15 @@ angular.module('picnic.services', [])
         this.isAdmin = session.isAdmin;
       };
 
+      Session.prototype.isLoggedIn = function () {
+        return this.loggedIn === true;
+      };
+
       Session.prototype.login = function (result, token) {
         this.set(result);
         this.$delete = result.$delete;
         if (token) {
-          TrackUser.setToken(token)
+          TrackUser.setToken(token);
           $window.localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, token);
         }
       };
@@ -168,12 +172,5 @@ angular.module('picnic.services', [])
 
       return new Alert();
 
-    }
-  ])
-  .service('SysInfoResource', [
-    '$resource',
-    'picnicUrls',
-    function ($resource, picnicUrls) {
-      return $resource(picnicUrls.sysinfo, {});
     }
   ]);
