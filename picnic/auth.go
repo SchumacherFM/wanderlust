@@ -23,28 +23,42 @@ import (
 type authLevel int
 
 const (
-	AUTH_LEVEL_IGNORE authLevel = iota + 1 // we don't need the user in this handler
-	AUTH_LEVEL_CHECK                       // prefetch user, doesn't matter if not logged in
-	AUTH_LEVEL_LOGIN                       // user required, 401 if not available
-	AUTH_LEVEL_ADMIN                       // admin required, 401 if no user, 403 if not admin
+	AUTH_LEVEL_IGNORE     authLevel = iota + 1 // we don't need the user in this handler
+	AUTH_LEVEL_CHECK                           // prefetch user, doesn't matter if not logged in
+	AUTH_LEVEL_LOGIN_WAIT                      // user required, 412 if not available
+	AUTH_LEVEL_LOGIN                           // user required, 401 if not available
+	AUTH_LEVEL_ADMIN                           // admin required, 401 if no user, 403 if not admin
 )
 
 func checkAuthLevel(level authLevel, user userPermissionsIf) error {
-	var errLoginRequired = httpError{
-		Status:      http.StatusUnauthorized,
-		Description: "You must be logged in!",
-	}
+	var (
+		errLoginRequired = httpError{
+			Status:      http.StatusUnauthorized,
+			Description: "You must be logged in!",
+		}
+		errWaitingForLogin = httpError{
+			Status:      http.StatusPreconditionFailed,
+			Description: "Waiting for login ...",
+		}
+		falseUser = nil == user || false == user.isAuthenticated()
+	)
 
 	switch level {
+	case AUTH_LEVEL_LOGIN_WAIT:
+		if falseUser {
+			logger.Debug("checkAuthLevel 46: user %#v", user)
+			return errWaitingForLogin
+		}
+		break
 	case AUTH_LEVEL_LOGIN:
-		if nil == user || false == user.isAuthenticated() {
-			logger.Debug("checkAuthLevel 41: user %#v", user)
+		if falseUser {
+			logger.Debug("checkAuthLevel 52: user %#v", user)
 			return errLoginRequired
 		}
 		break
 	case AUTH_LEVEL_ADMIN:
-		if nil == user || false == user.isAuthenticated() {
-			logger.Debug("checkAuthLevel 47: user %#v", user)
+		if falseUser {
+			logger.Debug("checkAuthLevel 59: user %#v", user)
 			return errLoginRequired
 		}
 		if false == user.isAdmin() {

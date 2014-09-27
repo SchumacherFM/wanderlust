@@ -34,7 +34,7 @@ angular
           Session.redirectToLogin();
           return;
         }
-        if (404 === status) {
+        if (404 === status || 412 === status) { // 412 pre condition failed: Waiting for login ...
           // handle locally
           return;
         }

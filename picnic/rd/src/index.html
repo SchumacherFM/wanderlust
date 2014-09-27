@@ -65,27 +65,30 @@
   <script type="text/javascript" src="js/dashboard/controllers/master-ctrl.js"></script>
   <script type="text/javascript" src="js/dashboard/controllers/login-ctrl.js"></script>
   <script type="text/javascript" src="js/dashboard/directives/loading.js"></script>
+  <script type="text/javascript" src="js/dashboard/directives/widget.js"></script>
+  <script type="text/javascript" src="js/dashboard/directives/widget-header.js"></script>
+  <script type="text/javascript" src="js/dashboard/directives/widget-body.js"></script>
   <!-- endbuild -->
   <!-- SCRIPTS -->
 
-    <!-- Piwik -->
-    <script type="text/javascript">
-      var _paq = _paq || [];
-      _paq.push(['trackPageView']);
-      _paq.push(['enableLinkTracking']);
-      (function () {
-        var u = "https://ssl.webpack.de/www.schumacher.fm/piwik/";
-        _paq.push(['setTrackerUrl', u + 'piwik.php']);
-        _paq.push(['setSiteId', 4]);
-        var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
-        g.type = 'text/javascript';
-        g.async = true;
-        g.defer = true;
-        g.src = u + 'piwik.js';
-        s.parentNode.insertBefore(g, s);
-      })();
-    </script>
-    <!-- End Piwik Code -->
+  <!-- Piwik -->
+  <script type="text/javascript">
+    var _paq = _paq || [];
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function () {
+      var u = "https://ssl.webpack.de/www.schumacher.fm/piwik/";
+      _paq.push(['setTrackerUrl', u + 'piwik.php']);
+      _paq.push(['setSiteId', 4]);
+      var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+      g.type = 'text/javascript';
+      g.async = true;
+      g.defer = true;
+      g.src = u + 'piwik.js';
+      s.parentNode.insertBefore(g, s);
+    })();
+  </script>
+  <!-- End Piwik Code -->
 
 </head>
 <body ng-controller="MasterCtrl">

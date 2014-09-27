@@ -33,8 +33,8 @@ var (
 	// these are the routes where we expect that the length of data is below ~100 bytes
 	// because then gzip compression fails, that means you can't decode it ... no idea why.
 	skipCompressionRoutes = map[string]bool{
-	"/sysinfo/":true,
-}
+		"/sysinfo/": true,
+	}
 )
 
 // These compression constants are copied from the compress/gzip package.

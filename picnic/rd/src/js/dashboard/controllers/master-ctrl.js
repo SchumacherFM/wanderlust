@@ -73,7 +73,49 @@ angular
   ])
   .controller('systemInfo', [
     '$scope',
-    function ($scope) {
+    '$timeout',
+    'SysInfoResource',
+    function ($scope, $timeout, SysInfoResource) {
+      var loggedOut = !$scope.session.loggedIn;
 
+      (function tick() { // @todo should be websocket
+        $scope.xdata = SysInfoResource.get(function () {
+          $timeout(tick, 1000);
+        });
+
+        console.log($scope.xdata)
+
+      })();
+
+      $scope.sysInfoWidgets = [
+        {
+          "icon": "fa-gears",
+          "title": 80,
+          "comment": "Workers",
+          "loading": loggedOut,
+          iconColor: "green"
+        },
+        {
+          "icon": "fa-globe",
+          "title": 136,
+          "comment": "Wanderers",
+          "loading": loggedOut,
+          iconColor: "orange"
+        },
+        {
+          "icon": "fa-download",
+          "title": 16,
+          "comment": "Brotzeit",
+          "loading": loggedOut,
+          iconColor: "red"
+        },
+        {
+          "icon": "fa-database",
+          "title": 3,
+          "comment": "Provisioners",
+          "loading": loggedOut,
+          iconColor: "blue"
+        }
+      ];
     }
   ]);

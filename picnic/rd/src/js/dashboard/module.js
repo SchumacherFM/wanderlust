@@ -13,6 +13,7 @@ angular
   .constant('picnicUrls', {
     auth: '/auth/',
     users: '/users/',
+    sysinfo: '/sysinfo/',
     messages: '/api/messages'
   })
   .constant('AUTH_TOKEN_HEADER', 'X-Auth-Token')

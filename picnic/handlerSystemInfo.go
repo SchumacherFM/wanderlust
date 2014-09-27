@@ -32,9 +32,7 @@ type SystemInfo struct {
 
 func (p *PicnicApp) initRoutesSystemInfo(router *mux.Router) error {
 	sysinfoRoute := router.PathPrefix("/sysinfo/").Subrouter()
-
-	sysinfoRoute.HandleFunc("/", p.handler(systemInfoHandler, AUTH_LEVEL_IGNORE)).Methods("GET")
-
+	sysinfoRoute.HandleFunc("/", p.handler(systemInfoHandler, AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
 	return nil
 }
 

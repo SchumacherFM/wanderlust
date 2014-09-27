@@ -14,6 +14,7 @@ angular
   .constant('picnicUrls', {
     auth: '/auth/',
     users: '/users/',
+    sysinfo: '/sysinfo/',
     messages: '/api/messages'
   })
   .constant('AUTH_TOKEN_HEADER', 'X-Auth-Token')
@@ -69,7 +70,7 @@ angular
           Session.redirectToLogin();
           return;
         }
-        if (404 === status) {
+        if (404 === status || 412 === status) { // 412 pre condition failed: Waiting for login ...
           // handle locally
           return;
         }
@@ -297,6 +298,13 @@ angular.module('picnic.services', [])
       return new Alert();
 
     }
+  ])
+  .service('SysInfoResource', [
+    '$resource',
+    'picnicUrls',
+    function ($resource, picnicUrls) {
+      return $resource(picnicUrls.sysinfo, {});
+    }
   ]);
 
 /**
@@ -374,8 +382,50 @@ angular
   ])
   .controller('systemInfo', [
     '$scope',
-    function ($scope) {
+    '$timeout',
+    'SysInfoResource',
+    function ($scope, $timeout, SysInfoResource) {
+      var loggedOut = !$scope.session.loggedIn;
 
+      (function tick() { // @todo should be websocket
+        $scope.xdata = SysInfoResource.get(function () {
+          $timeout(tick, 1000);
+        });
+
+        console.log($scope.xdata)
+
+      })();
+
+      $scope.sysInfoWidgets = [
+        {
+          "icon": "fa-gears",
+          "title": 80,
+          "comment": "Workers",
+          "loading": loggedOut,
+          iconColor: "green"
+        },
+        {
+          "icon": "fa-globe",
+          "title": 136,
+          "comment": "Wanderers",
+          "loading": loggedOut,
+          iconColor: "orange"
+        },
+        {
+          "icon": "fa-download",
+          "title": 16,
+          "comment": "Brotzeit",
+          "loading": loggedOut,
+          iconColor: "red"
+        },
+        {
+          "icon": "fa-database",
+          "title": 3,
+          "comment": "Provisioners",
+          "loading": loggedOut,
+          iconColor: "blue"
+        }
+      ];
     }
   ]);
 
@@ -433,5 +483,47 @@ angular
   }
 );
 
+
+angular
+  .module('Dashboard')
+  .directive('rdWidget', function () {
+    return {
+      transclude: true,
+      template: '<div class="widget" ng-transclude></div>',
+      restrict: 'EA'
+    };
+  }
+);
+
+
+angular
+  .module('Dashboard')
+  .directive('rdWidgetHeader', function () {
+    return {
+      requires: '^rdWidget',
+      scope: {
+        title: '@',
+        icon: '@'
+      },
+      transclude: true,
+      template: '<div class="widget-header"> <i class="fa" ng-class="icon"></i> {{title}} <div class="pull-right" ng-transclude></div></div>',
+      restrict: 'E'
+    };
+  });
+
+angular
+  .module('Dashboard')
+  .directive('rdWidgetBody', function () {
+    return {
+      requires: '^rdWidget',
+      scope: {
+        loading: '@?'
+      },
+      transclude: true,
+      template: '<div class="widget-body"><rd-loading ng-show="loading"></rd-loading><div ng-hide="loading" class="widget-content" ng-transclude></div></div>',
+      restrict: 'E'
+    };
+  }
+);
 
 })();

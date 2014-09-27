@@ -169,4 +169,11 @@ angular.module('picnic.services', [])
       return new Alert();
 
     }
+  ])
+  .service('SysInfoResource', [
+    '$resource',
+    'picnicUrls',
+    function ($resource, picnicUrls) {
+      return $resource(picnicUrls.sysinfo, {});
+    }
   ]);
