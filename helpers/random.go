@@ -37,6 +37,11 @@ func StringHash(str string) int {
 	return hash
 }
 
+func RandomInt(n int) int {
+	mrand.Seed(time.Now().UnixNano())
+	return mrand.Intn(n)
+}
+
 // randomString generates a pseudo-random alpha-numeric string with given length.
 func RandomString(length int) string {
 	mrand.Seed(time.Now().UnixNano())

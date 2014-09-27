@@ -29,6 +29,14 @@ import (
 	"strings"
 )
 
+var (
+	// these are the routes where we expect that the length of data is below ~100 bytes
+	// because then gzip compression fails, that means you can't decode it ... no idea why.
+	skipCompressionRoutes = map[string]bool{
+	"/sysinfo/":true,
+}
+)
+
 // These compression constants are copied from the compress/gzip package.
 const (
 	encodingGzip = "gzip"
@@ -78,6 +86,11 @@ func GzipContentTypeMiddleware(res http.ResponseWriter, req *http.Request, next 
 		return
 	}
 
+	if _, isSet := skipCompressionRoutes[req.RequestURI]; true == isSet {
+		next(res, req)
+		return
+	}
+
 	// 0 == isAllowed
 	h := newGzipHandler(gzip.BestSpeed)
 	h.ServeHTTP(res, req, next)
@@ -100,7 +113,7 @@ func newGzipHandler(level int) *gzipHandler {
 // ServeHTTP wraps the http.ResponseWriter with a gzip.Writer.
 func (h *gzipHandler) ServeHTTP(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	// Skip compression if the client doesn't accept gzip encoding.
-	if !strings.Contains(r.Header.Get(headerAcceptEncoding), encodingGzip) {
+	if false == strings.Contains(r.Header.Get(headerAcceptEncoding), encodingGzip) {
 		next(w, r)
 		return
 	}

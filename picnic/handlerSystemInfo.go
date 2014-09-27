@@ -18,6 +18,7 @@ package picnic
 
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
+	"github.com/SchumacherFM/wanderlust/helpers"
 	"net/http"
 	"runtime"
 )
@@ -30,21 +31,24 @@ type SystemInfo struct {
 }
 
 func (p *PicnicApp) initRoutesSystemInfo(router *mux.Router) error {
-	user := router.PathPrefix("/sysinfo/").Subrouter()
+	sysinfoRoute := router.PathPrefix("/sysinfo/").Subrouter()
 
-	user.HandleFunc("/", p.handler(systemInfoHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
+	sysinfoRoute.HandleFunc("/", p.handler(systemInfoHandler, AUTH_LEVEL_IGNORE)).Methods("GET")
 
 	return nil
 }
 
 func systemInfoHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
+	data := newSystemInfo()
+	return renderFFJSON(w, data, http.StatusOK)
+}
 
-	data := &SystemInfo{
+func newSystemInfo() *SystemInfo {
+	si := &SystemInfo{
 		Goroutines:   runtime.NumGoroutine(),
-		Brotzeit:     4,
-		Wanderers:    11,
+		Brotzeit:     helpers.RandomInt(6),  // @todo
+		Wanderers:    helpers.RandomInt(20), // @todo
 		Provisioners: 3,
 	}
-
-	return renderFFJSON(w, data, http.StatusOK)
+	return si
 }

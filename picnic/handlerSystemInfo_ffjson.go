@@ -46,28 +46,28 @@ func (mj *SystemInfo) MarshalJSONBuf(buf *bytes.Buffer) error {
 	} else {
 		buf.WriteString(`,`)
 	}
-	buf.WriteString(`"brotzeit":`)
+	buf.WriteString(`"Brotzeit":`)
 	helpers.Ffjson_FormatBits(buf, uint64(mj.Brotzeit), 10, mj.Brotzeit < 0)
 	if first == true {
 		first = false
 	} else {
 		buf.WriteString(`,`)
 	}
-	buf.WriteString(`"goroutines":`)
+	buf.WriteString(`"Goroutines":`)
 	helpers.Ffjson_FormatBits(buf, uint64(mj.Goroutines), 10, mj.Goroutines < 0)
 	if first == true {
 		first = false
 	} else {
 		buf.WriteString(`,`)
 	}
-	buf.WriteString(`"provisioners":`)
+	buf.WriteString(`"Provisioners":`)
 	helpers.Ffjson_FormatBits(buf, uint64(mj.Provisioners), 10, mj.Provisioners < 0)
 	if first == true {
 		first = false
 	} else {
 		buf.WriteString(`,`)
 	}
-	buf.WriteString(`"wanderers":`)
+	buf.WriteString(`"Wanderers":`)
 	helpers.Ffjson_FormatBits(buf, uint64(mj.Wanderers), 10, mj.Wanderers < 0)
 	buf.WriteString(`}`)
 	return nil
