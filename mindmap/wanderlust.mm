@@ -39,8 +39,7 @@
       - Handles configurations
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <cloud COLOR="#ff9966"/>
 <node CREATED="1408228814250" ID="ID_1818745543" MODIFIED="1408665089248" TEXT="Actions">
 <cloud COLOR="#ffcc66"/>
@@ -49,7 +48,12 @@
 <node CREATED="1408229470319" ID="ID_1737173709" MODIFIED="1408229482405" TEXT="Purge URLs collected from Brotzeit by provisioner"/>
 <node CREATED="1408229490288" ID="ID_1374484413" MODIFIED="1408229493396" TEXT="Purge all data"/>
 <node CREATED="1408665089999" ID="ID_686051620" MODIFIED="1408665139322" TEXT="Configure internal Cron Scheduler for each or all provisioners"/>
-<node CREATED="1410907631357" ID="ID_1779739970" MODIFIED="1410907647276" TEXT="User Management: Login, Logout, SignUp, Permissions"/>
+<node CREATED="1410907631357" ID="ID_1779739970" MODIFIED="1411815595866" TEXT="User Management">
+<node CREATED="1411815596742" ID="ID_1529916533" MODIFIED="1411815598752" TEXT="Login"/>
+<node CREATED="1411815599597" ID="ID_384392676" MODIFIED="1411815601504" TEXT="Logout"/>
+<node CREATED="1411815603142" ID="ID_92525725" MODIFIED="1411815607944" TEXT="Change Password"/>
+<node CREATED="1411815609229" ID="ID_1362166790" MODIFIED="1411815614072" TEXT="Create new User"/>
+</node>
 </node>
 <node CREATED="1408229245604" ID="ID_1214455075" MODIFIED="1408229284099" TEXT="Views">
 <cloud COLOR="#ffff66"/>
@@ -64,10 +68,53 @@
 <node CREATED="1408227096764" ID="ID_1917687630" MODIFIED="1408229329570" TEXT="Provisioners and their access data"/>
 <node CREATED="1408229333431" ID="ID_920425934" MODIFIED="1408229394680" TEXT="Wanderer: Concurrency level"/>
 <node CREATED="1408229358645" ID="ID_454668395" MODIFIED="1408229419886" TEXT="Brotzeit: Concurrency level"/>
+<node CREATED="1411815422138" ID="ID_931734721" MODIFIED="1411815428181" TEXT="Authentication">
+<node CREATED="1411815430195" ID="ID_1872763293" MODIFIED="1411815493011" TEXT="AUTH_LEVEL_IGNORE we don&apos;t need the user in this handler"/>
+<node CREATED="1411815449939" ID="ID_228901137" MODIFIED="1411815502283" TEXT="AUTH_LEVEL_CHECK prefetch user, doesn&apos;t matter if not logged in"/>
+<node CREATED="1411815455057" ID="ID_1156768440" MODIFIED="1411815545504" TEXT="AUTH_LEVEL_LOGIN_WAIT user required, 412 if not precondition failed (log in missing)"/>
+<node CREATED="1411815458418" ID="ID_624971482" MODIFIED="1411815553439" TEXT="AUTH_LEVEL_LOGIN user required, 401 if not available"/>
+<node CREATED="1411815461618" ID="ID_1557802446" MODIFIED="1411815564724" TEXT="AUTH_LEVEL_ADMIN admin required, 401 if no user, 403 if not admin"/>
+</node>
+</node>
+<node CREATED="1411815198758" ID="ID_482878418" MODIFIED="1411815314750" TEXT="Routes">
+<cloud COLOR="#cc9900"/>
+<node CREATED="1411815034801" ID="ID_551665319" MODIFIED="1411815038496" TEXT="/ GET">
+<node CREATED="1411815038497" ID="ID_776506454" MODIFIED="1411815085489" TEXT="Redirect dashboard/"/>
+</node>
+<node CREATED="1411815069576" ID="ID_1267062929" MODIFIED="1411815074639" TEXT="/dashboard">
+<node CREATED="1411815074640" ID="ID_1308184647" MODIFIED="1411815081146" TEXT="Redirect to dashboard/"/>
+</node>
+<node CREATED="1411815095447" ID="ID_354439861" MODIFIED="1411815096472" TEXT="/favicon.ico"/>
+<node CREATED="1411815105621" ID="ID_370226543" MODIFIED="1411815107197" TEXT="/">
+<node CREATED="1411815107199" ID="ID_1089694666" MODIFIED="1411815124762" TEXT="Gzrice Box, JS, CSS, HTML, Images"/>
 </node>
 <node CREATED="1408431999379" ID="ID_1149314733" MODIFIED="1408432599270" TEXT="REST API">
 <cloud COLOR="#cccc00"/>
-<node CREATED="1408432030914" ID="ID_1273328265" MODIFIED="1408432579004" TEXT="Start the Wanderer, e.g. after a deployment"/>
+<node CREATED="1411814820587" ID="ID_1236673550" MODIFIED="1411814822732" TEXT="auth">
+<node CREATED="1411814865912" ID="ID_1576528255" MODIFIED="1411814897866" TEXT="/ GET session info"/>
+<node CREATED="1411814871201" ID="ID_1190409325" MODIFIED="1411814910218" TEXT="/ POST Login"/>
+<node CREATED="1411814875345" ID="ID_1955078901" MODIFIED="1411814914113" TEXT="/ DELETE Logout"/>
+</node>
+<node CREATED="1411814833659" ID="ID_236936447" MODIFIED="1411814835080" TEXT="users">
+<node CREATED="1411814928894" ID="ID_1082572905" MODIFIED="1411814933705" TEXT="/ GET collection"/>
+</node>
+<node CREATED="1411814847826" ID="ID_1595602320" MODIFIED="1411814849036" TEXT="sysinfo">
+<node CREATED="1411814943221" ID="ID_690204432" MODIFIED="1411814969662" TEXT="/ GET Goroutines, Wanderers, Brotzeit, Prov."/>
+</node>
+<node CREATED="1411814978995" ID="ID_1719569356" MODIFIED="1411814980166" TEXT="brotzeit">
+<node CREATED="1411814994386" ID="ID_722052997" MODIFIED="1411814997301" TEXT="@todo"/>
+</node>
+<node CREATED="1411815006698" ID="ID_1527342828" MODIFIED="1411815007826" TEXT="wanderer">
+<node CREATED="1411815007827" ID="ID_1963620825" MODIFIED="1411815010651" TEXT="@todo"/>
+</node>
+<node CREATED="1411815023209" ID="ID_283685973" MODIFIED="1411815024465" TEXT="provisioners">
+<node CREATED="1411815024467" ID="ID_1076841306" MODIFIED="1411815026372" TEXT="@todo"/>
+</node>
+</node>
+<node CREATED="1411815315649" ID="ID_199482069" MODIFIED="1411815319808" TEXT="Middleware">
+<node CREATED="1411815319809" ID="ID_439476076" MODIFIED="1411815323704" TEXT="CORS"/>
+<node CREATED="1411815329128" ID="ID_764157888" MODIFIED="1411815339897" TEXT="GZIP auto detection"/>
+</node>
 </node>
 </node>
 <node CREATED="1408226087413" ID="ID_1865183383" MODIFIED="1408665380632" POSITION="left" STYLE="bubble">
@@ -228,8 +275,7 @@
       Database for storage. Compiled into.
     </p>
   </body>
-</html>
-</richcontent>
+</html></richcontent>
 <cloud COLOR="#ccccff"/>
 <node CREATED="1408321536418" ID="ID_1460198452" MODIFIED="1408321667611" TEXT="https://code.google.com/p/leveldb-go/"/>
 <node CREATED="1408321580596" ID="ID_1138239741" MODIFIED="1408321924122" TEXT="https://github.com/cznic/kv"/>
@@ -270,26 +316,57 @@
 <node CREATED="1408231265873" ID="ID_525514306" MODIFIED="1408231279512" TEXT="The only write access to the HDD is for saving the DB"/>
 <node CREATED="1408231312099" ID="ID_1235551636" MODIFIED="1408231334046" TEXT="Wanderlust can run anywhere"/>
 <node CREATED="1408231240797" ID="ID_225989754" MODIFIED="1410908446002" TEXT="All CSS, JS, HTML files are compiled into (via gz.rice)"/>
-<node CREATED="1408321328218" ID="ID_970423774" MODIFIED="1408321486226">
+<node CREATED="1408321328218" ID="ID_970423774" MODIFIED="1411815950783">
+<richcontent TYPE="NODE"><html>
+  <head>
+    
+  </head>
+  <body>
+    CLI Settings
+  </body>
+</html>
+</richcontent>
+<node CREATED="1411815801223" ID="ID_285526862" MODIFIED="1411815844379" TEXT="Name:  &quot;picnic-listen-address,pla&quot;,&#xa;Value: &quot;127.0.0.1:3008&quot;,&#xa;Usage: &quot;IP:Port address for picnic dashboard to listen on&quot;,&#xa;"/>
+<node CREATED="1411815860132" ID="ID_870649776" MODIFIED="1411815890159">
 <richcontent TYPE="NODE"><html>
   <head>
     
   </head>
   <body>
     <p>
-      <b>CLI Settings</b>
+      Name:&#160;&#160;&quot;picnic-pem-dir,ppd&quot;,
     </p>
     <p>
-      - Parallel (GOMAXPROCS)
+      Value: &quot;&quot;,
     </p>
     <p>
-      - HTTP Port
-    </p>
-    <p>
-      - storage dir for DB
+      Usage: &quot;Directory to store the .pem certificates. If empty will throw it somewhere in the system. If provided file names must be cert.pem and key.pem!&quot;,
     </p>
   </body>
-</html></richcontent>
+</html>
+</richcontent>
+</node>
+<node CREATED="1411815951495" ID="ID_1081447868" MODIFIED="1411815983675" TEXT="Name:  &quot;rucksack-dir,rd&quot;,&#xa;Value: &quot;&quot;, &#xa;Usage: &quot;Storage directory of the rucksack files. If empty then /tmp/random directory will be used.&quot;, "/>
+<node CREATED="1411816010949" ID="ID_1952015664" MODIFIED="1411816042016">
+<richcontent TYPE="NODE"><html>
+  <head>
+    
+  </head>
+  <body>
+    <p>
+      Name:&#160;&#160;&quot;logFile,lf&quot;,
+    </p>
+    <p>
+      Value: &quot;&quot;,
+    </p>
+    <p>
+      Usage: &quot;Log to file or if empty to os.Stderr&quot;,
+    </p>
+  </body>
+</html>
+</richcontent>
+</node>
+<node CREATED="1411816050513" ID="ID_147859593" MODIFIED="1411816065934" TEXT="Name:  &quot;logLevel,ll&quot;,&#xa;Value: &quot;&quot;,&#xa;Usage: &quot;Log level: debug, info, notice, warning, error, critical, alert, emergency. Default: debug&quot;,&#xa;"/>
 </node>
 <node CREATED="1410907657982" ID="ID_1984817677" MODIFIED="1410908393960" TEXT="Maybe: Wanderer, Brotzeit and Rucksack communicate via Pub/Sub (bullhorn lib)"/>
 <node CREATED="1410908458912" ID="ID_421948385" MODIFIED="1410908491476" TEXT="Only accessible via SSL"/>
