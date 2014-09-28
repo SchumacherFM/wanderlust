@@ -113,14 +113,26 @@
         <a href="#/tables" data-analytics-on="click" data-analytics-event="tables"
            data-analytics-category="navigation">Tables <span class="menu-icon fa fa-table"></span></a>
       </li>
+
+      <li class="sidebar-title separator"><span>PROVISIONERS</span></li>
+      <!--@todo make this configurable to list only available modules-->
       <li class="sidebar-list">
-        <a href="#" data-analytics-on="click" data-analytics-event="servers"
-           data-analytics-category="navigation">Servers <span class="menu-icon fa fa-tasks"></span></a>
+        <a href="#/provisioners/ga" data-analytics-on="click" data-analytics-event="provisioners-ga"
+           data-analytics-category="navigation">G'Analytics <span class="menu-icon"><img src="img/icon-ga.png" height="30"/></span></a>
       </li>
       <li class="sidebar-list">
-        <a href="#" data-analytics-on="click" data-analytics-event="settings"
-           data-analytics-category="navigation">Settings <span class="menu-icon fa fa-cogs"></span></a>
+        <a href="#/provisioners/piwik" data-analytics-on="click" data-analytics-event="provisioners-piwik"
+           data-analytics-category="navigation">Piwik <span class="menu-icon"><img src="img/icon-piwik.png" height="30"/></span></a>
       </li>
+      <li class="sidebar-list">
+        <a href="#/provisioners/sitemapxml" data-analytics-on="click" data-analytics-event="provisioners-sitemapxml"
+           data-analytics-category="navigation">Sitemap.xml <span class="menu-icon fa fa-sitemap"></span></a>
+      </li>
+      <li class="sidebar-list">
+        <a href="#/provisioners/textarea" data-analytics-on="click" data-analytics-event="provisioners-textarea"
+           data-analytics-category="navigation">Textarea <span class="menu-icon fa fa-file-text-o"></span></a>
+      </li>
+
       <li class="sidebar-title separator"><span>QUICK LINKS</span></li>
       <li class="sidebar-list">
         <a href="https://developers.google.com/analytics/devguides/reporting/"
@@ -133,13 +145,17 @@
            data-analytics-on="click" data-analytics-event="piwik" data-analytics-category="quicklinks"
            target="_blank">Piwik Analytics <span class="menu-icon fa fa-external-link"></span></a>
       </li>
+      <li class="sidebar-list">
+        <a href="https://raw.githubusercontent.com/SchumacherFM/wanderlust/master/mindmap/wanderlust.png"
+           data-analytics-on="click" data-analytics-event="architecture" data-analytics-category="quicklinks"
+           target="_blank">Architecture <span class="menu-icon fa fa-external-link"></span></a>
+      </li>
 
     </ul>
     <div class="sidebar-footer">
       <div class="col-xs-4">
-        <a href="https://github.com/SchumacherFM/wanderlust" target="_blank"
-           data-analytics-on="click" data-analytics-event="repo" data-analytics-category="help">
-          Github
+        <a href="#/privacy" data-analytics-on="click" data-analytics-event="privacy" data-analytics-category="help">
+          Privacy
         </a>
       </div>
       <div class="col-xs-4">

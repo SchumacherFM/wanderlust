@@ -8,28 +8,28 @@ angular
     return {
       Goroutines: {
         "icon": "fa-gears",
-        "title": 80,
+        "title": 0,
         "comment": "Workers",
         "loading": !loggedIn,
         iconColor: "green"
       },
       Wanderers: {
         "icon": "fa-globe",
-        "title": 136,
+        "title": 0,
         "comment": "Wanderers",
         "loading": !loggedIn,
         iconColor: "orange"
       },
       Brotzeit: {
         "icon": "fa-download",
-        "title": 16,
+        "title": 0,
         "comment": "Brotzeit",
         "loading": !loggedIn,
         iconColor: "red"
       },
       Provisioners: {
         "icon": "fa-database",
-        "title": 3,
+        "title": 0,
         "comment": "Provisioners",
         "loading": !loggedIn,
         iconColor: "blue"
