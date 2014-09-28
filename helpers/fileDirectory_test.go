@@ -26,9 +26,9 @@ func TestGetTempDir(t *testing.T) {
 	if "" == dir {
 		t.Error("No tempdir found!")
 	}
-
-	if string(os.PathSeparator) != dir[len(dir)-1:] {
-		t.Errorf("Trailing %s not found in %s", os.PathSeparator, dir)
+	ps := string(os.PathSeparator)
+	if ps != dir[len(dir)-1:] {
+		t.Errorf("Trailing %s not found in %s", ps, dir)
 	}
 }
 func TestPathExists(t *testing.T) {

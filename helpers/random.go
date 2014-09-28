@@ -86,5 +86,4 @@ func randChar(length int, chars []byte) (string, error) {
 			}
 		}
 	}
-	return "", errgo.Mask(errors.New("Unrechable point!"))
 }
