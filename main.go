@@ -63,11 +63,6 @@ func main() {
 					Usage: "Directory to store the .pem certificates. If empty will throw it somewhere in the system. If provided file names must be cert.pem and key.pem!",
 				},
 				cli.StringFlag{
-					Name:  "rucksack-listen-address,rla",
-					Value: "127.0.0.1:3108",
-					Usage: "IP:Port address for the rucksack REST API and web control panel",
-				},
-				cli.StringFlag{
 					Name:  "rucksack-dir,rd",
 					Value: "",
 					Usage: "Storage directory of the rucksack files. If empty then /tmp/random directory will be used.",

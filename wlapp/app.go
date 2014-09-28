@@ -70,22 +70,13 @@ func initLogger() {
 func BootRucksack() {
 
 	rucksackApp, err := rucksack.NewRucksackApp(
-		CliContext.String("rucksack-listen-address"),
 		CliContext.String("rucksack-dir"),
 		logger,
 	)
 	if nil != err {
 		logger.Check(err)
 	}
-
 	db = rucksackApp.GetDb()
-	if "" != rucksackApp.ListenAddress {
-		waitGroup.Add(1)
-		go func() {
-			defer waitGroup.Done()
-			rucksackApp.StartHttp()
-		}()
-	}
 }
 
 // starts the HTTP server for the picnic web interface and runs it in a goroutine
@@ -117,6 +108,13 @@ func BootPicnic() {
 }
 
 func BootBrotzeit() {
+	//	if "" != rucksackApp.ListenAddress {
+	//		waitGroup.Add(1)
+	//		go func() {
+	//			defer waitGroup.Done()
+	//			rucksackApp.StartHttp()
+	//		}()
+	//	}
 	logger.Notice("Booting Brotzeit ... @todo")
 }
 

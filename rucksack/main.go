@@ -22,18 +22,14 @@ import (
 	"github.com/SchumacherFM/wanderlust/rucksack/rucksackdb"
 )
 
-// @todo create maybe custom REST API instead of using the tiedot unsecure API
-
 type RucksackApp struct {
-	rdb           rucksackdb.RDBI
-	Logger        *log.Logger
-	ListenAddress string
+	rdb    rucksackdb.RDBI
+	Logger *log.Logger
 }
 
-func NewRucksackApp(listenAddress, dbDir string, logger *log.Logger) (*RucksackApp, error) {
+func NewRucksackApp(dbDir string, logger *log.Logger) (*RucksackApp, error) {
 	rucksackApp := &RucksackApp{
-		ListenAddress: listenAddress,
-		Logger:        logger,
+		Logger: logger,
 	}
 	rucksackApp.initDb(dbDir)
 	return rucksackApp, nil
@@ -52,27 +48,4 @@ func (r *RucksackApp) initDb(dbDir string) error {
 
 func (r *RucksackApp) GetDb() rucksackdb.RDBI {
 	return r.rdb
-}
-
-// listens on the DefaultServeMux and runs in a goroutine
-func (r *RucksackApp) StartHttp() {
-	r.Logger.Notice("Database webinterface running: http://%s", r.GetListenAddress())
-	err := r.rdb.StartHttp(r.GetListenAddress())
-	if nil != err {
-		r.Logger.Check(err)
-	}
-}
-
-// @todo How to implement a stopable http server
-// http://www.hydrogen18.com/blog/stop-listening-http-server-go.html
-func (r *RucksackApp) StopHttp() error {
-	return nil
-}
-
-func (r *RucksackApp) GetListenAddress() string {
-	address, port, err := helpers.ValidateListenAddress(r.ListenAddress)
-	if nil != err {
-		r.Logger.Check(err)
-	}
-	return address + ":" + port
 }

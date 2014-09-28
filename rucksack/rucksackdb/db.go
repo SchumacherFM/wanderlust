@@ -20,8 +20,6 @@ package rucksackdb
 
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/db"
-	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/httpapi"
-	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/webcp"
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 )
 
@@ -33,12 +31,10 @@ type RDBI interface {
 	FindAll(dbName string) (doc []map[string]interface{}, err error)
 	Insert(dbName string, doc map[string]interface{}) (id int, err error)
 	InsertRecovery(dbName string, id int, doc map[string]interface{}) (err error)
-	StartHttp(listenAddress string) error
 }
 
 type RDB struct {
-	db            *db.DB
-	isHttpRunning bool
+	db *db.DB
 }
 
 func NewRDB(dbDir string) (RDBI, error) {
@@ -101,13 +97,4 @@ func (rdb *RDB) Insert(dbName string, doc map[string]interface{}) (id int, err e
 func (rdb *RDB) InsertRecovery(dbName string, id int, doc map[string]interface{}) (err error) {
 	err = rdb.UseDatabase(dbName).InsertRecovery(id, doc)
 	return
-}
-
-func (rdb *RDB) StartHttp(listenAddress string) error {
-	webcp.WebCp = "webcp"
-	if false == rdb.isHttpRunning {
-		rdb.isHttpRunning = true
-		return httpapi.Start(rdb.db, listenAddress)
-	}
-	return nil
 }
