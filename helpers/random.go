@@ -18,8 +18,6 @@ package helpers
 
 import (
 	crand "crypto/rand"
-	"errors"
-	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 	"io"
 	mrand "math/rand"
 	"time"
