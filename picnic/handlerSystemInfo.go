@@ -30,15 +30,34 @@ type SystemInfo struct {
 	Provisioners int
 }
 
-func (p *PicnicApp) initRoutesSystemInfo(router *mux.Router) error {
-	sysinfoRoute := router.PathPrefix("/sysinfo/").Subrouter()
-	sysinfoRoute.HandleFunc("/", p.handler(systemInfoHandler, AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
-	return nil
-}
+func initRoutesSystemInfo(router *mux.Router) (*RouteHandlers, error) {
 
-func systemInfoHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
-	data := newSystemInfo()
-	return renderFFJSON(w, data, http.StatusOK)
+	sysinfoRoute := &RouteHandlers{
+		subrouter: router.PathPrefix("/sysinfo/").Subrouter(),
+	}
+
+	sysinfoRoute.routes = []*RouteHandler{
+		{
+			path:   "/",
+			aLevel: AUTH_LEVEL_LOGIN_WAIT,
+			method: "GET",
+			handler: func(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
+				data := newSystemInfo()
+				return renderFFJSON(w, data, http.StatusOK)
+			},
+		},
+		{
+			path:   "/provisioners",
+			aLevel: AUTH_LEVEL_IGNORE,
+			method: "GET",
+			handler: func(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
+				data := newSystemInfo()
+				return renderFFJSON(w, data, http.StatusOK)
+			},
+		},
+	}
+
+	return sysinfoRoute, nil
 }
 
 func newSystemInfo() *SystemInfo {

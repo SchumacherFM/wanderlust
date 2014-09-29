@@ -28,8 +28,29 @@ import (
 	"net/http"
 )
 
-// our custom handler
-type handlerFunc func(rc requestContextI, w http.ResponseWriter, r *http.Request) error
+type (
+	// our custom handler
+	handlerFunc func(rc requestContextI, w http.ResponseWriter, r *http.Request) error
+
+	// contains one route
+	RouteHandler struct {
+		path    string
+		handler handlerFunc
+		aLevel  authLevel
+		method  string
+	}
+	// container for all routes belonging to a subrouter
+	RouteHandlers struct {
+		subrouter *mux.Router
+		routes    []*RouteHandler
+	}
+)
+
+func (rh *RouteHandlers) attachRoutes(p *PicnicApp) {
+	for _, r := range rh.routes {
+		rh.subrouter.HandleFunc(r.path, p.handler(r.handler, r.aLevel)).Methods(r.method)
+	}
+}
 
 // the handler should create a new context on each request, and handle any returned
 // errors appropriately.
@@ -54,7 +75,10 @@ func (p *PicnicApp) getHandler() *negroni.Negroni {
 
 	p.initRoutesAuth(router)
 	p.initRoutesUsers(router)
-	p.initRoutesSystemInfo(router)
+
+	// initial idea
+	rh, _ := initRoutesSystemInfo(router)
+	rh.attachRoutes(p)
 
 	brotzeitApi := router.PathPrefix("/brotzeit/").Subrouter()
 	brotzeitApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
