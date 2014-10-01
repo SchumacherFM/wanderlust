@@ -164,6 +164,10 @@ angular.module('Dashboard').config([
       .state('privacy', {
         url: '/privacy',
         templateUrl: 'partials/privacy.html'
+      })
+      .state('shop', {
+        url: '/shop',
+        templateUrl: 'partials/shop.html'
       });
 
     $httpProvider.interceptors.push('AuthInterceptor');
