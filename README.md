@@ -2,8 +2,10 @@
 
 ### Cache warmer with priorities
 
-Wanderlust, the yearning to travel through Google Analytics, Piwik, 
-REST endpoints, sitemap.xml, etc to warm up the caches of your website.
+Wanderlust, the yearning to travel through Google Analytics (1), Piwik (1), 
+REST endpoints (1), sitemap.xml, textarea input, etc to warm up the caches of your website.
+
+(1) available to buy.
 
 ### Cold Cache vs. Warm Cache ?
 
@@ -61,7 +63,31 @@ $ go tool pprof [--pdf|svg|gif] ./wanderlust /path/to/cpu.pprof
 
 Please do not hesitate to send pull requests.
 
+# Free vs. Commercial Version
+
+### Idea
+
+The free version includes the provisioners for loading URLs from the sitemap.xml and from a textarea.
+The free version implements a lot of tracking via Piwik. The tracking data will be send to my
+private Piwik server and of course not shared with others. There is a privacy statement in the app.
+
+As soon as you buy (via in-app-purchase) one provisioner you'll get the commercial version. 
+Each provisioner has a recurring monthly fee. Provisioners must be compiled into this source code so delivery 
+of the new binary file may take some time. With the commercial version tracking is removed.
+
+Available provisioners:
+
+- Google Analytics
+- Piwik
+- Any REST endpoint
+- Magento, TYPO3, Drupal, WordPress, ... (2)
+- Any other analytics service which has a data out API
+
+(2) Module is open source but for Wanderlust integration a recurring fee is required.
+
 # License
+
+Will change in the future.
 
 General Public License
 
