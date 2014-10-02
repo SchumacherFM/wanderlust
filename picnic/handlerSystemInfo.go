@@ -32,40 +32,38 @@ type SystemInfo struct {
 
 func initRoutesSystemInfo(router *mux.Router) (*RouteHandlers, error) {
 
-	sysinfoRoute := &RouteHandlers{
-		subrouter: router.PathPrefix("/sysinfo/").Subrouter(),
-	}
+	theRoute := NewRouteHandlers(router, "/sysinfo/")
 
-	sysinfoRoute.routes = []*RouteHandler{
-		{
-			path:   "/",
-			aLevel: AUTH_LEVEL_LOGIN_WAIT,
-			method: "GET",
-			handler: func(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
-				data := newSystemInfo()
-				return renderFFJSON(w, data, http.StatusOK)
-			},
+	theRoute.addRoute(&RouteHandler{
+		path:   "/",
+		aLevel: AUTH_LEVEL_LOGIN_WAIT,
+		method: "GET",
+		handler: func(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
+			data := &SystemInfo{
+				Goroutines:   runtime.NumGoroutine(),
+				Brotzeit:     helpers.RandomInt(6),  // @todo
+				Wanderers:    helpers.RandomInt(20), // @todo
+				Provisioners: 3,
+			}
+			return renderFFJSON(w, data, http.StatusOK)
 		},
-		{
-			path:   "/provisioners",
-			aLevel: AUTH_LEVEL_IGNORE,
-			method: "GET",
-			handler: func(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
-				data := newSystemInfo()
-				return renderFFJSON(w, data, http.StatusOK)
-			},
+	})
+
+	theRoute.addRoute(&RouteHandler{
+		path:   "/provisioners",
+		aLevel: AUTH_LEVEL_IGNORE,
+		method: "GET",
+		handler: func(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
+			// @todo list all modules which the customer has for free and bought
+			data := &SystemInfo{
+				Goroutines:   runtime.NumGoroutine(),
+				Brotzeit:     helpers.RandomInt(6),
+				Wanderers:    helpers.RandomInt(20),
+				Provisioners: 3,
+			}
+			return renderFFJSON(w, data, http.StatusOK)
 		},
-	}
+	})
 
-	return sysinfoRoute, nil
-}
-
-func newSystemInfo() *SystemInfo {
-	si := &SystemInfo{
-		Goroutines:   runtime.NumGoroutine(),
-		Brotzeit:     helpers.RandomInt(6),  // @todo
-		Wanderers:    helpers.RandomInt(20), // @todo
-		Provisioners: 3,
-	}
-	return si
+	return theRoute, nil
 }

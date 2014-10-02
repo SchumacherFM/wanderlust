@@ -29,64 +29,76 @@ type loginPostData struct {
 	Password string `json:"password"`
 }
 
-func (p *PicnicApp) initRoutesAuth(router *mux.Router) error {
-	auth := router.PathPrefix("/auth/").Subrouter()
-	auth.HandleFunc("/", p.handler(sessionInfoHandler, AUTH_LEVEL_CHECK)).Methods("GET")
-	auth.HandleFunc("/", p.handler(loginHandler, AUTH_LEVEL_IGNORE)).Methods("POST")
-	auth.HandleFunc("/", p.handler(logoutHandler, AUTH_LEVEL_LOGIN)).Methods("DELETE")
-	return nil
-}
+func initRoutesAuth(router *mux.Router) (*RouteHandlers, error) {
 
-func sessionInfoHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
-	return renderFFJSON(w, newSessionInfo(rc.getUser()), http.StatusOK)
-}
+	theRoute := NewRouteHandlers(router, "/auth/")
 
-func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
+	theRoute.addRoute(&RouteHandler{
+		path:   "/",
+		aLevel: AUTH_LEVEL_CHECK,
+		method: "GET",
+		handler: func(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
+			return renderFFJSON(w, newSessionInfo(rc.getUser()), http.StatusOK)
+		},
+	})
 
-	var invalidLogin = httpError{
-		Status:      http.StatusBadRequest,
-		Description: "Invalid username or password",
-	}
+	theRoute.addRoute(&RouteHandler{
+		path:   "/",
+		aLevel: AUTH_LEVEL_IGNORE,
+		method: "POST",
+		handler: func(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
 
-	lpd := &loginPostData{}
+			var invalidLogin = httpError{
+				Status:      http.StatusBadRequest,
+				Description: "Invalid username or password",
+			}
 
-	if err := decodeJSON(r, lpd); nil != err {
-		return err
-	}
+			lpd := &loginPostData{}
 
-	if "" == lpd.UserName || "" == lpd.Password {
-		return invalidLogin
-	}
+			if err := decodeJSON(r, lpd); nil != err {
+				return err
+			}
 
-	// find user and login ...
-	user := NewUserModel(lpd.UserName)
-	userFound, userErr := user.findMe()
-	if nil != userErr {
-		return userErr
-	}
-	if false == userFound {
-		logger.Debug("loginHandler 148: user not found %#v", userFound)
-		return invalidLogin
-	}
-	if false == user.checkPassword(lpd.Password) {
-		logger.Debug("loginHandler 152: password incorrect %#v", userFound)
-		return invalidLogin
-	}
+			if "" == lpd.UserName || "" == lpd.Password {
+				return invalidLogin
+			}
 
-	if err := rc.getApp().getSessionManager().writeToken(w, user.getUserName()); nil != err {
-		return err
-	}
+			// find user and login ...
+			user := NewUserModel(lpd.UserName)
+			userFound, userErr := user.findMe()
+			if nil != userErr {
+				return userErr
+			}
+			if false == userFound {
+				logger.Debug("loginHandler 148: user not found %#v", userFound)
+				return invalidLogin
+			}
+			if false == user.checkPassword(lpd.Password) {
+				logger.Debug("loginHandler 152: password incorrect %#v", userFound)
+				return invalidLogin
+			}
 
-	user.setAuthenticated(true)
-	// @todo use websocket to send message
-	return renderFFJSON(w, newSessionInfo(user), http.StatusOK)
-}
+			if err := rc.getApp().getSessionManager().writeToken(w, user.getUserName()); nil != err {
+				return err
+			}
 
-func logoutHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
+			user.setAuthenticated(true)
+			// @todo use websocket to send message
+			return renderFFJSON(w, newSessionInfo(user), http.StatusOK)
+		},
+	})
 
-	if err := rc.getApp().getSessionManager().writeToken(w, ""); err != nil {
-		return err
-	}
-	// @todo use websocket to send message
-	return renderFFJSON(w, newSessionInfo(nil), http.StatusOK)
+	theRoute.addRoute(&RouteHandler{
+		path:   "/",
+		aLevel: AUTH_LEVEL_LOGIN,
+		method: "DELETE",
+		handler: func(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
+			if err := rc.getApp().getSessionManager().writeToken(w, ""); err != nil {
+				return err
+			}
+			// @todo use websocket to send message
+			return renderFFJSON(w, newSessionInfo(nil), http.StatusOK)
+		},
+	})
+	return theRoute, nil
 }

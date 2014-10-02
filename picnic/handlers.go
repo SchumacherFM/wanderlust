@@ -46,10 +46,21 @@ type (
 	}
 )
 
+func (rh *RouteHandlers) addRoute(rHandler *RouteHandler) {
+	rh.routes = append(rh.routes, rHandler)
+}
+
 func (rh *RouteHandlers) attachRoutes(p *PicnicApp) {
 	for _, r := range rh.routes {
 		rh.subrouter.HandleFunc(r.path, p.handler(r.handler, r.aLevel)).Methods(r.method)
 	}
+}
+
+func NewRouteHandlers(router *mux.Router, pathPrefix string) *RouteHandlers {
+	theRoute := &RouteHandlers{
+		subrouter: router.PathPrefix(pathPrefix).Subrouter(),
+	}
+	return theRoute
 }
 
 // the handler should create a new context on each request, and handle any returned
@@ -73,7 +84,9 @@ func (p *PicnicApp) handler(h handlerFunc, level authLevel) http.HandlerFunc {
 func (p *PicnicApp) getHandler() *negroni.Negroni {
 	router := mux.NewRouter()
 
-	p.initRoutesAuth(router)
+	rha, _ := initRoutesAuth(router)
+	rha.attachRoutes(p)
+
 	p.initRoutesUsers(router)
 
 	// initial idea
