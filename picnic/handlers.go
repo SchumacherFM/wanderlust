@@ -32,6 +32,7 @@ type (
 	// our custom handler
 	handlerFunc func(rc requestContextI, w http.ResponseWriter, r *http.Request) error
 
+	// maybe that is over engineered and not idiomatic enough
 	// contains one route
 	RouteHandler struct {
 		path    string
@@ -39,6 +40,8 @@ type (
 		aLevel  authLevel
 		method  string
 	}
+
+	// maybe that is over engineered and not idiomatic enough
 	// container for all routes belonging to a subrouter
 	RouteHandlers struct {
 		subrouter *mux.Router
