@@ -24,10 +24,11 @@ import (
 )
 
 type SystemInfo struct {
-	Goroutines   int
-	Brotzeit     int
-	Wanderers    int
-	Provisioners int
+	Goroutines     int
+	Brotzeit       int
+	Wanderers      int
+	Provisioners   int
+	SessionExpires int
 }
 
 func (p *PicnicApp) initRoutesSystemInfo(router *mux.Router) error {
@@ -41,6 +42,7 @@ func (p *PicnicApp) initRoutesSystemInfo(router *mux.Router) error {
 
 func systemInfoHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
 	data := newSystemInfo()
+	data.SessionExpires = rc.getUser().getSessionExpiresIn()
 	return renderFFJSON(w, data, http.StatusOK)
 }
 

@@ -30,7 +30,7 @@ const (
 )
 
 type sessionManagerI interface {
-	readToken(*http.Request) (string, error)
+	readToken(*http.Request) (string, time.Duration, error)
 	_createToken(string) (string, error)
 	writeToken(http.ResponseWriter, string) error
 }
@@ -54,10 +54,11 @@ type defaultSessionManager struct {
 	signKey   []byte
 }
 
-func (m *defaultSessionManager) readToken(r *http.Request) (string, error) {
+// readToken, reads the token, validates it and returns the uid, validity in seconds and err|nil
+func (m *defaultSessionManager) readToken(r *http.Request) (string, time.Duration, error) {
 	tokenString := r.Header.Get(middleware.HEADER_X_AUTH_TOKEN)
 	if tokenString == "" {
-		return "", nil
+		return "", 0, nil
 	}
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return m.verifyKey, nil
@@ -65,17 +66,24 @@ func (m *defaultSessionManager) readToken(r *http.Request) (string, error) {
 	switch err.(type) {
 	case nil:
 		if !token.Valid {
-			return "", nil
+			return "", 0, nil
 		}
-		token := token.Claims["uid"].(string)
-		if "" == token {
-			return "", nil
+		tokenUid := token.Claims["uid"].(string)
+		if "" == tokenUid {
+			return "", 0, nil
 		}
-		return token, nil
+		exp, expOK := token.Claims["exp"].(float64)
+		if false == expOK {
+			return "", 0, nil
+		}
+		expTm := time.Unix(int64(exp), 0).Unix()
+		dur := time.Duration((expTm - time.Now().Unix()))
+		dur = dur * time.Second
+		return tokenUid, dur, nil
 	case *jwt.ValidationError:
-		return "", nil
+		return "", 0, nil
 	default:
-		return "", errgo.Mask(err)
+		return "", 0, errgo.Mask(err)
 	}
 }
 

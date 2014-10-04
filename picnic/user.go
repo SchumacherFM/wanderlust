@@ -61,6 +61,7 @@ type userGetterIf interface {
 	getEmail() string
 	getName() string
 	getUserName() string
+	getSessionExpiresIn() int
 	toStringInterface() map[string]interface{}
 	findMe() (bool, error)
 	helpers.FfjsonIf
@@ -71,6 +72,7 @@ type userSetterIf interface {
 	setName(string) error
 	setUserName(string) error
 	setAuthenticated(bool) error
+	setSessionExpiresIn(time.Duration) error
 	prepareNew() error
 	applyDbData(map[string]interface{}) error
 	// validate(ctx *context, r *http.Request, errors map[string]string) error
@@ -95,26 +97,29 @@ type UserModelCollection struct {
 }
 
 type UserModel struct {
-	CreatedAt       time.Time
-	UserName        string
-	Name            string
-	Email           string
-	Password        string
-	IsAdmin         bool
-	IsActive        bool
-	RecoveryCode    string
-	IsAuthenticated bool
+	CreatedAt        time.Time
+	UserName         string
+	Name             string
+	Email            string
+	Password         string
+	IsAdmin          bool
+	IsActive         bool
+	RecoveryCode     string
+	IsAuthenticated  bool
+	SessionExpiresIn time.Duration // not exported in JSON
 }
 
-func (um *UserModel) getId() int          { return helpers.StringHash(um.UserName) }
-func (um *UserModel) getEmail() string    { return um.Email }
-func (um *UserModel) getUserName() string { return um.UserName }
-func (um *UserModel) getName() string     { return um.Name }
+func (um *UserModel) getId() int               { return helpers.StringHash(um.UserName) }
+func (um *UserModel) getEmail() string         { return um.Email }
+func (um *UserModel) getUserName() string      { return um.UserName }
+func (um *UserModel) getName() string          { return um.Name }
+func (um *UserModel) getSessionExpiresIn() int { return int(um.SessionExpiresIn.Seconds()) }
 
-func (um *UserModel) setEmail(e string) error          { um.Email = e; return nil }
-func (um *UserModel) setName(n string) error           { um.Name = n; return nil }
-func (um *UserModel) setUserName(u string) error       { um.UserName = u; return nil }
-func (um *UserModel) setAuthenticated(auth bool) error { um.IsAuthenticated = auth; return nil }
+func (um *UserModel) setEmail(e string) error                    { um.Email = e; return nil }
+func (um *UserModel) setName(n string) error                     { um.Name = n; return nil }
+func (um *UserModel) setUserName(u string) error                 { um.UserName = u; return nil }
+func (um *UserModel) setAuthenticated(auth bool) error           { um.IsAuthenticated = auth; return nil }
+func (um *UserModel) setSessionExpiresIn(ei time.Duration) error { um.SessionExpiresIn = ei; return nil }
 
 func (um *UserModel) isAuthenticated() bool { return um.IsAuthenticated }
 func (um *UserModel) isAdmin() bool         { return um.IsAdmin }

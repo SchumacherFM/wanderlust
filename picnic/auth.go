@@ -79,7 +79,7 @@ func (p *PicnicApp) authenticate(r *http.Request, level authLevel) (userIf, erro
 		return nil, nil
 	}
 
-	userID, err := p.session.readToken(r)
+	userID, expiresIn, err := p.session.readToken(r)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +95,7 @@ func (p *PicnicApp) authenticate(r *http.Request, level authLevel) (userIf, erro
 		return nil, checkAuthLevel(level, nil)
 	}
 	user.setAuthenticated(true)
-
+	user.setSessionExpiresIn(expiresIn)
 	return user, checkAuthLevel(level, user)
 
 }
