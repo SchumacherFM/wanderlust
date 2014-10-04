@@ -21,8 +21,8 @@ angular.module('picnic.services', [])
         }
       };
     }])
-  .service('Session', ['$location', '$window', '$q', 'AUTH_TOKEN_STORAGE_KEY', 'Alert', 'TrackUser',
-    function ($location, $window, $q, AUTH_TOKEN_STORAGE_KEY, Alert, TrackUser) {
+  .service('Session', ['$location', 'localStorageService', '$q', 'AUTH_TOKEN_STORAGE_KEY', 'Alert', 'TrackUser',
+    function ($location, localStorageService, $q, AUTH_TOKEN_STORAGE_KEY, Alert, TrackUser) {
       var noRedirectUrls = {
         "/login": true,
         "/changepass": true,
@@ -108,7 +108,7 @@ angular.module('picnic.services', [])
         this.$delete = result.$delete;
         if (token) {
           TrackUser.setToken(token);
-          $window.localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, token);
+          localStorageService.set(AUTH_TOKEN_STORAGE_KEY, token);
         }
       };
 
@@ -118,7 +118,7 @@ angular.module('picnic.services', [])
         $this.$delete(function (result) {
           $this.clear();
           d.resolve(result);
-          $window.localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
+          localStorageService.remove(AUTH_TOKEN_STORAGE_KEY);
         });
         return d.promise;
       };

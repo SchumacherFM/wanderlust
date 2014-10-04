@@ -43,12 +43,12 @@ angular
   .factory('SysInfoResource', function ($resource, picnicUrls) {
     return $resource(picnicUrls.sysinfo, {});
   })
-  .factory('AuthInterceptor', function ($window, TrackUser, AUTH_TOKEN_HEADER, AUTH_TOKEN_STORAGE_KEY) {
+  .factory('AuthInterceptor', function (localStorageService, TrackUser, AUTH_TOKEN_HEADER, AUTH_TOKEN_STORAGE_KEY) {
     // adds for every request the token
     return {
       request: function (config) {
         config.headers = config.headers || {};
-        var token = $window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
+        var token = localStorageService.get(AUTH_TOKEN_STORAGE_KEY);
         if (token && token.length > 20) {
           TrackUser.setToken(token);
           config.headers[AUTH_TOKEN_HEADER] = token;

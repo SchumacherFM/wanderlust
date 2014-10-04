@@ -6,13 +6,13 @@ angular
   .controller('MasterCtrl', [
     '$scope',
     '$state',
-    '$cookieStore',
+    'localStorageService',
     '$timeout',
     'Session',
     'AuthResource',
     'Alert',
-    function ($scope, $state, $cookieStore, $timeout, Session, AuthResource, Alert) {
-
+    function ($scope, $state, localStorageService, $timeout, Session, AuthResource, Alert) {
+      var LS_TOGGLE_KEY = 'wlToggle';
       //<Alerts>
       $scope.alert = Alert;
       $scope.$watchCollection('alert.messages', function () {
@@ -40,16 +40,18 @@ angular
       //</Sessions>
 
       /**
-       * Sidebar Toggle & Cookie Control
+       * Sidebar Toggle & localStorageService Control
        */
+      $scope.toggle = localStorageService.get(LS_TOGGLE_KEY) !== 'false';
       var mobileView = 992;
       $scope.getWidth = function () {
         return window.innerWidth;
       };
       $scope.$watch($scope.getWidth, function (newValue) {
         if (newValue >= mobileView) {
-          if (angular.isDefined($cookieStore.get('toggle'))) {
-            $scope.toggle = !$cookieStore.get('toggle');
+          if (localStorageService.get(LS_TOGGLE_KEY)) {
+            console.log('localStorageService.get(LS_TOGGLE_KEY)', localStorageService.get(LS_TOGGLE_KEY));
+            $scope.toggle = localStorageService.get(LS_TOGGLE_KEY) !== 'false';
           } else {
             $scope.toggle = true;
           }
@@ -59,13 +61,11 @@ angular
       });
       $scope.toggleSidebar = function () {
         $scope.toggle = !$scope.toggle;
-
-        $cookieStore.put('toggle', $scope.toggle);
+        localStorageService.set(LS_TOGGLE_KEY, $scope.toggle);
       };
       window.onresize = function () {
         $scope.$apply();
       };
-
     }
   ])
   .controller('systemInfo', [

@@ -4,7 +4,7 @@ angular
   .module('Dashboard', [
     'ui.bootstrap',
     'ui.router',
-    'ngCookies',
+    'LocalStorageModule',
     'ngResource',
     'ui.gravatar',
     'ui.bootstrap',
@@ -80,12 +80,12 @@ angular
   .factory('SysInfoResource', function ($resource, picnicUrls) {
     return $resource(picnicUrls.sysinfo, {});
   })
-  .factory('AuthInterceptor', function ($window, TrackUser, AUTH_TOKEN_HEADER, AUTH_TOKEN_STORAGE_KEY) {
+  .factory('AuthInterceptor', function (localStorageService, TrackUser, AUTH_TOKEN_HEADER, AUTH_TOKEN_STORAGE_KEY) {
     // adds for every request the token
     return {
       request: function (config) {
         config.headers = config.headers || {};
-        var token = $window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY);
+        var token = localStorageService.get(AUTH_TOKEN_STORAGE_KEY);
         if (token && token.length > 20) {
           TrackUser.setToken(token);
           config.headers[AUTH_TOKEN_HEADER] = token;
@@ -202,8 +202,8 @@ angular.module('picnic.services', [])
         }
       };
     }])
-  .service('Session', ['$location', '$window', '$q', 'AUTH_TOKEN_STORAGE_KEY', 'Alert', 'TrackUser',
-    function ($location, $window, $q, AUTH_TOKEN_STORAGE_KEY, Alert, TrackUser) {
+  .service('Session', ['$location', 'localStorageService', '$q', 'AUTH_TOKEN_STORAGE_KEY', 'Alert', 'TrackUser',
+    function ($location, localStorageService, $q, AUTH_TOKEN_STORAGE_KEY, Alert, TrackUser) {
       var noRedirectUrls = {
         "/login": true,
         "/changepass": true,
@@ -289,7 +289,7 @@ angular.module('picnic.services', [])
         this.$delete = result.$delete;
         if (token) {
           TrackUser.setToken(token);
-          $window.localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, token);
+          localStorageService.set(AUTH_TOKEN_STORAGE_KEY, token);
         }
       };
 
@@ -299,7 +299,7 @@ angular.module('picnic.services', [])
         $this.$delete(function (result) {
           $this.clear();
           d.resolve(result);
-          $window.localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
+          localStorageService.remove(AUTH_TOKEN_STORAGE_KEY);
         });
         return d.promise;
       };
@@ -364,13 +364,13 @@ angular
   .controller('MasterCtrl', [
     '$scope',
     '$state',
-    '$cookieStore',
+    'localStorageService',
     '$timeout',
     'Session',
     'AuthResource',
     'Alert',
-    function ($scope, $state, $cookieStore, $timeout, Session, AuthResource, Alert) {
-
+    function ($scope, $state, localStorageService, $timeout, Session, AuthResource, Alert) {
+      var LS_TOGGLE_KEY = 'wlToggle';
       //<Alerts>
       $scope.alert = Alert;
       $scope.$watchCollection('alert.messages', function () {
@@ -398,16 +398,18 @@ angular
       //</Sessions>
 
       /**
-       * Sidebar Toggle & Cookie Control
+       * Sidebar Toggle & localStorageService Control
        */
+      $scope.toggle = localStorageService.get(LS_TOGGLE_KEY) !== 'false';
       var mobileView = 992;
       $scope.getWidth = function () {
         return window.innerWidth;
       };
       $scope.$watch($scope.getWidth, function (newValue) {
         if (newValue >= mobileView) {
-          if (angular.isDefined($cookieStore.get('toggle'))) {
-            $scope.toggle = !$cookieStore.get('toggle');
+          if (localStorageService.get(LS_TOGGLE_KEY)) {
+            console.log('localStorageService.get(LS_TOGGLE_KEY)', localStorageService.get(LS_TOGGLE_KEY));
+            $scope.toggle = localStorageService.get(LS_TOGGLE_KEY) !== 'false';
           } else {
             $scope.toggle = true;
           }
@@ -417,13 +419,11 @@ angular
       });
       $scope.toggleSidebar = function () {
         $scope.toggle = !$scope.toggle;
-
-        $cookieStore.put('toggle', $scope.toggle);
+        localStorageService.set(LS_TOGGLE_KEY, $scope.toggle);
       };
       window.onresize = function () {
         $scope.$apply();
       };
-
     }
   ])
   .controller('systemInfo', [
