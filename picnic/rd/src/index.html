@@ -64,6 +64,7 @@
   <script type="text/javascript" src="js/dashboard/services.js"></script>
   <script type="text/javascript" src="js/dashboard/controllers/master-ctrl.js"></script>
   <script type="text/javascript" src="js/dashboard/controllers/login-ctrl.js"></script>
+  <script type="text/javascript" src="js/dashboard/directives/check.js"></script>
   <script type="text/javascript" src="js/dashboard/directives/loading.js"></script>
   <script type="text/javascript" src="js/dashboard/directives/widget.js"></script>
   <script type="text/javascript" src="js/dashboard/directives/widget-header.js"></script>
@@ -190,12 +191,12 @@
           <div class="user pull-right">
             <div class="item dropdown">
 
-              <a href="#" class="dropdown-toggle" data-ng-show="session.loggedIn">
-                <img gravatar-src="session.email" alt="Welcome! {{ session.name }}" title="Welcome! {{ session.name }}"/>
-              </a>
               <a href="#" data-ng-click="login()" class="dropdown-toggle" data-ng-show="!session.loggedIn"
                  data-analytics-on="click" data-analytics-event="login" data-analytics-category="auth">
                 <img src="img/avatar.jpg" alt="Please Login" title="Please log in">
+              </a>
+              <a href="#" class="dropdown-toggle" data-ng-show="session.loggedIn">
+                <img gravatar-src="session.email" alt="Welcome! {{ session.name }}" title="Welcome! {{ session.name }}"/>
               </a>
 
               <ul data-ng-show="session.loggedIn" class="dropdown-menu dropdown-menu-right">

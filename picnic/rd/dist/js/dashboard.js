@@ -40,6 +40,10 @@ angular
  */
 angular
   .module('Dashboard')
+  // loads the user collection when the dashboard website is open.
+  .factory('UserInfoResource', function ($resource, picnicUrls) {
+    return $resource(picnicUrls.users, {});
+  })
   .factory('SysInfoWidgets', function (Session) {
     var loggedIn = Session.isLoggedIn();
     return {
@@ -191,12 +195,12 @@ angular.module('picnic.services', [])
 
       return {
         "setUser": function (user) {
-          setVar(1, "username", user)
+          setVar(1, "username", user);
         },
         "setToken": function (token) {
-          setVar(2, "token", token)
+          setVar(2, "token", token);
         }
-      }
+      };
     }])
   .service('Session', ['$location', '$window', '$q', 'AUTH_TOKEN_STORAGE_KEY', 'Alert', 'TrackUser',
     function ($location, $window, $q, AUTH_TOKEN_STORAGE_KEY, Alert, TrackUser) {
@@ -465,6 +469,21 @@ angular
       });
 
     }
+  ])
+  .controller('userInfo', [
+    '$scope',
+    'UserInfoResource',
+    function ($scope, UserInfoResource) {
+      var loggedIn = $scope.session.isLoggedIn();
+      $scope.userCollection = [];
+      $scope.isLoggedOut = !loggedIn;
+
+      UserInfoResource.get(function (response) {
+        var users = response.Users || {};
+        $scope.userCollection = users;
+      });
+
+    }
   ]);
 
 angular
@@ -507,6 +526,20 @@ angular
       };
     }
   ]);
+angular
+  .module('Dashboard')
+  .directive('rdCheck', function () {
+    return {
+      restrict: 'AE',
+      scope: {
+        checked: '@'
+      },
+      template: '<i class="fa fa-check" data-ng-show="checked"></i><i class="fa fa-times" data-ng-hide="checked"></i>'
+    };
+  }
+);
+
+
 /**
  * Loading Directive
  * @see http://tobiasahlin.com/spinkit/
@@ -555,10 +588,13 @@ angular
     return {
       requires: '^rdWidget',
       scope: {
-        loading: '@?'
+        loading: '@?',
+        bodyclass: '@'
       },
       transclude: true,
-      template: '<div class="widget-body"><rd-loading ng-show="loading"></rd-loading><div ng-hide="loading" class="widget-content" ng-transclude></div></div>',
+      template: '<div class="widget-body" ng-class="bodyclass">' +
+        '<rd-loading ng-show="loading"></rd-loading>' +
+        '<div ng-hide="loading" class="widget-content" ng-transclude></div></div>',
       restrict: 'E'
     };
   }

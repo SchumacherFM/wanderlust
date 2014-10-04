@@ -365,6 +365,9 @@ ul.sidebar .sidebar-list .menu-icon {
 .widget .widget-header input {
   width: 25%;
 }
+.widget .widget-header .search {
+  width: 100%;
+}
 .widget .widget-body {
   padding: 20px;
 }

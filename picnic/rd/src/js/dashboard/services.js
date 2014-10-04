@@ -14,12 +14,12 @@ angular.module('picnic.services', [])
 
       return {
         "setUser": function (user) {
-          setVar(1, "username", user)
+          setVar(1, "username", user);
         },
         "setToken": function (token) {
-          setVar(2, "token", token)
+          setVar(2, "token", token);
         }
-      }
+      };
     }])
   .service('Session', ['$location', '$window', '$q', 'AUTH_TOKEN_STORAGE_KEY', 'Alert', 'TrackUser',
     function ($location, $window, $q, AUTH_TOKEN_STORAGE_KEY, Alert, TrackUser) {

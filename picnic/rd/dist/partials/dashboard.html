@@ -5,10 +5,8 @@
         <div class="widget-icon {{siw.iconColor}} pull-left">
           <i class="fa {{siw.icon}}"></i>
         </div>
-        <!--<div class="widget-content pull-left">-->
         <div class="title">{{siw.title}}</div>
         <div class="comment">{{siw.comment}}</div>
-        <!--</div>-->
         <div class="clearfix"></div>
       </rd-widget-body>
     </rd-widget>
@@ -88,49 +86,50 @@
       </div>
     </div>
   </div>
-  <div class="col-lg-6">
-    <div class="widget">
-      <div class="widget-header">
-        <i class="fa fa-users"></i> Users
-        <input type="text" placeholder="Search @todo" class="form-control input-sm pull-right"/>
-
-        <div class="clearfix"></div>
-      </div>
-      <div class="widget-body medium no-padding">
+  <div class="col-lg-6" data-ng-controller="userInfo">
+    <rd-widget>
+      <rd-widget-header title="Users ({{userCollection.length}})" icon="fa-users">
+        <input data-xng-model="u" type="text" placeholder="Search" class="form-control input-sm pull-right search"/>
+      </rd-widget-header>
+      <rd-widget-body loading="{{isLoggedOut}}" bodyclass="medium no-padding">
         <div class="table-responsive">
           <table class="table">
             <thead>
             <tr>
               <th class="text-center">ID</th>
               <th>Username</th>
-              <th>Role</th>
-              <th>Account</th>
+              <th>Name</th>
+              <th>Admin?</th>
+              <th>Active?</th>
+              <th>Logged in?</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-              <td class="text-center">1</td>
-              <td>Joe Bloggs</td>
-              <td>Super Admin</td>
-              <td>AZ23045</td>
+            <tr data-ng-repeat="user in userCollection">
+              <td class="text-center">{{$index+1}}</td>
+              <td>{{user.UserName}}</td>
+              <td>{{user.Name}}</td>
+              <td class="text-center">
+                <rd-check checked="{{user.IsAdmin}}"/>
+              </td>
+              <td class="text-center">
+                <rd-check checked="{{user.IsActive}}"/>
+              </td>
+              <td class="text-center">
+                <i class="fa fa-question"></i>
+              </td>
             </tr>
-            <tr>
-              <td class="text-center">2</td>
-              <td>Timothy Hernandez</td>
-              <td>Admin</td>
-              <td>AU24783</td>
-            </tr>
-            <tr>
-              <td class="text-center">3</td>
-              <td>Joe Bickham</td>
-              <td>User</td>
-              <td>AM23781</td>
+            <tr data-ng-if="userCollection.length == 0">
+              <td colspan="4">
+                <p class="text-center"><strong>No results found...</strong></p>
+              </td>
             </tr>
             </tbody>
           </table>
+
         </div>
-      </div>
-    </div>
+      </rd-widget-body>
+    </rd-widget>
   </div>
 </div>
 <div class="row">

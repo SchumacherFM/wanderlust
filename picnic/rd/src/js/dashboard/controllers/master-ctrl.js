@@ -111,4 +111,19 @@ angular
       });
 
     }
+  ])
+  .controller('userInfo', [
+    '$scope',
+    'UserInfoResource',
+    function ($scope, UserInfoResource) {
+      var loggedIn = $scope.session.isLoggedIn();
+      $scope.userCollection = [];
+      $scope.isLoggedOut = !loggedIn;
+
+      UserInfoResource.get(function (response) {
+        var users = response.Users || {};
+        $scope.userCollection = users;
+      });
+
+    }
   ]);

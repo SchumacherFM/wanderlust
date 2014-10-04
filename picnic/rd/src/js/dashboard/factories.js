@@ -3,6 +3,10 @@
  */
 angular
   .module('Dashboard')
+  // loads the user collection when the dashboard website is open.
+  .factory('UserInfoResource', function ($resource, picnicUrls) {
+    return $resource(picnicUrls.users, {});
+  })
   .factory('SysInfoWidgets', function (Session) {
     var loggedIn = Session.isLoggedIn();
     return {
