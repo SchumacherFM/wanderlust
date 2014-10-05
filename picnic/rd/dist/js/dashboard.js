@@ -406,15 +406,12 @@ angular
         return window.innerWidth;
       };
       $scope.$watch($scope.getWidth, function (newValue) {
+        $scope.toggle = false;
         if (newValue >= mobileView) {
+          $scope.toggle = true;
           if (localStorageService.get(LS_TOGGLE_KEY)) {
-            console.log('localStorageService.get(LS_TOGGLE_KEY)', localStorageService.get(LS_TOGGLE_KEY));
             $scope.toggle = localStorageService.get(LS_TOGGLE_KEY) !== 'false';
-          } else {
-            $scope.toggle = true;
           }
-        } else {
-          $scope.toggle = false;
         }
       });
       $scope.toggleSidebar = function () {
