@@ -80,15 +80,15 @@ angular
           angular.forEach(data, function (v, k) {
             if (SysInfoWidgets[k]) {
               SysInfoWidgets[k].title = parseInt(v, 10); // fight against all evil ;-)
+              SysInfoWidgets[k].loading = !loggedIn;
             }
           });
           $scope.sysInfoWidgets = SysInfoWidgets;
           timeoutPromise = $timeout(tick, timeoutSecs);
         }, function error() {
           // this interval cancels itself when the user logs out
-          loggedIn = $scope.session.isLoggedIn();
           angular.forEach(SysInfoWidgets, function (obj) {
-            obj.loading = !loggedIn;
+            obj.loading = true;
           });
           $scope.sysInfoWidgets = SysInfoWidgets;
         });
@@ -106,21 +106,16 @@ angular
           timeoutPromise = undefined;
         }
       });
-
     }
   ])
   .controller('userInfo', [
     '$scope',
     'UserInfoResource',
     function ($scope, UserInfoResource) {
-      var loggedIn = $scope.session.isLoggedIn();
       $scope.userCollection = [];
-      $scope.isLoggedOut = !loggedIn;
-
+      $scope.isLoading = !$scope.session.isLoggedIn();
       UserInfoResource.get(function (response) {
-        var users = response.Users || {};
-        $scope.userCollection = users;
+        $scope.userCollection = response.Users || {};
       });
-
     }
   ]);
