@@ -21,6 +21,7 @@ package picnic
 
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
+	"github.com/SchumacherFM/wanderlust/helpers"
 	"net/http"
 )
 
@@ -41,5 +42,5 @@ func userCollectionHandler(rc requestContextI, w http.ResponseWriter, r *http.Re
 	if nil != err {
 		return err
 	}
-	return renderFFJSON(w, users, http.StatusOK)
+	return helpers.RenderFFJSON(w, users, http.StatusOK)
 }

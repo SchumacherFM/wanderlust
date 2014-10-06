@@ -21,6 +21,7 @@ package picnic
 
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
+	"github.com/SchumacherFM/wanderlust/helpers"
 	"net/http"
 )
 
@@ -38,7 +39,7 @@ func (p *PicnicApp) initRoutesAuth(router *mux.Router) error {
 }
 
 func sessionInfoHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
-	return renderFFJSON(w, newSessionInfo(rc.getUser()), http.StatusOK)
+	return helpers.RenderFFJSON(w, newSessionInfo(rc.getUser()), http.StatusOK)
 }
 
 func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
@@ -50,7 +51,7 @@ func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) er
 
 	lpd := &loginPostData{}
 
-	if err := decodeJSON(r, lpd); nil != err {
+	if err := helpers.DecodeJSON(r, lpd); nil != err {
 		return err
 	}
 
@@ -79,7 +80,7 @@ func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) er
 
 	user.setAuthenticated(true)
 	// @todo use websocket to send message
-	return renderFFJSON(w, newSessionInfo(user), http.StatusOK)
+	return helpers.RenderFFJSON(w, newSessionInfo(user), http.StatusOK)
 }
 
 func logoutHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
@@ -88,5 +89,5 @@ func logoutHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) e
 		return err
 	}
 	// @todo use websocket to send message
-	return renderFFJSON(w, newSessionInfo(nil), http.StatusOK)
+	return helpers.RenderFFJSON(w, newSessionInfo(nil), http.StatusOK)
 }

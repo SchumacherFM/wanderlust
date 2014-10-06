@@ -24,6 +24,7 @@ import (
 	gzrice "github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice"
 	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/negroni"
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
+	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/picnic/middleware"
 	"net/http"
 )
@@ -44,7 +45,6 @@ func (p *PicnicApp) handler(h handlerFunc, level authLevel) http.HandlerFunc {
 			}
 			return h(newRequestContext(p, r, user), w, r)
 		}
-
 		p.handleError(w, r, doAuthentication())
 	}
 }
@@ -106,5 +106,5 @@ func handlerFavicon(w http.ResponseWriter, r *http.Request) {
 }
 
 func noopHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
-	return renderString(w, 200, fmt.Sprintf("Found route \n%#v\n %#v\n", r, rc))
+	return helpers.RenderString(w, 200, fmt.Sprintf("Found route \n%#v\n %#v\n", r, rc))
 }

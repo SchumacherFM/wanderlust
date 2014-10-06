@@ -17,18 +17,16 @@
 // Wanderlust uses go.rice package for serving static web content
 //
 
-package picnic
+package helpers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
-	"github.com/SchumacherFM/wanderlust/helpers"
 	"net/http"
 	"strconv"
 )
 
-func writeBody(w http.ResponseWriter, body []byte, status int, contentType string) error {
+func WriteBody(w http.ResponseWriter, body []byte, status int, contentType string) error {
 	w.Header().Set("Content-Type", contentType+"; charset=UTF8")
 	w.Header().Set("Content-Length", strconv.Itoa(len(body)))
 	w.WriteHeader(status)
@@ -36,37 +34,26 @@ func writeBody(w http.ResponseWriter, body []byte, status int, contentType strin
 	return errgo.Mask(err)
 }
 
-func renderFFJSON(w http.ResponseWriter, value helpers.FfjsonIf, status int) error {
+func RenderFFJSON(w http.ResponseWriter, value FfjsonIf, status int) error {
 	body, err := value.MarshalJSON()
 	if nil != err {
 		return errgo.Mask(err)
 	}
-	return writeBody(w, body, status, "application/json")
+	return WriteBody(w, body, status, "application/json")
 }
 
-func renderJSON(w http.ResponseWriter, value interface{}, status int) error {
+func RenderJSON(w http.ResponseWriter, value interface{}, status int) error {
 	body, err := json.Marshal(value)
 	if nil != err {
 		return errgo.Mask(err)
 	}
-	return writeBody(w, body, status, "application/json")
+	return WriteBody(w, body, status, "application/json")
 }
 
-func renderString(w http.ResponseWriter, status int, msg string) error {
-	return writeBody(w, []byte(msg), status, "text/plain")
+func RenderString(w http.ResponseWriter, status int, msg string) error {
+	return WriteBody(w, []byte(msg), status, "text/plain")
 }
 
-func getScheme(r *http.Request) string {
-	if nil == r.TLS {
-		return "http"
-	}
-	return "https"
-}
-
-func getBaseURL(r *http.Request) string {
-	return fmt.Sprintf("%s://%s", getScheme(r), r.Host)
-}
-
-func decodeJSON(r *http.Request, value interface{}) error {
+func DecodeJSON(r *http.Request, value interface{}) error {
 	return errgo.Mask(json.NewDecoder(r.Body).Decode(value))
 }

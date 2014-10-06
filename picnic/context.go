@@ -22,15 +22,31 @@ import (
 	"strconv"
 )
 
-type requestParamsI interface {
-	get(name string) string
-	getInt(name string) int64
-}
+type (
+	requestParamsI interface {
+		get(name string) string
+		getInt(name string) int64
+	}
 
-// contains route parameters in a map
-type requestParams struct {
-	vars map[string]string
-}
+	// contains route parameters in a map
+	requestParams struct {
+		vars map[string]string
+	}
+	requestContextI interface {
+		getApp() PicnicAppI
+		getParamString(string) string
+		getParamInt64(string) int64
+		getUser() userGetPermIf
+	}
+
+	// request-specific requestContext
+	// contains the app config so we have access to all the objects we need
+	requestContext struct {
+		app  PicnicAppI
+		par  requestParamsI
+		user userGetPermIf
+	}
+)
 
 func (r *requestParams) get(name string) string {
 	return r.vars[name]
@@ -39,13 +55,6 @@ func (r *requestParams) get(name string) string {
 func (r *requestParams) getInt(name string) int64 {
 	value, _ := strconv.ParseInt(r.vars[name], 10, 0)
 	return value
-}
-
-type requestContextI interface {
-	getApp() PicnicAppI
-	getParamString(string) string
-	getParamInt64(string) int64
-	getUser() userGetPermIf
 }
 
 // invoked in (p *PicnicApp) handler()
@@ -59,14 +68,6 @@ func newRequestContext(app PicnicAppI, r *http.Request, theUser userGetPermIf) *
 		user: theUser,
 	}
 	return ctx
-}
-
-// request-specific requestContext
-// contains the app config so we have access to all the objects we need
-type requestContext struct {
-	app  PicnicAppI
-	par  requestParamsI
-	user userGetPermIf
 }
 
 func (rc *requestContext) getApp() PicnicAppI {
