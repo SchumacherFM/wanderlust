@@ -31,10 +31,10 @@ angular
         "loading": !loggedIn,
         iconColor: "red"
       },
-      Provisioners: {
-        "icon": "fa-database",
+      SessionExpires: {
+        "icon": "fa-clock-o",
         "title": 0,
-        "comment": "Provisioners",
+        "comment": "Log out in",
         "loading": !loggedIn,
         iconColor: "blue"
       }

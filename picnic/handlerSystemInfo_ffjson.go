@@ -60,13 +60,6 @@ func (mj *SystemInfo) MarshalJSONBuf(buf *bytes.Buffer) error {
 	} else {
 		buf.WriteString(`,`)
 	}
-	buf.WriteString(`"Provisioners":`)
-	helpers.Ffjson_FormatBits(buf, uint64(mj.Provisioners), 10, mj.Provisioners < 0)
-	if first == true {
-		first = false
-	} else {
-		buf.WriteString(`,`)
-	}
 	buf.WriteString(`"Wanderers":`)
 	helpers.Ffjson_FormatBits(buf, uint64(mj.Wanderers), 10, mj.Wanderers < 0)
 	if first == true {

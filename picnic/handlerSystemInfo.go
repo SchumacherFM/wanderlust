@@ -27,7 +27,6 @@ type SystemInfo struct {
 	Goroutines     int
 	Brotzeit       int
 	Wanderers      int
-	Provisioners   int
 	SessionExpires int
 }
 
@@ -48,10 +47,10 @@ func systemInfoHandler(rc requestContextI, w http.ResponseWriter, r *http.Reques
 
 func newSystemInfo() *SystemInfo {
 	si := &SystemInfo{
-		Goroutines:   runtime.NumGoroutine(),
-		Brotzeit:     helpers.RandomInt(6),  // @todo
-		Wanderers:    helpers.RandomInt(20), // @todo
-		Provisioners: 3,
+		Goroutines:     runtime.NumGoroutine(),
+		Brotzeit:       helpers.RandomInt(6),  // @todo
+		Wanderers:      helpers.RandomInt(20), // @todo
+		SessionExpires: 0,
 	}
 	return si
 }

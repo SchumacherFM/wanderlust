@@ -83,6 +83,14 @@ angular
               SysInfoWidgets[k].loading = !loggedIn;
             }
           });
+
+          if (SysInfoWidgets.SessionExpires) {
+            var s = SysInfoWidgets.SessionExpires.title,
+                m = parseInt(s / 60, 10);
+            s = s - (m * 60);
+            SysInfoWidgets.SessionExpires.title = m + 'm ' + s + 's';
+          }
+
           $scope.sysInfoWidgets = SysInfoWidgets;
           timeoutPromise = $timeout(tick, timeoutSecs);
         }, function error() {
@@ -98,7 +106,6 @@ angular
         tick();
       }
       $scope.sysInfoWidgets = SysInfoWidgets;
-
       // Cancel interval on page changes
       $scope.$on('$destroy', function () {
         if (angular.isDefined(timeoutPromise)) {
