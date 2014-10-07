@@ -62,18 +62,18 @@ gulp.task('watch', function () {
   gulp.watch([paths.bower_fonts], ['copy-bower_fonts']);
 });
 
-gulp.task('webserver', function () {
-  connect.server({
-    root: 'dist',
-    livereload: true
-  });
-});
-
-gulp.task('livereload', function () {
-  gulp.src(['dist/**/*.*'])
-    .pipe(watch())
-    .pipe(connect.reload());
-});
+//gulp.task('webserver', function () {
+//  connect.server({
+//    root: 'dist',
+//    livereload: true
+//  });
+//});
+//
+//gulp.task('livereload', function () {
+//  gulp.src(['dist/**/*.*'])
+//    .pipe(watch())
+//    .pipe(connect.reload());
+//});
 
 /**
  * Compile less
@@ -85,4 +85,9 @@ gulp.task('compile-less', function () {
 });
 
 gulp.task('build', ['usemin', 'copy-assets']);
-gulp.task('default', ['build', 'webserver', 'livereload', 'watch']);
+gulp.task('default', [
+  'build',
+  //'webserver',
+  //'livereload',
+  'watch'
+]);
