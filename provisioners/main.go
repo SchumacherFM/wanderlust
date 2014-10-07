@@ -19,17 +19,20 @@ package provisioners
 import ()
 
 const (
+	// no slashes for this PrePath in the route
 	URL_PRE_ROUTE string = "provisioners"
 )
 
 type (
-	provFunc func() error
-
 	Provisioner struct {
-		Name   string
-		Url    string
-		Icon   string
-		method provFunc
+		// This name appears in the frontend
+		Name string
+		// REST path
+		Url string
+		// can be a fa-* icon or path to an image
+		Icon string
+		// internal handler
+		method func() error
 	}
 
 	Provisioners struct {

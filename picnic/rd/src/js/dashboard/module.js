@@ -15,6 +15,7 @@ angular
     auth: '/auth/',
     users: '/users/',
     sysinfo: '/sysinfo/',
+    provisioners: '/provisioners/',
     messages: '/api/messages'
   })
   .constant('AUTH_TOKEN_HEADER', 'X-Auth-Token')

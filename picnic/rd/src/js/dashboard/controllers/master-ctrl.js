@@ -11,7 +11,9 @@ angular
     'Session',
     'AuthResource',
     'Alert',
-    function ($scope, $state, localStorageService, $timeout, Session, AuthResource, Alert) {
+    'ProvisionerResource',
+    function ($scope, $state, localStorageService, $timeout, Session, AuthResource, Alert, ProvisionerResource) {
+      'use strict';
       var LS_TOGGLE_KEY = 'wlToggle';
       //<Alerts>
       $scope.alert = Alert;
@@ -22,6 +24,19 @@ angular
         }, 3000);
       });
       //</Alerts>
+
+      // <Navigation> @todo subcontroller; not nice here because we need to refresh
+      $scope.provisioners = [];
+      ProvisionerResource.get({prov: ''}, function (result) {
+        $scope.provisioners = result.Collection || [];
+      }, function (result) {
+        $scope.provisioners.push({
+          Name: result.data,
+          Url: "",
+          Icon: "fa-exclamation-circle"
+        });
+      });
+      // </Navigation>
 
       //<Sessions>
       Session.init(AuthResource);

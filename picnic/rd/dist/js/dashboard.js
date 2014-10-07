@@ -16,6 +16,7 @@ angular
     auth: '/auth/',
     users: '/users/',
     sysinfo: '/sysinfo/',
+    provisioners: '/provisioners/',
     messages: '/api/messages'
   })
   .constant('AUTH_TOKEN_HEADER', 'X-Auth-Token')
@@ -40,9 +41,18 @@ angular
  */
 angular
   .module('Dashboard')
+
+  // handles all the provisioners
+  .factory('ProvisionerResource', function ($resource, picnicUrls) {
+    return $resource(picnicUrls.provisioners + ':prov', {prov: '@prov'});
+  })
+
   // loads the user collection when the dashboard website is open.
   .factory('UserInfoResource', function ($resource, picnicUrls) {
     return $resource(picnicUrls.users, {});
+  })
+  .factory('SysInfoResource', function ($resource, picnicUrls) {
+    return $resource(picnicUrls.sysinfo, {});
   })
   .factory('SysInfoWidgets', function (Session) {
     var loggedIn = Session.isLoggedIn();
@@ -76,9 +86,6 @@ angular
         iconColor: "blue"
       }
     };
-  })
-  .factory('SysInfoResource', function ($resource, picnicUrls) {
-    return $resource(picnicUrls.sysinfo, {});
   })
   .factory('AuthInterceptor', function (localStorageService, TrackUser, AUTH_TOKEN_HEADER, AUTH_TOKEN_STORAGE_KEY) {
     // adds for every request the token
@@ -369,7 +376,9 @@ angular
     'Session',
     'AuthResource',
     'Alert',
-    function ($scope, $state, localStorageService, $timeout, Session, AuthResource, Alert) {
+    'ProvisionerResource',
+    function ($scope, $state, localStorageService, $timeout, Session, AuthResource, Alert, ProvisionerResource) {
+      'use strict';
       var LS_TOGGLE_KEY = 'wlToggle';
       //<Alerts>
       $scope.alert = Alert;
@@ -380,6 +389,19 @@ angular
         }, 3000);
       });
       //</Alerts>
+
+      // <Navigation> @todo subcontroller; not nice here because we need to refresh
+      $scope.provisioners = [];
+      ProvisionerResource.get({prov: ''}, function (result) {
+        $scope.provisioners = result.Collection || [];
+      }, function (result) {
+        $scope.provisioners.push({
+          Name: result.data,
+          Url: "",
+          Icon: "fa-exclamation-circle"
+        });
+      });
+      // </Navigation>
 
       //<Sessions>
       Session.init(AuthResource);
@@ -536,6 +558,28 @@ angular
   }
 );
 
+
+angular
+  .module('Dashboard')
+  .directive('rdNavIcon', function () {
+    return {
+      restrict: 'E',
+      scope: {
+        icon: '@'
+      },
+      link: function (scope, element) {
+        "use strict";
+        var tpl = '';
+        if (-1 === scope.icon.indexOf('fa-')) { // img
+          tpl = '<span class="menu-icon"><img src="' + scope.icon + '" height="30"/></span>';
+        } else { // fa-icon
+          tpl = '<span class="menu-icon fa ' + scope.icon + '"></span>';
+        }
+        element.html(tpl);
+      }
+    };
+  }
+);
 
 /**
  * Loading Directive

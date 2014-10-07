@@ -55,6 +55,7 @@ func (p *PicnicApp) getHandler() *negroni.Negroni {
 	p.initRoutesAuth(router)
 	p.initRoutesUsers(router)
 	p.initRoutesSystemInfo(router)
+	p.initRoutesProvisioners(router)
 
 	brotzeitApi := router.PathPrefix("/brotzeit/").Subrouter()
 	brotzeitApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
@@ -73,14 +74,6 @@ func (p *PicnicApp) getHandler() *negroni.Negroni {
 	rucksackApi := router.PathPrefix("/rucksack/").Subrouter()
 	rucksackApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
 	rucksackApi.HandleFunc("/stop", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
-
-	// a provisioner can be:
-	// ga (Google Analytics), pw (Piwik), sm (URL to sitemap.xml), url (any URL), json (our special JSON format)
-	provisionerApi := router.PathPrefix("/provisioners/").Subrouter()
-	provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")        // get account
-	provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("DELETE")     // delete account
-	provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}/save", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("PATCH") // save account data
-	provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}/urls", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")   // retrieve all urls associated
 
 	dashboardApi := router.PathPrefix("/dashboard/").Subrouter()
 

@@ -19,7 +19,6 @@ package picnic
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
 	"github.com/SchumacherFM/wanderlust/helpers"
-	"github.com/SchumacherFM/wanderlust/provisioners"
 	"net/http"
 	"runtime"
 )
@@ -34,19 +33,7 @@ type SystemInfo struct {
 func (p *PicnicApp) initRoutesSystemInfo(router *mux.Router) error {
 	sysinfoRoute := router.PathPrefix("/sysinfo/").Subrouter()
 	sysinfoRoute.HandleFunc("/", p.handler(systemInfoHandler, AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
-	sysinfoRoute.HandleFunc("/provisioners", p.handler(availableProvisionersHandler, AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
 	return nil
-}
-
-func availableProvisionersHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
-	prov, err := provisioners.GetAvailable()
-	if nil != err {
-		return httpError{
-			Status:      http.StatusNotFound,
-			Description: "",
-		}
-	}
-	return helpers.RenderFFJSON(w, prov, http.StatusOK)
 }
 
 func systemInfoHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {

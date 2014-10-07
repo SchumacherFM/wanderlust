@@ -3,9 +3,18 @@
  */
 angular
   .module('Dashboard')
+
+  // handles all the provisioners
+  .factory('ProvisionerResource', function ($resource, picnicUrls) {
+    return $resource(picnicUrls.provisioners + ':prov', {prov: '@prov'});
+  })
+
   // loads the user collection when the dashboard website is open.
   .factory('UserInfoResource', function ($resource, picnicUrls) {
     return $resource(picnicUrls.users, {});
+  })
+  .factory('SysInfoResource', function ($resource, picnicUrls) {
+    return $resource(picnicUrls.sysinfo, {});
   })
   .factory('SysInfoWidgets', function (Session) {
     var loggedIn = Session.isLoggedIn();
@@ -39,9 +48,6 @@ angular
         iconColor: "blue"
       }
     };
-  })
-  .factory('SysInfoResource', function ($resource, picnicUrls) {
-    return $resource(picnicUrls.sysinfo, {});
   })
   .factory('AuthInterceptor', function (localStorageService, TrackUser, AUTH_TOKEN_HEADER, AUTH_TOKEN_STORAGE_KEY) {
     // adds for every request the token
