@@ -70,24 +70,14 @@
       </li>
 
       <li class="sidebar-title separator"><span>PROVISIONERS</span></li>
-
-      <li class="sidebar-list" data-ng-repeat="prov in provisioners">
-        <a href="#{{prov.Url}}" data-analytics-on="click"
-           data-analytics-category="navigation">{{prov.Name}} <rd-nav-icon icon="{{prov.Icon}}"></rd-nav-icon></a>
-      </li>
-      <!--<li class="sidebar-list">-->
-        <!--<a href="#/provisioners/piwik" data-analytics-on="click" data-analytics-event="provisioners-piwik"-->
-           <!--data-analytics-category="navigation">Piwik <span class="menu-icon"><img src="img/icon-piwik.png" height="30"/></span></a>-->
-      <!--</li>-->
-      <!--<li class="sidebar-list">-->
-        <!--<a href="#/provisioners/sitemapxml" data-analytics-on="click" data-analytics-event="provisioners-sitemapxml"-->
-           <!--data-analytics-category="navigation">Sitemap.xml <span class="menu-icon fa fa-sitemap"></span></a>-->
-      <!--</li>-->
-      <!--<li class="sidebar-list">-->
-        <!--<a href="#/provisioners/textarea" data-analytics-on="click" data-analytics-event="provisioners-textarea"-->
-           <!--data-analytics-category="navigation">Textarea <span class="menu-icon fa fa-file-text-o"></span></a>-->
-      <!--</li>-->
-
+      <ngc data-ng-controller="provisionerNavigation">
+        <li class="sidebar-list" data-ng-repeat="prov in provisioners">
+          <a href="#{{prov.Url}}" data-analytics-on="click"
+             data-analytics-category="navigation">{{prov.Name}}
+            <rd-nav-icon icon="{{prov.Icon}}"></rd-nav-icon>
+          </a>
+        </li>
+      </ngc>
       <li class="sidebar-list">
         <a href="#/shop" data-analytics-on="click" data-analytics-event="shop"
            data-analytics-category="navigation">Shop <span class="menu-icon fa fa-shopping-cart"></span></a>

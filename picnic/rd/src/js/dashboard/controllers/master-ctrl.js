@@ -11,8 +11,7 @@ angular
     'Session',
     'AuthResource',
     'Alert',
-    'ProvisionerResource',
-    function ($scope, $state, localStorageService, $timeout, Session, AuthResource, Alert, ProvisionerResource) {
+    function ($scope, $state, localStorageService, $timeout, Session, AuthResource, Alert) {
       'use strict';
       var LS_TOGGLE_KEY = 'wlToggle';
       //<Alerts>
@@ -24,19 +23,6 @@ angular
         }, 3000);
       });
       //</Alerts>
-
-      // <Navigation> @todo subcontroller; not nice here because we need to refresh
-      $scope.provisioners = [];
-      ProvisionerResource.get({prov: ''}, function (result) {
-        $scope.provisioners = result.Collection || [];
-      }, function (result) {
-        $scope.provisioners.push({
-          Name: result.data,
-          Url: "",
-          Icon: "fa-exclamation-circle"
-        });
-      });
-      // </Navigation>
 
       //<Sessions>
       Session.init(AuthResource);
@@ -139,5 +125,36 @@ angular
       UserInfoResource.get(function (response) {
         $scope.userCollection = response.Users || {};
       });
+    }
+  ])
+  .controller('provisionerNavigation', [
+    '$scope',
+    'ProvisionerResource',
+    function ($scope, ProvisionerResource) {
+      $scope.provisioners = [];
+
+      function loadProv() {
+        ProvisionerResource.get({prov: ''}, function (result) {
+          $scope.provisioners = result.Collection || [];
+          console.log('success', $scope.provisioners);
+        }, function (result) {
+          $scope.provisioners.push({
+            Name: result.data,
+            Url: "",
+            Icon: "fa-exclamation-circle"
+          });
+          console.log('err', $scope.session);
+        });
+      }
+
+      //loadProv();
+      $scope.$watch('session',
+        function (newValue, oldValue) {
+          console.log('session Changed');
+          console.log('newValue', newValue);
+          console.log('oldValue', oldValue);
+        }
+      );
+
     }
   ]);
