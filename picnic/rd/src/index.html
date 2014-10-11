@@ -63,9 +63,10 @@
   <script type="text/javascript" src="js/dashboard/routes.js"></script>
   <script type="text/javascript" src="js/dashboard/services.js"></script>
   <script type="text/javascript" src="js/dashboard/controllers/master-ctrl.js"></script>
+  <script type="text/javascript" src="js/dashboard/controllers/dashboard-ctrl.js"></script>
   <script type="text/javascript" src="js/dashboard/controllers/login-ctrl.js"></script>
   <script type="text/javascript" src="js/dashboard/directives/check.js"></script>
-  <script type="text/javascript" src="js/dashboard/directives/navIcon.js"></script>
+  <script type="text/javascript" src="js/dashboard/directives/navigation.js"></script>
   <script type="text/javascript" src="js/dashboard/directives/loading.js"></script>
   <script type="text/javascript" src="js/dashboard/directives/widget.js"></script>
   <script type="text/javascript" src="js/dashboard/directives/widget-header.js"></script>
@@ -99,7 +100,7 @@
   <!-- Sidebar -->
 
   <div id="sidebar-wrapper">
-    <ul class="sidebar">
+    <ul class="sidebar" data-ng-controller="navigation">
       <li class="sidebar-main">
         <a href="#" ng-click="toggleSidebar()">
           Wanderlust
@@ -115,16 +116,9 @@
         <a href="#/tables" data-analytics-on="click" data-analytics-event="tables"
            data-analytics-category="navigation">Tables <span class="menu-icon fa fa-table"></span></a>
       </li>
-
       <li class="sidebar-title separator"><span>PROVISIONERS</span></li>
-      <ngc data-ng-controller="provisionerNavigation">
-        <li class="sidebar-list" data-ng-repeat="prov in provisioners">
-          <a href="#{{prov.Url}}" data-analytics-on="click"
-             data-analytics-category="navigation">{{prov.Name}}
-            <rd-nav-icon icon="{{prov.Icon}}"></rd-nav-icon>
-          </a>
-        </li>
-      </ngc>
+      <rd-nav-li data-ng-repeat="prov in provisioners" p="prov"></rd-nav-li>
+
       <li class="sidebar-list">
         <a href="#/shop" data-analytics-on="click" data-analytics-event="shop"
            data-analytics-category="navigation">Shop <span class="menu-icon fa fa-shopping-cart"></span></a>

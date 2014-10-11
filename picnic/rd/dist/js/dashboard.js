@@ -431,6 +431,53 @@ angular
       };
     }
   ])
+  .controller('navigation', [
+    '$scope',
+    'ProvisionerResource',
+    'Session',
+    function ($scope, ProvisionerResource, Session) {
+      'use strict';
+
+      function loadProv() {
+        ProvisionerResource.get({prov: ''}, function (result) {
+          $scope.provisioners = [];
+          $scope.provisioners = result.Collection || [];
+        }, function (result) {
+          $scope.provisioners = [];
+          $scope.provisioners.push({
+            Name: result.data,
+            Url: "",
+            Icon: "fa-exclamation-circle"
+          });
+        });
+      }
+
+      $scope.$watch(
+        function () {
+          return Session.isLoggedIn();
+        },
+        function (newValue, oldValue) {
+          if (newValue === oldValue) {
+            return;
+          }
+          loadProv();
+        }
+      );
+      // when user logged in this may fire twice but with the $on listener, this will fire
+      // only when the user is logged out. Is there a better solution?
+      $scope.$on('$viewContentLoaded', function () {
+        if (false === Session.isLoggedIn()) {
+          loadProv();
+        }
+      });
+    }
+  ]);
+
+/**
+ * Dashboard Controller
+ */
+angular
+  .module('Dashboard')
   .controller('systemInfo', [
     '$scope',
     '$timeout',
@@ -491,38 +538,8 @@ angular
         $scope.userCollection = response.Users || {};
       });
     }
-  ])
-  .controller('provisionerNavigation', [
-    '$scope',
-    'ProvisionerResource',
-    function ($scope, ProvisionerResource) {
-      $scope.provisioners = [];
-
-      function loadProv() {
-        ProvisionerResource.get({prov: ''}, function (result) {
-          $scope.provisioners = result.Collection || [];
-          console.log('success', $scope.provisioners);
-        }, function (result) {
-          $scope.provisioners.push({
-            Name: result.data,
-            Url: "",
-            Icon: "fa-exclamation-circle"
-          });
-          console.log('err', $scope.session);
-        });
-      }
-
-      //loadProv();
-      $scope.$watch('session',
-        function (newValue, oldValue) {
-          console.log('session Changed');
-          console.log('newValue', newValue);
-          console.log('oldValue', oldValue);
-        }
-      );
-
-    }
   ]);
+
 
 angular
   .module('Dashboard')
@@ -578,6 +595,17 @@ angular
 
 angular
   .module('Dashboard')
+  .directive('rdNavLi', function () {
+    return {
+      restrict: 'E',
+      template: '<li data-ng-model="p.Name" class="sidebar-list">' +
+        '<a href="#{{p.Url}}" data-analytics-on="click" data-analytics-category="navigation">{{p.Name}}' +
+        '<rd-nav-icon icon="{{p.Icon}}"></rd-nav-icon></a></li>',
+      scope: {
+        p: '='
+      }
+    };
+  })
   .directive('rdNavIcon', function () {
     return {
       restrict: 'E',
@@ -585,7 +613,7 @@ angular
         icon: '@'
       },
       link: function (scope, element) {
-        "use strict";
+        'use strict';
         var tpl = '';
         if (-1 === scope.icon.indexOf('fa-')) { // img
           tpl = '<span class="menu-icon"><img src="' + scope.icon + '" height="30"/></span>';
@@ -595,8 +623,7 @@ angular
         element.html(tpl);
       }
     };
-  }
-);
+  });
 
 /**
  * Loading Directive
