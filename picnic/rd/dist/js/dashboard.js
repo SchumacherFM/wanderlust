@@ -456,20 +456,13 @@ angular
         function () {
           return Session.isLoggedIn();
         },
-        function (newValue, oldValue) {
-          if (newValue === oldValue) {
-            return;
+        function (newValue) {
+          if (true === newValue) {
+            loadProv();
           }
-          loadProv();
         }
       );
-      // when user logged in this may fire twice but with the $on listener, this will fire
-      // only when the user is logged out. Is there a better solution?
-      $scope.$on('$viewContentLoaded', function () {
-        if (false === Session.isLoggedIn()) {
-          loadProv();
-        }
-      });
+      loadProv();
     }
   ]);
 
