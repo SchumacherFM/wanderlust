@@ -16,7 +16,7 @@ func (tu *testUser) getUserName() string     { return "gopher" }
 func (tu *testUser) isAdmin() bool           { return true }
 func (tu *testUser) isValidForSession() bool { return true }
 
-var expected = []byte(`{"email":"root@localhost.dev","isAdmin":true,"loggedIn":true,"name":"Joanna Gopher","username":"gopher"}`)
+var expected = []byte(`{"email":"root@localhost.dev","isAdmin":true,"loggedIn":true,"name":"Joanna Gopher","userName":"gopher"}`)
 
 func TestFFMarshalJSON(t *testing.T) {
 	tu := &testUser{}
@@ -28,7 +28,7 @@ func TestFFMarshalJSON(t *testing.T) {
 	}
 
 	if bytes.Compare(actual, expected) != 0 {
-		t.Errorf("\nExpected: %s\nActual: %s\n", expected, actual)
+		t.Errorf("\nExpected: %s\nActual:   %s\n", expected, actual)
 	}
 }
 

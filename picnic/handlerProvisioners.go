@@ -32,7 +32,7 @@ import (
 //provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}/urls", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")   // retrieve all urls associated
 
 func (p *PicnicApp) initRoutesProvisioners(router *mux.Router) error {
-	pRoute := router.PathPrefix("/" + provisioners.URL_PRE_ROUTE + "/").Subrouter()
+	pRoute := router.PathPrefix("/" + provisioners.GetRoutePathPrefix() + "/").Subrouter()
 	pRoute.HandleFunc("/", p.handler(availableProvisionersHandler, AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
 	return nil
 }
