@@ -25,6 +25,7 @@
   <link rel="stylesheet" type="text/css" href="less/dashboard/widgets.less">
   <link rel="stylesheet" type="text/css" href="less/dashboard/hamburg.less">
   <link rel="stylesheet" type="text/css" href="less/dashboard/login.less">
+  <link rel="stylesheet" type="text/css" href="less/dashboard/custom.less">
   <!-- endbuild -->
 
   <!-- SCRIPTS -->
@@ -178,7 +179,7 @@
 
               <a href="#" data-ng-click="login()" class="dropdown-toggle" data-ng-show="!session.loggedIn"
                  data-analytics-on="click" data-analytics-event="login" data-analytics-category="auth">
-                <img src="img/avatar.jpg" alt="Please Login" title="Please log in">
+                <i class="fa fa-sign-in" style="font-size: 30px" title="Please log in"></i>
               </a>
               <a href="#" class="dropdown-toggle" data-ng-show="session.loggedIn">
                 <img gravatar-src="session.email" alt="Welcome! {{ session.name }}" title="Welcome! {{ session.name }}"/>

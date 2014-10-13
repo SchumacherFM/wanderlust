@@ -9,7 +9,7 @@ var paths = {
   js: 'src/js/**/*.*',
   fonts: 'src/fonts/**.*',
   images: 'src/img/**/*.*',
-  partials: 'src/partials/**.*',
+  partials: 'src/partials/**',
   styles: 'src/less/**/*.less',
   index: 'src/index.html',
   bower_fonts: 'src/bower_components/**/*.{ttf,woff,eof,svg}',
