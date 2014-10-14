@@ -32,28 +32,15 @@
   <!-- build:js lib/angular/angular.js -->
   <script type="text/javascript" src="bower_components/angular/angular.js"></script>
   <!-- endbuild -->
-  <!-- build:js lib/angular/angular-resource.js -->
+  <!-- build:js lib/angular/angular-libs.js -->
   <script type="text/javascript" src="bower_components/angular-resource/angular-resource.js"></script>
-  <!-- endbuild -->
-  <!-- build:js lib/angular/angular-localStorage.js -->
   <script type="text/javascript" src="bower_components/angular-local-storage/dist/angular-local-storage.js"></script>
-  <!-- endbuild -->
-  <!-- build:js lib/angular/ui-bootstrap.js -->
   <script type="text/javascript" src="bower_components/angular-bootstrap/ui-bootstrap.js"></script>
-  <!-- endbuild -->
-  <!-- build:js lib/angular/ui-bootstrap-tpls.js -->
   <script type="text/javascript" src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-  <!-- endbuild -->
-  <!-- build:js lib/angular/angular-ui-router.js -->
   <script type="text/javascript" src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
-  <!-- endbuild -->
-  <!-- build:js lib/angular/gravatar-md5.js -->
+  <script type="text/javascript" src="bower_components/angular-breadcrumb/release/angular-breadcrumb.js"></script>
   <script type="text/javascript" src="bower_components/angular-gravatar/build/md5.js"></script>
-  <!-- endbuild -->
-  <!-- build:js lib/angular/gravatar.js -->
   <script type="text/javascript" src="bower_components/angular-gravatar/build/angular-gravatar.js"></script>
-  <!-- endbuild -->
-  <!-- build:js lib/angular/angulartics-piwik.js -->
   <script type="text/javascript" src="bower_components/angulartics/src/angulartics.js"></script>
   <script type="text/javascript" src="bower_components/angulartics/src/angulartics-piwik.js"></script>
   <!-- endbuild -->
@@ -66,6 +53,7 @@
   <script type="text/javascript" src="js/dashboard/controllers/master-ctrl.js"></script>
   <script type="text/javascript" src="js/dashboard/controllers/dashboard-ctrl.js"></script>
   <script type="text/javascript" src="js/dashboard/controllers/login-ctrl.js"></script>
+  <script type="text/javascript" src="js/dashboard/controllers/provisioner-ctrl.js"></script>
   <script type="text/javascript" src="js/dashboard/directives/check.js"></script>
   <script type="text/javascript" src="js/dashboard/directives/navigation.js"></script>
   <script type="text/javascript" src="js/dashboard/directives/loading.js"></script>
@@ -103,14 +91,14 @@
   <div id="sidebar-wrapper">
     <ul class="sidebar" data-ng-controller="navigation">
       <li class="sidebar-main">
-        <a href="#" ng-click="toggleSidebar()">
+        <a href="#/" ng-click="toggleSidebar()">
           Wanderlust
           <span class="menu-icon glyphicon glyphicon-transfer"></span>
         </a>
       </li>
       <li class="sidebar-title"><span>NAVIGATION</span></li>
       <li class="sidebar-list">
-        <a href="#" data-analytics-on="click" data-analytics-event="dashboard"
+        <a href="#/" data-analytics-on="click" data-analytics-event="dashboard"
            data-analytics-category="navigation">Dashboard <span class="menu-icon fa fa-tachometer"></span></a>
       </li>
       <li class="sidebar-list">
@@ -224,10 +212,10 @@
           </div>
           <div class="meta">
             <div class="page">
-              Wanderlust
+              Wanderlust - A cache warmer with priorities
             </div>
             <div class="breadcrumb-links">
-              Home / Dashboard
+              <ncy-breadcrumb/>
             </div>
           </div>
         </div>

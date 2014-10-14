@@ -81,7 +81,7 @@ angular
           $scope.provisioners = [];
           $scope.provisioners.push({
             Name: result.data,
-            Url: "",
+            Url: "/",
             Icon: "fa-exclamation-circle"
           });
         });

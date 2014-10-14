@@ -15,20 +15,32 @@ angular.module('Dashboard')
       $stateProvider
         .state('index', {
           url: '/',
-          templateUrl: 'partials/dashboard.html'
+          templateUrl: 'partials/dashboard.html',
+          data: {
+            ncyBreadcrumbLabel: 'Dashboard'
+          }
         })
         .state('login', {
           url: '/login',
           templateUrl: 'partials/login.html',
-          controller: 'LoginCtrl'
+          controller: 'LoginCtrl',
+          data: {
+            ncyBreadcrumbLabel: 'Login'
+          }
         })
         .state('tables', {
           url: '/tables',
-          templateUrl: 'partials/tables.html'
+          templateUrl: 'partials/tables.html',
+          data: {
+            ncyBreadcrumbLabel: 'Yet another demo table page'
+          }
         })
         .state('privacy', {
           url: '/privacy',
-          templateUrl: 'partials/privacy.html'
+          templateUrl: 'partials/privacy.html',
+          data: {
+            ncyBreadcrumbLabel: 'Privacy Statement'
+          }
         })
         .state('provisioners', {
           url: '/provisioners/:type',
@@ -36,6 +48,9 @@ angular.module('Dashboard')
             // 404 errors can occur when a template not exists
             var type = $stateParams.type || 'textarea';
             return 'partials/provisioners/' + type + '.html';
+          },
+          data: {
+            ncyBreadcrumbLabel: 'Provisioner / {{name}}'
           }
         })
         .state('shop', {

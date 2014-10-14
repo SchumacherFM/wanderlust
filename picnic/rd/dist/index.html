@@ -14,14 +14,7 @@
 
   <!-- SCRIPTS -->
   <script src="lib/angular/angular.js"></script>
-  <script src="lib/angular/angular-resource.js"></script>
-  <script src="lib/angular/angular-localStorage.js"></script>
-  <script src="lib/angular/ui-bootstrap.js"></script>
-  <script src="lib/angular/ui-bootstrap-tpls.js"></script>
-  <script src="lib/angular/angular-ui-router.js"></script>
-  <script src="lib/angular/gravatar-md5.js"></script>
-  <script src="lib/angular/gravatar.js"></script>
-  <script src="lib/angular/angulartics-piwik.js"></script>
+  <script src="lib/angular/angular-libs.js"></script>
 
   <script src="js/dashboard.js"></script>
   <!-- SCRIPTS -->
@@ -54,14 +47,14 @@
   <div id="sidebar-wrapper">
     <ul class="sidebar" data-ng-controller="navigation">
       <li class="sidebar-main">
-        <a href="#" ng-click="toggleSidebar()">
+        <a href="#/" ng-click="toggleSidebar()">
           Wanderlust
           <span class="menu-icon glyphicon glyphicon-transfer"></span>
         </a>
       </li>
       <li class="sidebar-title"><span>NAVIGATION</span></li>
       <li class="sidebar-list">
-        <a href="#" data-analytics-on="click" data-analytics-event="dashboard"
+        <a href="#/" data-analytics-on="click" data-analytics-event="dashboard"
            data-analytics-category="navigation">Dashboard <span class="menu-icon fa fa-tachometer"></span></a>
       </li>
       <li class="sidebar-list">
@@ -175,10 +168,10 @@
           </div>
           <div class="meta">
             <div class="page">
-              Wanderlust
+              Wanderlust - A cache warmer with priorities
             </div>
             <div class="breadcrumb-links">
-              Home / Dashboard
+              <ncy-breadcrumb/>
             </div>
           </div>
         </div>
