@@ -3,15 +3,15 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/jessevdk/go-flags"
+	goflags "github.com/SchumacherFM/wanderlust/github.com/jessevdk/go-flags" // rename import to `goflags` (file scope) so we can use `var flags` (package scope)
 	"os"
 	"strconv"
 	"strings"
 )
 
 type EditorOptions struct {
-	Input  flags.Filename `short:"i" long:"input" description:"Input file" default:"-"`
-	Output flags.Filename `short:"o" long:"output" description:"Output file" default:"-"`
+	Input  goflags.Filename `short:"i" long:"input" description:"Input file" default:"-"`
+	Output goflags.Filename `short:"o" long:"output" description:"Output file" default:"-"`
 }
 
 type Point struct {
@@ -66,7 +66,7 @@ type Options struct {
 
 var options Options
 
-var parser = flags.NewParser(&options, flags.Default)
+var parser = goflags.NewParser(&options, goflags.Default)
 
 func main() {
 	if _, err := parser.Parse(); err != nil {
