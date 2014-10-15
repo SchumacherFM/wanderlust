@@ -155,6 +155,11 @@ div.input-mask {
 .row.header .meta .breadcrumb-links {
   font-size: 10px;
 }
+.row.header .meta .breadcrumb-links .breadcrumb {
+  margin: 0;
+  padding: 0;
+  background: none;
+}
 .row.header .meta div {
   white-space: nowrap;
   overflow: hidden;

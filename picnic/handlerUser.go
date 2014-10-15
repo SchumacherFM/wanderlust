@@ -25,10 +25,10 @@ import (
 	"net/http"
 )
 
-func (p *PicnicApp) initRoutesUsers(router *mux.Router) error {
-	user := router.PathPrefix("/users/").Subrouter()
+func (p *PicnicApp) initRoutesUsers(r *mux.Router) error {
+	sr := r.PathPrefix("/users/").Subrouter()
 
-	user.HandleFunc("/", p.handler(userCollectionHandler, AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
+	sr.HandleFunc("/", p.handler(userCollectionHandler, AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
 	//	user.HandleFunc("/", p.handler(userCreateHandler, AUTH_LEVEL_LOGIN)).Methods("POST")
 	//	user.HandleFunc("/{id:[0-9]+}", p.handler(userGetHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
 	//	user.HandleFunc("/{id:[0-9]+}", p.handler(userUpdateHandler, AUTH_LEVEL_LOGIN)).Methods("PUT")
@@ -38,9 +38,9 @@ func (p *PicnicApp) initRoutesUsers(router *mux.Router) error {
 }
 
 func userCollectionHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
-	users, err := GetAllUsers()
+	u, err := GetAllUsers()
 	if nil != err {
 		return err
 	}
-	return helpers.RenderFFJSON(w, users, http.StatusOK)
+	return helpers.RenderFFJSON(w, u, http.StatusOK)
 }

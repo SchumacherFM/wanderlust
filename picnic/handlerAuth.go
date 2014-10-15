@@ -30,11 +30,11 @@ type loginPostData struct {
 	Password string `json:"password"`
 }
 
-func (p *PicnicApp) initRoutesAuth(router *mux.Router) error {
-	auth := router.PathPrefix("/auth/").Subrouter()
-	auth.HandleFunc("/", p.handler(sessionInfoHandler, AUTH_LEVEL_CHECK)).Methods("GET")
-	auth.HandleFunc("/", p.handler(loginHandler, AUTH_LEVEL_IGNORE)).Methods("POST")
-	auth.HandleFunc("/", p.handler(logoutHandler, AUTH_LEVEL_LOGIN)).Methods("DELETE")
+func (p *PicnicApp) initRoutesAuth(r *mux.Router) error {
+	sr := r.PathPrefix("/auth/").Subrouter()
+	sr.HandleFunc("/", p.handler(sessionInfoHandler, AUTH_LEVEL_CHECK)).Methods("GET")
+	sr.HandleFunc("/", p.handler(loginHandler, AUTH_LEVEL_IGNORE)).Methods("POST")
+	sr.HandleFunc("/", p.handler(logoutHandler, AUTH_LEVEL_LOGIN)).Methods("DELETE")
 	return nil
 }
 
@@ -44,7 +44,7 @@ func sessionInfoHandler(rc requestContextI, w http.ResponseWriter, r *http.Reque
 
 func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
 
-	var invalidLogin = httpError{
+	var errLogin = httpError{
 		Status:      http.StatusBadRequest,
 		Description: "Invalid username or password",
 	}
@@ -56,31 +56,31 @@ func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) er
 	}
 
 	if "" == lpd.UserName || "" == lpd.Password {
-		return invalidLogin
+		return errLogin
 	}
 
 	// find user and login ...
-	user := NewUserModel(lpd.UserName)
-	userFound, userErr := user.findMe()
-	if nil != userErr {
-		return userErr
+	u := NewUserModel(lpd.UserName)
+	uFound, uErr := u.findMe()
+	if nil != uErr {
+		return uErr
 	}
-	if false == userFound {
-		logger.Debug("loginHandler 148: user not found %#v", userFound)
-		return invalidLogin
+	if false == uFound {
+		logger.Debug("loginHandler 148: user not found %#v", uFound)
+		return errLogin
 	}
-	if false == user.checkPassword(lpd.Password) {
-		logger.Debug("loginHandler 152: password incorrect %#v", userFound)
-		return invalidLogin
+	if false == u.checkPassword(lpd.Password) {
+		logger.Debug("loginHandler 152: password incorrect %#v", uFound)
+		return errLogin
 	}
 
-	if err := rc.getApp().getSessionManager().writeToken(w, user.getUserName()); nil != err {
+	if err := rc.getApp().getSessionManager().writeToken(w, u.getUserName()); nil != err {
 		return err
 	}
 
-	user.setAuthenticated(true)
+	u.setAuthenticated(true)
 	// @todo use websocket to send message
-	return helpers.RenderFFJSON(w, newSessionInfo(user), http.StatusOK)
+	return helpers.RenderFFJSON(w, newSessionInfo(u), http.StatusOK)
 }
 
 func logoutHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {

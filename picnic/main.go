@@ -53,19 +53,20 @@ type PicnicApp struct {
 	keyFile       string
 }
 
-func NewPicnicApp(listenAddress, pemDir string, theLogger *log.Logger, theDb rucksackdb.RDBI) (PicnicAppI, error) {
+// la = listen address, pd = pemDir, lo = logger
+func NewPicnicApp(la, pd string, lo *log.Logger, theDb rucksackdb.RDBI) (PicnicAppI, error) {
 	var err error
 	rsdb = theDb
-	logger = theLogger
-	picnicApp := &PicnicApp{
-		ListenAddress: listenAddress,
-		PemDir:        pemDir,
+	logger = lo
+	pa := &PicnicApp{
+		ListenAddress: la,
+		PemDir:        pd,
 	}
-	picnicApp.certFile, picnicApp.keyFile, err = picnicApp.generatePems()
+	pa.certFile, pa.keyFile, err = pa.generatePems()
 	if nil != err {
 		return nil, err
 	}
-	picnicApp.session, err = newSessionManager(picnicApp.certFile, picnicApp.keyFile)
+	pa.session, err = newSessionManager(pa.certFile, pa.keyFile)
 	if nil != err {
 		return nil, err
 	}
@@ -73,7 +74,7 @@ func NewPicnicApp(listenAddress, pemDir string, theLogger *log.Logger, theDb ruc
 	if nil != err {
 		return nil, err
 	}
-	return picnicApp, nil
+	return pa, nil
 }
 
 func (p *PicnicApp) getSessionManager() sessionManagerI {
@@ -81,12 +82,12 @@ func (p *PicnicApp) getSessionManager() sessionManagerI {
 }
 
 func (p *PicnicApp) getServer() *http.Server {
-	server := &http.Server{
+	s := &http.Server{
 		Addr:      p.GetListenAddress(),
 		Handler:   p.getHandler(),
 		TLSConfig: helpers.GetTlsConfig(),
 	}
-	return server
+	return s
 }
 
 func (p *PicnicApp) getPemDir() string {
@@ -95,16 +96,16 @@ func (p *PicnicApp) getPemDir() string {
 
 func (p *PicnicApp) generatePems() (certFile, keyFile string, err error) {
 	// PemDir can be empty then it will generate a random one
-	pemDir, err := helpers.GeneratePems(p.GetListenAddress(), p.getPemDir(), PEM_CERT, PEM_KEY)
+	dir, err := helpers.GeneratePems(p.GetListenAddress(), p.getPemDir(), PEM_CERT, PEM_KEY)
 	if nil != err {
 		return "", "", err
 	}
-	if "" != pemDir {
-		logger.Notice("PEM certificate temp directory is %s", pemDir)
+	if "" != dir {
+		logger.Notice("PEM certificate temp directory is %s", dir)
 	}
-	p.PemDir = pemDir
-	certFile = pemDir + PEM_CERT
-	keyFile = pemDir + PEM_KEY
+	p.PemDir = dir
+	certFile = dir + PEM_CERT
+	keyFile = dir + PEM_KEY
 	return
 }
 

@@ -9,7 +9,8 @@ angular
     'ui.bootstrap',
     'picnic.services',
     'angulartics',
-    'angulartics.piwik'
+    'angulartics.piwik',
+    'ncy-angular-breadcrumb'
   ])
   .constant('picnicUrls', {
     auth: '/auth/',

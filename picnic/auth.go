@@ -30,7 +30,7 @@ const (
 	AUTH_LEVEL_ADMIN                           // admin required, 401 if no user, 403 if not admin
 )
 
-func checkAuthLevel(level authLevel, user userPermissionsIf) error {
+func checkAuthLevel(l authLevel, u userPermissionsIf) error {
 	var (
 		errLoginRequired = httpError{
 			Status:      http.StatusUnauthorized,
@@ -40,28 +40,28 @@ func checkAuthLevel(level authLevel, user userPermissionsIf) error {
 			Status:      http.StatusPreconditionFailed,
 			Description: "Waiting for login ...",
 		}
-		falseUser = nil == user || false == user.isAuthenticated()
+		falseUser = nil == u || false == u.isAuthenticated()
 	)
 
-	switch level {
+	switch l {
 	case AUTH_LEVEL_LOGIN_WAIT:
 		if falseUser {
-			logger.Debug("checkAuthLevel 46: user %#v", user)
+			logger.Debug("checkAuthLevel 46: user %#v", u)
 			return errWaitingForLogin
 		}
 		break
 	case AUTH_LEVEL_LOGIN:
 		if falseUser {
-			logger.Debug("checkAuthLevel 52: user %#v", user)
+			logger.Debug("checkAuthLevel 52: user %#v", u)
 			return errLoginRequired
 		}
 		break
 	case AUTH_LEVEL_ADMIN:
 		if falseUser {
-			logger.Debug("checkAuthLevel 59: user %#v", user)
+			logger.Debug("checkAuthLevel 59: user %#v", u)
 			return errLoginRequired
 		}
-		if false == user.isAdmin() {
+		if false == u.isAdmin() {
 			return httpError{
 				Status:      http.StatusForbidden,
 				Description: "You must be an admin!",
@@ -73,29 +73,29 @@ func checkAuthLevel(level authLevel, user userPermissionsIf) error {
 
 // lazily fetches the current session user
 // check also JWT
-func (p *PicnicApp) authenticate(r *http.Request, level authLevel) (userIf, error) {
+func (p *PicnicApp) authenticate(r *http.Request, l authLevel) (userIf, error) {
 
-	if level == AUTH_LEVEL_IGNORE {
+	if l == AUTH_LEVEL_IGNORE {
 		return nil, nil
 	}
 
-	userID, expiresIn, err := p.session.readToken(r)
+	uid, expiresIn, err := p.session.readToken(r)
 	if err != nil {
 		return nil, err
 	}
-	user := NewUserModel(userID)
-	if "" == userID {
+	u := NewUserModel(uid)
+	if "" == uid {
 		logger.Debug("p.authenticate: userID from token is empty")
-		return nil, checkAuthLevel(level, nil)
+		return nil, checkAuthLevel(l, nil)
 	}
-	var found bool
-	found, err = user.findMe()
-	if false == found || err != nil {
-		logger.Debug("p.authenticate: user not found in DB %#v", user)
-		return nil, checkAuthLevel(level, nil)
+	var f bool
+	f, err = u.findMe()
+	if false == f || err != nil {
+		logger.Debug("p.authenticate: user not found in DB %#v", u)
+		return nil, checkAuthLevel(l, nil)
 	}
-	user.setAuthenticated(true)
-	user.setSessionExpiresIn(expiresIn)
-	return user, checkAuthLevel(level, user)
+	u.setAuthenticated(true)
+	u.setSessionExpiresIn(expiresIn)
+	return u, checkAuthLevel(l, u)
 
 }

@@ -31,19 +31,19 @@ import (
 //provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}/save", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("PATCH") // save account data
 //provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}/urls", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")   // retrieve all urls associated
 
-func (p *PicnicApp) initRoutesProvisioners(router *mux.Router) error {
-	pRoute := router.PathPrefix("/" + provisioners.GetRoutePathPrefix() + "/").Subrouter()
-	pRoute.HandleFunc("/", p.handler(availableProvisionersHandler, AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
+func (p *PicnicApp) initRoutesProvisioners(r *mux.Router) error {
+	sr := r.PathPrefix("/" + provisioners.GetRoutePathPrefix() + "/").Subrouter()
+	sr.HandleFunc("/", p.handler(availableProvisionersHandler, AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
 	return nil
 }
 
 func availableProvisionersHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
-	prov, err := provisioners.GetAvailable()
+	p, err := provisioners.GetAvailable()
 	if nil != err {
 		return httpError{
 			Status:      http.StatusNotFound,
 			Description: "",
 		}
 	}
-	return helpers.RenderFFJSON(w, prov, http.StatusOK)
+	return helpers.RenderFFJSON(w, p, http.StatusOK)
 }
