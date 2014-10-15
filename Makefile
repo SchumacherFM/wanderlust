@@ -41,7 +41,7 @@ all: darwin linux windows
 
 # Native Go build per OS/ARCH combo.
 %:
-	cd $DOCKER_SRC_PATH
+	cd $(DOCKER_SRC_PATH)
 	cd github.com/SchumacherFM/go.gzrice/gzrice && go build -a -v
 	mv github.com/SchumacherFM/go.gzrice/gzrice/gzrice ${DOCKER_SRC_PATH}/
 	# build with gzip support
