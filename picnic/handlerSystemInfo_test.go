@@ -17,11 +17,11 @@
 package picnic
 
 import (
-	"testing"
-	"net/http/httptest"
 	"net/http"
-	"strings"
+	"net/http/httptest"
 	"runtime"
+	"strings"
+	"testing"
 )
 
 func compareSystemInfoJsonString(t *testing.T, json string) {

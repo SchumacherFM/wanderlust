@@ -16,8 +16,6 @@
 
 package provisioners
 
-import ()
-
 const (
 	// no slashes for this PrePath in the route
 	URL_PRE_ROUTE string = "provisioners"
@@ -54,4 +52,9 @@ func (p *Provisioners) add(prov *Provisioner) {
 
 func GetAvailable() (*Provisioners, error) {
 	return provisionerCollection, nil
+}
+
+// @todo remove this as temp implementation
+func GetRoutePathPrefix() string {
+	return "/provisioners"
 }

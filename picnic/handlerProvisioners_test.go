@@ -17,19 +17,19 @@
 package picnic
 
 import (
-	"testing"
-	"net/http/httptest"
-	"net/http"
-	"github.com/SchumacherFM/wanderlust/provisioners"
 	"bytes"
+	"github.com/SchumacherFM/wanderlust/provisioners"
+	"net/http"
+	"net/http/httptest"
+	"testing"
 )
 
 type testRequestContext struct {
 }
 
-func (rc *testRequestContext) getApp() PicnicAppI { return nil }
+func (rc *testRequestContext) getApp() PicnicAppI             { return nil }
 func (rc *testRequestContext) getParamString(s string) string { return s }
-func (rc *testRequestContext) getParamInt64(s string) int64 { return 0 }
+func (rc *testRequestContext) getParamInt64(s string) int64   { return 0 }
 func (rc *testRequestContext) getUser() userGetPermIf {
 	um := NewUserModel("testUser")
 	return um

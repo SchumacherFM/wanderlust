@@ -41,6 +41,8 @@ Yes there are apps like `godep` to handle this but I decided
 to implement each package directly. Maybe some parts will be moved out of the 
 repository, mainly those which are on github and keep those which needs hg or bzr.
 
+Cross build inside docker container [https://github.com/docker-library/docs/tree/master/golang](https://github.com/docker-library/docs/tree/master/golang)
+
 ## Profiling
 
 To start the program with CPU profiling: `$ WL_PPROF_CPU=1 ./wanderlust [options] [arguments]`

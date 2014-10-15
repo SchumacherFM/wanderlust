@@ -24,6 +24,12 @@ import (
 	"runtime"
 )
 
+// The following vars will be injected during the build process via -ldflags.
+var (
+	Version string
+	GitSHA  string
+)
+
 // mainAction will be executed when the CLI command run will be provided
 func mainAction(c *cli.Context) {
 	wlapp.CliContext = c
@@ -42,7 +48,7 @@ func main() {
 
 	app := cli.NewApp()
 	app.Name = "Wanderlust"
-	app.Version = "0.0.1"
+	app.Version = Version + " [GitSHA: " + GitSHA + "]"
 	app.Usage = "Wanderlust - a cache warmer for your web app with priorities"
 	app.Action = showHelp
 	app.Commands = []cli.Command{
