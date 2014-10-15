@@ -26,8 +26,9 @@ import (
 
 // The following vars will be injected during the build process via -ldflags.
 var (
-	Version string
-	GitSHA  string
+	Version       string
+	GitSHA        string
+	CustomizedFor string
 )
 
 // mainAction will be executed when the CLI command run will be provided
@@ -49,7 +50,10 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "Wanderlust"
 	app.Version = Version + " [GitSHA: " + GitSHA + "]"
-	app.Usage = "Wanderlust - a cache warmer for your web app with priorities"
+	if "" != CustomizedFor {
+		app.Version = app.Version + " customized for: " + CustomizedFor
+	}
+	app.Usage = "A cache warmer for your web app with priorities"
 	app.Action = showHelp
 	app.Commands = []cli.Command{
 		{
