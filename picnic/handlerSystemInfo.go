@@ -30,16 +30,16 @@ type SystemInfo struct {
 	SessionExpires int
 }
 
-func (p *PicnicApp) initRoutesSystemInfo(router *mux.Router) error {
-	sysinfoRoute := router.PathPrefix("/sysinfo/").Subrouter()
-	sysinfoRoute.HandleFunc("/", p.handler(systemInfoHandler, AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
+func (p *PicnicApp) initRoutesSystemInfo(r *mux.Router) error {
+	sr := r.PathPrefix("/sysinfo/").Subrouter()
+	sr.HandleFunc("/", p.handler(systemInfoHandler, AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
 	return nil
 }
 
 func systemInfoHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
-	data := newSystemInfo()
-	data.SessionExpires = rc.getUser().getSessionExpiresIn()
-	return helpers.RenderFFJSON(w, data, http.StatusOK)
+	d := newSystemInfo()
+	d.SessionExpires = rc.getUser().getSessionExpiresIn()
+	return helpers.RenderFFJSON(w, d, http.StatusOK)
 }
 
 func newSystemInfo() *SystemInfo {

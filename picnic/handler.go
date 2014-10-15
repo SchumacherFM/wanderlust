@@ -50,44 +50,41 @@ func (p *PicnicApp) handler(h handlerFunc, level authLevel) http.HandlerFunc {
 }
 
 func (p *PicnicApp) getHandler() *negroni.Negroni {
-	router := mux.NewRouter()
+	r := mux.NewRouter()
 
-	p.initRoutesAuth(router)
-	p.initRoutesUsers(router)
-	p.initRoutesSystemInfo(router)
-	p.initRoutesProvisioners(router)
+	p.initRoutesAuth(r)
+	p.initRoutesUsers(r)
+	p.initRoutesSystemInfo(r)
+	p.initRoutesProvisioners(r)
 
-	brotzeitApi := router.PathPrefix("/brotzeit/").Subrouter()
+	// @todo
+	brotzeitApi := r.PathPrefix("/brotzeit/").Subrouter()
 	brotzeitApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
 	brotzeitApi.HandleFunc("/stop", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
 	brotzeitApi.HandleFunc("/purge", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET") // purges all collected URLs
 	brotzeitApi.HandleFunc("/concurrency", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("PUT")
 	brotzeitApi.HandleFunc("/collections", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET") // retrieves running processes
 
-	wandererApi := router.PathPrefix("/wanderer/").Subrouter()
+	// @todo
+	wandererApi := r.PathPrefix("/wanderer/").Subrouter()
 	wandererApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
 	wandererApi.HandleFunc("/stop", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
 	wandererApi.HandleFunc("/concurrency", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("PUT")
 	wandererApi.HandleFunc("/current", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
 
-	// start stop the database web interface
-	rucksackApi := router.PathPrefix("/rucksack/").Subrouter()
-	rucksackApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
-	rucksackApi.HandleFunc("/stop", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
-
-	dashboardApi := router.PathPrefix("/dashboard/").Subrouter()
+	dr := r.PathPrefix("/dashboard/").Subrouter()
 
 	// loads automatically the index.html
-	dashboardApi.PathPrefix("/").Handler(http.StripPrefix("/dashboard", http.FileServer(gzrice.MustFindBox("rd/dist/").HTTPBox())))
-	router.HandleFunc("/", handlerRedirectDashboard)
-	router.HandleFunc("/dashboard", handlerRedirectDashboard)
-	router.HandleFunc("/favicon.ico", handlerFavicon)
+	dr.PathPrefix("/").Handler(http.StripPrefix("/dashboard", http.FileServer(gzrice.MustFindBox("rd/dist/").HTTPBox())))
+	r.HandleFunc("/", handlerRedirectDashboard)
+	r.HandleFunc("/dashboard", handlerRedirectDashboard)
+	r.HandleFunc("/favicon.ico", handlerFavicon)
 
 	n := negroni.New(
 		negroni.HandlerFunc(middleware.CorsMiddleware),
 		negroni.HandlerFunc(middleware.GzipContentTypeMiddleware),
 	)
-	n.UseHandler(router)
+	n.UseHandler(r)
 	return n
 }
 

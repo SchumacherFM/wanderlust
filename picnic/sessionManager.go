@@ -60,19 +60,19 @@ func (m *defaultSessionManager) readToken(r *http.Request) (string, time.Duratio
 	if tokenString == "" {
 		return "", 0, nil
 	}
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	t, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return m.verifyKey, nil
 	})
 	switch err.(type) {
 	case nil:
-		if !token.Valid {
+		if !t.Valid {
 			return "", 0, nil
 		}
-		tokenUid := token.Claims["uid"].(string)
+		tokenUid := t.Claims["uid"].(string)
 		if "" == tokenUid {
 			return "", 0, nil
 		}
-		exp, expOK := token.Claims["exp"].(float64)
+		exp, expOK := t.Claims["exp"].(float64)
 		if false == expOK {
 			return "", 0, nil
 		}
@@ -89,10 +89,10 @@ func (m *defaultSessionManager) readToken(r *http.Request) (string, time.Duratio
 
 // creates and signs a token, private method
 func (m *defaultSessionManager) _createToken(userID string) (string, error) {
-	token := jwt.New(jwt.GetSigningMethod("RS256"))
-	token.Claims["uid"] = userID
-	token.Claims["exp"] = time.Now().Add(time.Minute * TOKEN_EXPIRY).Unix()
-	tokenString, err := token.SignedString(m.signKey)
+	t := jwt.New(jwt.GetSigningMethod("RS256"))
+	t.Claims["uid"] = userID
+	t.Claims["exp"] = time.Now().Add(time.Minute * TOKEN_EXPIRY).Unix()
+	tokenString, err := t.SignedString(m.signKey)
 	if err != nil {
 		return tokenString, errgo.Mask(err)
 	}
