@@ -1,6 +1,6 @@
 GOFMT=gofmt -s
 GOFILES=$(wildcard *.go **/*.go)
-# WLHOMEDIR=${GOPATH}/src/github.com/SchumacherFM/wanderlust
+WLHOMEDIR=${GOPATH}/src/github.com/SchumacherFM/wanderlust
 
 VERSION := $(shell cat VERSION)
 GITSHA1 := $(shell git rev-parse --short HEAD)
@@ -19,6 +19,10 @@ default: dockerbuild
 # Build binaries in Docker container. The `|| true` hack is a temporary fix for
 # https://github.com/dotcloud/docker/issues/3986
 dockerbuild: clean
+	cd github.com/SchumacherFM/go.gzrice/gzrice && go build
+	mv github.com/SchumacherFM/go.gzrice/gzrice/gzrice ${WLHOMEDIR}/
+	# build with gzip support before sending the build context to the Docker daemon
+	./gzrice --import-path ./picnic embed-go
 	docker build -t "$(DOCKER_IMAGE)" .
 	docker run --name "$(DOCKER_CONTAINER)" "$(DOCKER_IMAGE)" 
 	docker cp "$(DOCKER_CONTAINER)":"$(DOCKER_SRC_PATH)"/$(PREFIX)-$(VERSION)-darwin-$(GOARCH) . || true
@@ -41,12 +45,7 @@ all: darwin linux windows
 
 # Native Go build per OS/ARCH combo.
 %:
-	cd $(DOCKER_SRC_PATH)
-	cd github.com/SchumacherFM/go.gzrice/gzrice && go build -a -v
-	mv github.com/SchumacherFM/go.gzrice/gzrice/gzrice ${DOCKER_SRC_PATH}/
-	# build with gzip support
-	./gzrice --import-path ./picnic embed-go
-	GOOS=$@ GOARCH=$(GOARCH) go build -a -v $(GOFLAGS) -o $(PREFIX)-$(VERSION)-$@-$(GOARCH)$(if $(filter windows, $@),.exe)
+	GOOS=$@ GOARCH=$(GOARCH) go build $(GOFLAGS) -o $(PREFIX)-$(VERSION)-$@-$(GOARCH)$(if $(filter windows, $@),.exe)
 
 
 # This binary will be installed at $GOBIN or $GOPATH/bin. Requires proper
