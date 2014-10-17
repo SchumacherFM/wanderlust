@@ -1,6 +1,7 @@
-package gzrice
+package rice
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice/embedded"
@@ -118,6 +119,11 @@ func (b *Box) IsEmbedded() bool {
 	return b.embed != nil
 }
 
+// IsAppended indicates wether this box was appended to the application
+func (b *Box) IsAppended() bool {
+	return b.appendd != nil
+}
+
 // Time returns how actual the box is.
 // When the box is embedded, it's value is saved in the embedding code.
 // When the box is live, this methods returns time.Now()
@@ -125,6 +131,9 @@ func (b *Box) Time() time.Time {
 	if b.IsEmbedded() {
 		return b.embed.Time
 	}
+
+	//++ TODO: return time for appended box
+
 	return time.Now()
 }
 
@@ -264,4 +273,9 @@ func (b *Box) MustString(name string) string {
 		panic(err)
 	}
 	return str
+}
+
+// Name returns the name of the box
+func (b *Box) Name() string {
+	return b.name
 }
