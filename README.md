@@ -37,7 +37,8 @@ Setup go/src for darwin, linux and windows [http://dave.cheney.net/2013/07/09/an
 Run `make build`. If you are interested in pre-compiled binaries, ping me.
 
 Dependencies to external packages are all included in this repository. 
-Yes there are apps like `godep` to handle this but I decided 
+Yes there are apps like `godep` [here](https://coreos.com/blog/godep-for-end-user-go-projects/) 
+to handle this but I decided 
 to implement each package directly. Maybe some parts will be moved out of the 
 repository, mainly those which are on github and keep those which needs hg or bzr.
 
