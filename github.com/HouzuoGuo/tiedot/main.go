@@ -3,7 +3,7 @@ package main
 
 import (
 	"flag"
-	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/db"
+	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/dberr"
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/httpapi"
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/tdlog"
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/webcp"

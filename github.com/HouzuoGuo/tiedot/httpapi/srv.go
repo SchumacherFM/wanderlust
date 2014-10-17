@@ -3,7 +3,7 @@ package httpapi
 
 import (
 	"fmt"
-	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/db"
+	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/dberr"
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/webcp"
 	"net/http"
 )
