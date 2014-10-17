@@ -6,7 +6,7 @@ The hash table stores the unchanging ID as entry key and the physical document l
 package data
 
 import (
-	"github.com/HouzuoGuo/tiedot/dberr"
+	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/dberr"
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/tdlog"
 	"sync"
 )

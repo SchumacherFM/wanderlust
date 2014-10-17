@@ -4,7 +4,7 @@ package db
 import (
 	"errors"
 	"fmt"
-	"github.com/HouzuoGuo/tiedot/dberr"
+	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/dberr"
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/tdlog"
 	"strconv"
 	"strings"

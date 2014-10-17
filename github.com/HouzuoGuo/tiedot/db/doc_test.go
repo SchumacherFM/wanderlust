@@ -3,7 +3,7 @@ package db
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/HouzuoGuo/tiedot/dberr"
+	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/dberr"
 	"io/ioutil"
 	"os"
 	"strings"
