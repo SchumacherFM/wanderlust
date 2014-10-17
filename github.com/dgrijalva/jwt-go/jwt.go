@@ -50,7 +50,7 @@ func New(method SigningMethod) *Token {
 }
 
 // Get the complete, signed token
-func (t *Token) SignedString(key []byte) (string, error) {
+func (t *Token) SignedString(key interface{}) (string, error) {
 	var sig, sstr string
 	var err error
 	if sstr, err = t.SigningString(); err != nil {
@@ -127,7 +127,12 @@ func Parse(tokenString string, keyFunc Keyfunc) (*Token, error) {
 
 	// Lookup key
 	var key interface{}
+	if keyFunc == nil {
+		// keyFunc was not provided.  short circuiting validation
+		return token, &ValidationError{err: "no Keyfunc was provided.", Errors: ValidationErrorUnverifiable}
+	}
 	if key, err = keyFunc(token); err != nil {
+		// keyFunc returned an error
 		return token, &ValidationError{err: err.Error(), Errors: ValidationErrorUnverifiable}
 	}
 
