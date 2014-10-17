@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/HouzuoGuo/tiedot/dberr"
 	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/db"
 	"os"
 	"strings"
@@ -85,6 +86,9 @@ func TestAll(t *testing.T) {
 		return true
 	})
 	if err := feeds.Delete(docID); err != nil {
+		t.Fatal(err)
+	}
+	if err := feeds.Delete(docID); err.(dberr.Error).Code != dberr.DocDoesNotExist {
 		t.Fatal(err)
 	}
 
