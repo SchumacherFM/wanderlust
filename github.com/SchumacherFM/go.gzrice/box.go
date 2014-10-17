@@ -1,7 +1,6 @@
-package rice
+package gzrice
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice/embedded"
@@ -117,11 +116,6 @@ func (b *Box) resolveAbsolutePathFromCaller() error {
 // IsEmbedded indicates wether this box was embedded into the application
 func (b *Box) IsEmbedded() bool {
 	return b.embed != nil
-}
-
-// IsAppended indicates wether this box was appended to the application
-func (b *Box) IsAppended() bool {
-	return b.appendd != nil
 }
 
 // Time returns how actual the box is.

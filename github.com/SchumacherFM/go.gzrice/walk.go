@@ -1,4 +1,4 @@
-package rice
+package gzrice
 
 import (
 	"os"
@@ -21,7 +21,7 @@ func (b *Box) Walk(path string, walkFn filepath.WalkFunc) error {
 		return err
 	}
 
-	if b.IsAppended() || b.IsEmbedded() {
+	if b.IsEmbedded() {
 		return b.walk(path, pathInfo, walkFn)
 	}
 
