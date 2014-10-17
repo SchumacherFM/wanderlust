@@ -345,3 +345,8 @@ func (b *Box) MustString(name string) string {
 	}
 	return str
 }
+
+// Name returns the name of the box
+func (b *Box) Name() string {
+	return b.name
+}
