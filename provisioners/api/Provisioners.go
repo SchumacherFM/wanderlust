@@ -14,29 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package provisioners
+package api
 
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
-	. "github.com/SchumacherFM/wanderlust/provisioners/api"
+	"bytes"
 )
 
-var (
-	provisionerCollection = &Provisioners{}
-	ErrCollectionEmpty    = errgo.New("Provisioner Collection is empty")
-)
-
-func AddProvisioner(p *Provisioner) {
-	provisionerCollection.Add(p)
-}
-
-func GetAvailable() (*Provisioners, error) {
-	if 0 == provisionerCollection.Length() {
-		return nil, ErrCollectionEmpty
+type (
+	Provisioners struct {
+		Collection []*Provisioner
 	}
-	return provisionerCollection, nil
-}
 
-func GetRoutePathPrefix() string {
-	return URL_PRE_ROUTE
+	ProvisionersJsonIf interface {
+		MarshalJSON() ([]byte, error)
+		MarshalJSONBuf(buf *bytes.Buffer) error
+	}
+)
+
+func (p *Provisioners) Add(prov *Provisioner) {
+	p.Collection = append(p.Collection, prov)
+}
+func (p *Provisioners) Length() int {
+	return len(p.Collection)
 }

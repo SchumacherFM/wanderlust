@@ -14,54 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package provisioners
+package api
 
 import (
 	"bytes"
-	"github.com/SchumacherFM/wanderlust/helpers"
 )
-
-func (mj *Provisioner) MarshalJSON() ([]byte, error) {
-	var buf bytes.Buffer
-	buf.Grow(1024)
-	err := mj.MarshalJSONBuf(&buf)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-func (mj *Provisioner) MarshalJSONBuf(buf *bytes.Buffer) error {
-	var err error
-	var obj []byte
-	var first bool = true
-	_ = obj
-	_ = err
-	_ = first
-	buf.WriteString(`{`)
-	if first == true {
-		first = false
-	} else {
-		buf.WriteString(`,`)
-	}
-	buf.WriteString(`"Icon":`)
-	helpers.Ffjson_WriteJsonString(buf, mj.Icon)
-	if first == true {
-		first = false
-	} else {
-		buf.WriteString(`,`)
-	}
-	buf.WriteString(`"Name":`)
-	helpers.Ffjson_WriteJsonString(buf, mj.Name)
-	if first == true {
-		first = false
-	} else {
-		buf.WriteString(`,`)
-	}
-	buf.WriteString(`"Url":`)
-	helpers.Ffjson_WriteJsonString(buf, mj.Url)
-	buf.WriteString(`}`)
-	return nil
-}
 
 func (mj *Provisioners) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
@@ -72,6 +29,7 @@ func (mj *Provisioners) MarshalJSON() ([]byte, error) {
 	}
 	return buf.Bytes(), nil
 }
+
 func (mj *Provisioners) MarshalJSONBuf(buf *bytes.Buffer) error {
 	var err error
 	var obj []byte

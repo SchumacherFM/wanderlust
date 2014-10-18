@@ -16,14 +16,24 @@
 
 package provisioners
 
-import ()
+import (
+	. "github.com/SchumacherFM/wanderlust/provisioners/api"
+)
 
 func init() {
+	p := NewProvisioner("Textarea", "/textarea", "fa-file-text-o", &ta{})
+	AddProvisioner(p)
+}
 
-	p := &Provisioner{
-		Name: "Textarea",
-		Url:  "/" + URL_PRE_ROUTE + "/textarea",
-		Icon: "fa-file-text-o",
+type (
+	ta struct {
+		data string
 	}
-	provisionerCollection.add(p)
+)
+
+func (t *ta) MethodA() {
+
+}
+func (t *ta) MethodB() {
+
 }

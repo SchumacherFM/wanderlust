@@ -26,11 +26,6 @@ import (
 )
 
 func init() {
-
-	p := &Provisioner{
-		Name: "G'Analytics",
-		Url:  "/" + URL_PRE_ROUTE + "/ga",
-		Icon: "img/icon-ga.png",
-	}
-	provisionerCollection.add(p)
+	gap := ga.GetProvisioner()
+	AddProvisioner(gap)
 }

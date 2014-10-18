@@ -16,14 +16,24 @@
 
 package provisioners
 
-import ()
+import (
+	. "github.com/SchumacherFM/wanderlust/provisioners/api"
+)
 
 func init() {
+	p := NewProvisioner("Sitemap", "/sitemap", "fa-sitemap", &sm{})
+	AddProvisioner(p)
+}
 
-	p := &Provisioner{
-		Name: "Sitemap",
-		Url:  "/" + URL_PRE_ROUTE + "/sitemap",
-		Icon: "fa-sitemap",
+type (
+	sm struct {
+		url string
 	}
-	provisionerCollection.add(p)
+)
+
+func (s *sm) MethodA() {
+
+}
+func (s *sm) MethodB() {
+
 }
