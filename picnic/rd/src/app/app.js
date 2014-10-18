@@ -1,6 +1,6 @@
 'use strict';
 angular
-  .module('Dashboard', [
+  .module('Wanderlust', [
     'ui.bootstrap',
     'ui.router',
     'LocalStorageModule',

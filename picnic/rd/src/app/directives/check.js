@@ -1,5 +1,5 @@
 angular
-  .module('Dashboard')
+  .module('Wanderlust')
   .directive('rdCheck', function () {
     return {
       restrict: 'AE',

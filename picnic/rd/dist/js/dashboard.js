@@ -1,7 +1,7 @@
 (function(){ 
 'use strict';
 angular
-  .module('Dashboard', [
+  .module('Wanderlust', [
     'ui.bootstrap',
     'ui.router',
     'LocalStorageModule',
@@ -41,53 +41,7 @@ angular
  * ErrorInterceptor will be applied in the routes.js file
  */
 angular
-  .module('Dashboard')
-
-  // handles all the provisioners
-  .factory('ProvisionerResource', function ($resource, picnicUrls) {
-    return $resource(picnicUrls.provisioners + ':prov', {prov: '@prov'});
-  })
-
-  // loads the user collection when the dashboard website is open.
-  .factory('UserInfoResource', function ($resource, picnicUrls) {
-    return $resource(picnicUrls.users, {});
-  })
-  .factory('SysInfoResource', function ($resource, picnicUrls) {
-    return $resource(picnicUrls.sysinfo, {});
-  })
-  .factory('SysInfoWidgets', function (Session) {
-    var loggedIn = Session.isLoggedIn();
-    return {
-      Goroutines: {
-        "icon": "fa-gears",
-        "title": 0,
-        "comment": "Workers",
-        "loading": !loggedIn,
-        iconColor: "green"
-      },
-      Wanderers: {
-        "icon": "fa-globe",
-        "title": 0,
-        "comment": "Wanderers",
-        "loading": !loggedIn,
-        iconColor: "orange"
-      },
-      Brotzeit: {
-        "icon": "fa-download",
-        "title": 0,
-        "comment": "Brotzeit",
-        "loading": !loggedIn,
-        iconColor: "red"
-      },
-      SessionExpires: {
-        "icon": "fa-clock-o",
-        "title": 0,
-        "comment": "Log out in",
-        "loading": !loggedIn,
-        iconColor: "blue"
-      }
-    };
-  })
+  .module('Wanderlust')
   .factory('AuthInterceptor', function (localStorageService, TrackUser, AUTH_TOKEN_HEADER, AUTH_TOKEN_STORAGE_KEY) {
     // adds for every request the token
     return {
@@ -148,7 +102,7 @@ angular
 /**
  * Route configuration for the Dashboard module.
  */
-angular.module('Dashboard')
+angular.module('Wanderlust')
   .config([
     '$stateProvider',
     '$urlRouterProvider',
@@ -162,37 +116,37 @@ angular.module('Dashboard')
       $stateProvider
         .state('index', {
           url: '/',
-          templateUrl: 'partials/dashboard.html',
+          templateUrl: 'partials/dashboard/tpl/dashboard.html',
           data: {
             ncyBreadcrumbLabel: 'Dashboard'
           }
         })
         .state('login', {
           url: '/login',
-          templateUrl: 'partials/login.html',
-          controller: 'LoginCtrl',
+          templateUrl: 'partials/login/tpl/login.html',
+          controller: 'LoginController',
           data: {
             ncyBreadcrumbLabel: 'Login'
           }
         })
         .state('tables', {
           url: '/tables',
-          templateUrl: 'partials/tables.html',
+          templateUrl: 'partials/core/tpl/tables.html',
           data: {
             ncyBreadcrumbLabel: 'Yet another demo table page'
           }
         })
         .state('shop', {
           url: '/shop',
-          templateUrl: 'partials/shop.html',
-          controller: 'ShopCtrl',
+          templateUrl: 'partials/marketplace/tpl/mp.html',
+          controller: 'MarketplaceController',
           data: {
             ncyBreadcrumbLabel: 'Shop - Your in-app purchase made easy!'
           }
         })
         .state('privacy', {
           url: '/privacy',
-          templateUrl: 'partials/privacy.html',
+          templateUrl: 'partials/core/tpl/privacy.html',
           data: {
             ncyBreadcrumbLabel: 'Privacy Statement'
           }
@@ -202,7 +156,7 @@ angular.module('Dashboard')
           templateUrl: function ($stateParams) {
             // 404 errors can occur when a template not exists
             var type = $stateParams.type || 'textarea';
-            return 'partials/provisioners/' + type + '.html';
+            return 'partials/provisioner/tpl/' + type + '.html';
           },
           data: {
             ncyBreadcrumbLabel: 'Provisioner / {{name}}'
@@ -395,7 +349,7 @@ angular.module('picnic.services', [])
  * Master Controller
  */
 angular
-  .module('Dashboard')
+  .module('Wanderlust')
   .controller('MasterCtrl', [
     '$scope',
     '$state',
@@ -495,10 +449,89 @@ angular
   ]);
 
 /**
+ * ErrorInterceptor will be applied in the routes.js file
+ */
+angular
+  .module('Wanderlust')
+
+  // loads the user collection when the dashboard website is open.
+  .factory('UserInfoResource', function ($resource, picnicUrls) {
+    return $resource(picnicUrls.users, {});
+  })
+  .factory('SysInfoResource', function ($resource, picnicUrls) {
+    return $resource(picnicUrls.sysinfo, {});
+  })
+  .factory('SysInfoWidgets', function (Session) {
+    var loggedIn = Session.isLoggedIn();
+    return {
+      Goroutines: {
+        "icon": "fa-gears",
+        "title": 0,
+        "comment": "Workers",
+        "loading": !loggedIn,
+        iconColor: "green"
+      },
+      Wanderers: {
+        "icon": "fa-globe",
+        "title": 0,
+        "comment": "Wanderers",
+        "loading": !loggedIn,
+        iconColor: "orange"
+      },
+      Brotzeit: {
+        "icon": "fa-download",
+        "title": 0,
+        "comment": "Brotzeit",
+        "loading": !loggedIn,
+        iconColor: "red"
+      },
+      SessionExpires: {
+        "icon": "fa-clock-o",
+        "title": 0,
+        "comment": "Log out in",
+        "loading": !loggedIn,
+        iconColor: "blue"
+      }
+    };
+  });
+
+angular
+  .module('Wanderlust')
+  .directive('rdNavLi', function () {
+    return {
+      restrict: 'E',
+      template: '<li data-ng-model="p.Name" class="sidebar-list">' +
+        '<a href="#{{p.Url}}" data-analytics-on="click" data-analytics-category="navigation">{{p.Name}}' +
+        '<rd-nav-icon icon="{{p.Icon}}"></rd-nav-icon></a></li>',
+      scope: {
+        p: '='
+      }
+    };
+  })
+  .directive('rdNavIcon', function () {
+    return {
+      restrict: 'E',
+      scope: {
+        icon: '@'
+      },
+      link: function (scope, element) {
+        'use strict';
+        var tpl = '';
+        if (-1 === scope.icon.indexOf('fa-')) { // img
+          tpl = '<span class="menu-icon"><img src="' + scope.icon + '" height="30"/></span>';
+        } else { // fa-icon
+          tpl = '<span class="menu-icon fa ' + scope.icon + '"></span>';
+        }
+        element.html(tpl);
+      }
+    };
+  });
+
+/**
  * Dashboard Controller
  */
 angular
-  .module('Dashboard')
+  .module('Wanderlust')
   .controller('systemInfo', [
     '$scope',
     '$timeout',
@@ -563,8 +596,8 @@ angular
 
 
 angular
-  .module('Dashboard')
-  .controller('LoginCtrl', [
+  .module('Wanderlust')
+  .controller('LoginController', [
     '$scope',
     '$location',
     '$window',
@@ -601,7 +634,7 @@ angular
     }
   ]);
 angular
-  .module('Dashboard')
+  .module('Wanderlust')
   .controller('ProvisionerCtrl', [
     '$scope',
     'Session',
@@ -612,9 +645,20 @@ angular
       console.log('$scope.name', $scope.name)
     }
   ]);
+/**
+ * ErrorInterceptor will be applied in the routes.js file
+ */
 angular
-  .module('Dashboard')
-  .controller('ShopCtrl', [
+  .module('Wanderlust')
+
+  // handles all the provisioners
+  .factory('ProvisionerResource', function ($resource, picnicUrls) {
+    return $resource(picnicUrls.provisioners + ':prov', {prov: '@prov'});
+  });
+
+angular
+  .module('Wanderlust')
+  .controller('MarketplaceController', [
     '$scope',
     'Alert',
     function ($scope, Alert) {
@@ -761,7 +805,7 @@ angular
     }
   ]);
 angular
-  .module('Dashboard')
+  .module('Wanderlust')
   .directive('rdCheck', function () {
     return {
       restrict: 'AE',
@@ -774,44 +818,12 @@ angular
 );
 
 
-angular
-  .module('Dashboard')
-  .directive('rdNavLi', function () {
-    return {
-      restrict: 'E',
-      template: '<li data-ng-model="p.Name" class="sidebar-list">' +
-        '<a href="#{{p.Url}}" data-analytics-on="click" data-analytics-category="navigation">{{p.Name}}' +
-        '<rd-nav-icon icon="{{p.Icon}}"></rd-nav-icon></a></li>',
-      scope: {
-        p: '='
-      }
-    };
-  })
-  .directive('rdNavIcon', function () {
-    return {
-      restrict: 'E',
-      scope: {
-        icon: '@'
-      },
-      link: function (scope, element) {
-        'use strict';
-        var tpl = '';
-        if (-1 === scope.icon.indexOf('fa-')) { // img
-          tpl = '<span class="menu-icon"><img src="' + scope.icon + '" height="30"/></span>';
-        } else { // fa-icon
-          tpl = '<span class="menu-icon fa ' + scope.icon + '"></span>';
-        }
-        element.html(tpl);
-      }
-    };
-  });
-
 /**
  * Loading Directive
  * @see http://tobiasahlin.com/spinkit/
  */
 angular
-  .module('Dashboard')
+  .module('Wanderlust')
   .directive('rdLoading', function () {
     return {
       restrict: 'AE',
@@ -822,7 +834,7 @@ angular
 
 
 angular
-  .module('Dashboard')
+  .module('Wanderlust')
   .directive('rdWidget', function () {
     return {
       transclude: true,
@@ -834,7 +846,7 @@ angular
 
 
 angular
-  .module('Dashboard')
+  .module('Wanderlust')
   .directive('rdWidgetHeader', function () {
     return {
       requires: '^rdWidget',
@@ -849,7 +861,7 @@ angular
   });
 
 angular
-  .module('Dashboard')
+  .module('Wanderlust')
   .directive('rdWidgetBody', function () {
     return {
       requires: '^rdWidget',

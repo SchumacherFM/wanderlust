@@ -1,7 +1,7 @@
 /**
  * Route configuration for the Dashboard module.
  */
-angular.module('Dashboard')
+angular.module('Wanderlust')
   .config([
     '$stateProvider',
     '$urlRouterProvider',
@@ -15,37 +15,37 @@ angular.module('Dashboard')
       $stateProvider
         .state('index', {
           url: '/',
-          templateUrl: 'partials/dashboard.html',
+          templateUrl: 'partials/dashboard/tpl/dashboard.html',
           data: {
             ncyBreadcrumbLabel: 'Dashboard'
           }
         })
         .state('login', {
           url: '/login',
-          templateUrl: 'partials/login.html',
-          controller: 'LoginCtrl',
+          templateUrl: 'partials/login/tpl/login.html',
+          controller: 'LoginController',
           data: {
             ncyBreadcrumbLabel: 'Login'
           }
         })
         .state('tables', {
           url: '/tables',
-          templateUrl: 'partials/tables.html',
+          templateUrl: 'partials/core/tpl/tables.html',
           data: {
             ncyBreadcrumbLabel: 'Yet another demo table page'
           }
         })
         .state('shop', {
           url: '/shop',
-          templateUrl: 'partials/shop.html',
-          controller: 'ShopCtrl',
+          templateUrl: 'partials/marketplace/tpl/mp.html',
+          controller: 'MarketplaceController',
           data: {
             ncyBreadcrumbLabel: 'Shop - Your in-app purchase made easy!'
           }
         })
         .state('privacy', {
           url: '/privacy',
-          templateUrl: 'partials/privacy.html',
+          templateUrl: 'partials/core/tpl/privacy.html',
           data: {
             ncyBreadcrumbLabel: 'Privacy Statement'
           }
@@ -55,7 +55,7 @@ angular.module('Dashboard')
           templateUrl: function ($stateParams) {
             // 404 errors can occur when a template not exists
             var type = $stateParams.type || 'textarea';
-            return 'partials/provisioners/' + type + '.html';
+            return 'partials/provisioner/tpl/' + type + '.html';
           },
           data: {
             ncyBreadcrumbLabel: 'Provisioner / {{name}}'

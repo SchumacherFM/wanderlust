@@ -1,6 +1,6 @@
 angular
-  .module('Dashboard')
-  .controller('LoginCtrl', [
+  .module('Wanderlust')
+  .controller('LoginController', [
     '$scope',
     '$location',
     '$window',

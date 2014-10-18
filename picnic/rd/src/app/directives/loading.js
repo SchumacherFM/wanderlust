@@ -3,7 +3,7 @@
  * @see http://tobiasahlin.com/spinkit/
  */
 angular
-  .module('Dashboard')
+  .module('Wanderlust')
   .directive('rdLoading', function () {
     return {
       restrict: 'AE',

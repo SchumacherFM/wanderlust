@@ -2,7 +2,7 @@
  * Dashboard Controller
  */
 angular
-  .module('Dashboard')
+  .module('Wanderlust')
   .controller('systemInfo', [
     '$scope',
     '$timeout',

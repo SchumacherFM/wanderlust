@@ -1,6 +1,6 @@
 angular
-  .module('Dashboard')
-  .controller('ShopCtrl', [
+  .module('Wanderlust')
+  .controller('MarketplaceController', [
     '$scope',
     'Alert',
     function ($scope, Alert) {

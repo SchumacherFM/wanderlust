@@ -2,7 +2,7 @@
  * Master Controller
  */
 angular
-  .module('Dashboard')
+  .module('Wanderlust')
   .controller('MasterCtrl', [
     '$scope',
     '$state',

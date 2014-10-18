@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en" ng-app="Dashboard">
+<html lang="en" ng-app="Wanderlust">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Dashboard</title>
+  <title>Wanderlust - A Cache Warmer</title>
 
   <!-- build:less lib/bootstrap/css/bootstrap.css -->
   <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.css">
@@ -46,21 +46,23 @@
   <!-- endbuild -->
 
   <!-- build:js js/dashboard.js -->
-  <script type="text/javascript" src="js/dashboard/module.js"></script>
-  <script type="text/javascript" src="js/dashboard/factories.js"></script>
-  <script type="text/javascript" src="js/dashboard/routes.js"></script>
-  <script type="text/javascript" src="js/dashboard/services.js"></script>
-  <script type="text/javascript" src="js/dashboard/controllers/master-ctrl.js"></script>
-  <script type="text/javascript" src="js/dashboard/controllers/dashboard-ctrl.js"></script>
-  <script type="text/javascript" src="js/dashboard/controllers/login-ctrl.js"></script>
-  <script type="text/javascript" src="js/dashboard/controllers/provisioner-ctrl.js"></script>
-  <script type="text/javascript" src="js/dashboard/controllers/shop-ctrl.js"></script>
-  <script type="text/javascript" src="js/dashboard/directives/check.js"></script>
-  <script type="text/javascript" src="js/dashboard/directives/navigation.js"></script>
-  <script type="text/javascript" src="js/dashboard/directives/loading.js"></script>
-  <script type="text/javascript" src="js/dashboard/directives/widget.js"></script>
-  <script type="text/javascript" src="js/dashboard/directives/widget-header.js"></script>
-  <script type="text/javascript" src="js/dashboard/directives/widget-body.js"></script>
+  <script type="text/javascript" src="app/App.js"></script>
+  <script type="text/javascript" src="app/core/CoreFactory.js"></script>
+  <script type="text/javascript" src="app/core/CoreRoutes.js"></script>
+  <script type="text/javascript" src="app/core/CoreServices.js"></script>
+  <script type="text/javascript" src="app/master/MasterController.js"></script>
+  <script type="text/javascript" src="app/master/MasterFactory.js"></script>
+  <script type="text/javascript" src="app/master/MasterNavigation.js"></script>
+  <script type="text/javascript" src="app/dashboard/DashboardController.js"></script>
+  <script type="text/javascript" src="app/login/LoginController.js"></script>
+  <script type="text/javascript" src="app/provisioner/ProvisionerController.js"></script>
+  <script type="text/javascript" src="app/provisioner/ProvisionerFactory.js"></script>
+  <script type="text/javascript" src="app/marketplace/MarketplaceController.js"></script>
+  <script type="text/javascript" src="app/directives/check.js"></script>
+  <script type="text/javascript" src="app/directives/loading.js"></script>
+  <script type="text/javascript" src="app/directives/widget.js"></script>
+  <script type="text/javascript" src="app/directives/widget-header.js"></script>
+  <script type="text/javascript" src="app/directives/widget-body.js"></script>
   <!-- endbuild -->
   <!-- SCRIPTS -->
 
@@ -111,7 +113,7 @@
 
       <li class="sidebar-list">
         <a href="#/shop" data-analytics-on="click" data-analytics-event="shop"
-           data-analytics-category="navigation">Shop <span class="menu-icon fa fa-shopping-cart"></span></a>
+           data-analytics-category="navigation">Marketplace <span class="menu-icon fa fa-shopping-cart"></span></a>
       </li>
 
       <li class="sidebar-title separator"><span>QUICK LINKS</span></li>

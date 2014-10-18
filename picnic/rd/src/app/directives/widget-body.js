@@ -1,5 +1,5 @@
 angular
-  .module('Dashboard')
+  .module('Wanderlust')
   .directive('rdWidgetBody', function () {
     return {
       requires: '^rdWidget',

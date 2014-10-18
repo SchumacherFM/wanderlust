@@ -1,5 +1,5 @@
 angular
-  .module('Dashboard')
+  .module('Wanderlust')
   .controller('ProvisionerCtrl', [
     '$scope',
     'Session',

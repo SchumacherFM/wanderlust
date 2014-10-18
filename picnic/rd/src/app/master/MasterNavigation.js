@@ -1,5 +1,5 @@
 angular
-  .module('Dashboard')
+  .module('Wanderlust')
   .directive('rdNavLi', function () {
     return {
       restrict: 'E',

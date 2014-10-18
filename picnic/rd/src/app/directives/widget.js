@@ -1,5 +1,5 @@
 angular
-  .module('Dashboard')
+  .module('Wanderlust')
   .directive('rdWidget', function () {
     return {
       transclude: true,
