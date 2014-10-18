@@ -35,6 +35,14 @@ angular.module('Dashboard')
             ncyBreadcrumbLabel: 'Yet another demo table page'
           }
         })
+        .state('shop', {
+          url: '/shop',
+          templateUrl: 'partials/shop.html',
+          controller: 'ShopCtrl',
+          data: {
+            ncyBreadcrumbLabel: 'Shop - Your in-app purchase made easy!'
+          }
+        })
         .state('privacy', {
           url: '/privacy',
           templateUrl: 'partials/privacy.html',
@@ -52,10 +60,6 @@ angular.module('Dashboard')
           data: {
             ncyBreadcrumbLabel: 'Provisioner / {{name}}'
           }
-        })
-        .state('shop', {
-          url: '/shop',
-          templateUrl: 'partials/shop.html'
         });
 
       $httpProvider.interceptors.push('AuthInterceptor');

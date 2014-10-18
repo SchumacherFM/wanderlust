@@ -525,3 +525,9 @@ ul.sidebar .sidebar-list .menu-icon {
 .need-help {
   margin-top: 10px;
 }
+.panel.no-margin {
+  margin-bottom: 0;
+}
+.hero-feature .caption {
+  min-height: 16em;
+}
