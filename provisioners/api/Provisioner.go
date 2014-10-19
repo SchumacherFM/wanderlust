@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-// this package acts also as an external api to create
+// this package acts also as an external api to create custom provisioners
 package api
 
 import (
@@ -29,8 +29,12 @@ const (
 
 type (
 	// this methods will be used to query the provisioner instance and set values
-	ProvisionerMethod interface {
+	ProvisionerApi interface {
+		// GetRoutes returns the endpoint of the route
 		GetRoute() string
+		// GetRouteHandler returns a handler which must manage GET, POST and DELETE methods
+		// GET returns the config for the <form> fields and also the saved data for the inputs
+		// POST saves the data from the input field into the rucksack
 		GetRouteHandler() HandlerFunc
 	}
 
@@ -42,7 +46,7 @@ type (
 		// can be a fa-* icon or path to an image
 		Icon string
 		// internal handler
-		Method ProvisionerMethod
+		Api ProvisionerApi
 	}
 
 	ProvisionerJsonIf interface {
@@ -51,11 +55,11 @@ type (
 	}
 )
 
-func NewProvisioner(n, u, i string, m ProvisionerMethod) *Provisioner {
+func NewProvisioner(n, i string, a ProvisionerApi) *Provisioner {
 	return &Provisioner{
-		Name:   n,
-		Url:    "/" + URL_PRE_ROUTE + u,
-		Icon:   i,
-		Method: m,
+		Name: n,
+		Url:  "/" + URL_PRE_ROUTE + "/" + a.GetRoute(),
+		Icon: i,
+		Api:  a,
 	}
 }

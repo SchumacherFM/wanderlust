@@ -14,32 +14,37 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package provisioners
+package textarea
 
 import (
 	"fmt"
 	"github.com/SchumacherFM/wanderlust/helpers"
-	papi "github.com/SchumacherFM/wanderlust/picnic/api"
+	picnicApi "github.com/SchumacherFM/wanderlust/picnic/api"
 	. "github.com/SchumacherFM/wanderlust/provisioners/api"
 	"net/http"
 )
 
-func init() {
-	p := NewProvisioner("Textarea", "/textarea", "fa-file-text-o", &ta{})
-	AddProvisioner(p)
+func GetProvisioner() *Provisioner {
+	textarea := &ta{
+		url: "textarea",
+	}
+	p := NewProvisioner("Textarea", "fa-file-text-o", textarea)
+	return p
 }
 
 type (
 	ta struct {
 		data string
+		url  string
 	}
 )
 
 func (t *ta) GetRoute() string {
-	return "textarea"
+	return t.url
 }
-func (t *ta) GetRouteHandler() papi.HandlerFunc {
-	return func(rc papi.RequestContextI, w http.ResponseWriter, r *http.Request) error {
+
+func (t *ta) GetRouteHandler() picnicApi.HandlerFunc {
+	return func(rc picnicApi.RequestContextI, w http.ResponseWriter, r *http.Request) error {
 		return helpers.RenderString(w, 200, fmt.Sprintf("Found route \n%#v\n %#v\n", r, rc))
 	}
 }

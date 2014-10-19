@@ -36,12 +36,15 @@ func (p *PicnicApp) initRoutesProvisioners(r *mux.Router) error {
 	sr := r.PathPrefix("/" + provisioners.GetRoutePathPrefix() + "/").Subrouter()
 	sr.HandleFunc("/", p.handler(availableProvisionersHandler, AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
 
-	//	for _, prov, _ := range provisioners.GetAvailable() {
-	//		sr.HandleFunc("/"+prov.GetRoute(), p.handler(prov.GetRouteHandler(), AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
-	//		sr.HandleFunc("/"+prov.GetRoute()+"/save", p.handler(prov.GetRouteHandler(), AUTH_LEVEL_LOGIN)).Methods("POST")
-	//		sr.HandleFunc("/"+prov.GetRoute(), p.handler(prov.GetRouteHandler(), AUTH_LEVEL_LOGIN)).Methods("DELETE")
-	//	}
-
+	pc, err := provisioners.GetAvailable()
+	if nil != err {
+		return err
+	}
+	for _, prov := range pc.Collection {
+		sr.HandleFunc("/"+prov.Api.GetRoute(), p.handler(prov.Api.GetRouteHandler(), AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
+		sr.HandleFunc("/"+prov.Api.GetRoute()+"/save", p.handler(prov.Api.GetRouteHandler(), AUTH_LEVEL_LOGIN)).Methods("POST")
+		sr.HandleFunc("/"+prov.Api.GetRoute(), p.handler(prov.Api.GetRouteHandler(), AUTH_LEVEL_LOGIN)).Methods("DELETE")
+	}
 	return nil
 }
 

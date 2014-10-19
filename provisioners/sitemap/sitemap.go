@@ -14,39 +14,36 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package provisioners
+package sitemap
 
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
+	"fmt"
+	"github.com/SchumacherFM/wanderlust/helpers"
+	picnicApi "github.com/SchumacherFM/wanderlust/picnic/api"
 	. "github.com/SchumacherFM/wanderlust/provisioners/api"
-	"github.com/SchumacherFM/wanderlust/provisioners/sitemap"
-	"github.com/SchumacherFM/wanderlust/provisioners/textarea"
+	"net/http"
 )
 
-var (
-	provisionerCollection = &Provisioners{}
-	ErrCollectionEmpty    = errgo.New("Provisioner Collection is empty")
-)
-
-// initializes all the build-in provisioners, every custom provisioner will be added via build tag
-func init() {
-	sm := sitemap.GetProvisioner()
-	AddProvisioner(sm)
-	ta := textarea.GetProvisioner()
-	AddProvisioner(ta)
-}
-
-func AddProvisioner(p *Provisioner) {
-	provisionerCollection.Add(p)
-}
-
-func GetAvailable() (*Provisioners, error) {
-	if 0 == provisionerCollection.Length() {
-		return nil, ErrCollectionEmpty
+func GetProvisioner() *Provisioner {
+	sitemap := &sm{
+		url: "sitemap",
 	}
-	return provisionerCollection, nil
+	p := NewProvisioner("Sitemap", "fa-sitemap", sitemap)
+	return p
 }
 
-func GetRoutePathPrefix() string {
-	return URL_PRE_ROUTE
+type (
+	sm struct {
+		url string
+	}
+)
+
+func (s *sm) GetRoute() string {
+	return s.url
+}
+
+func (s *sm) GetRouteHandler() picnicApi.HandlerFunc {
+	return func(rc picnicApi.RequestContextI, w http.ResponseWriter, r *http.Request) error {
+		return helpers.RenderString(w, 200, fmt.Sprintf("Found route \n%#v\n %#v\n", r, rc))
+	}
 }
