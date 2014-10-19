@@ -345,6 +345,75 @@ angular.module('picnic.services', [])
     }
   ]);
 
+angular
+  .module('Wanderlust')
+  .directive('rdCheck', function () {
+    return {
+      restrict: 'AE',
+      scope: {
+        checked: '@'
+      },
+      template: '<i class="fa fa-check" data-ng-show="checked"></i><i class="fa fa-times" data-ng-hide="checked"></i>'
+    };
+  }
+);
+
+
+/**
+ * Loading Directive
+ * @see http://tobiasahlin.com/spinkit/
+ */
+angular
+  .module('Wanderlust')
+  .directive('rdLoading', function () {
+    return {
+      restrict: 'AE',
+      template: '<div class="loading"><div class="double-bounce1"></div><div class="double-bounce2"></div></div>'
+    };
+  });
+
+angular
+  .module('Wanderlust')
+  .directive('rdWidget', function () {
+    return {
+      transclude: true,
+      template: '<div class="widget" ng-transclude></div>',
+      restrict: 'EA'
+    };
+  });
+
+angular
+  .module('Wanderlust')
+  .directive('rdWidgetHeader', function () {
+    return {
+      requires: '^rdWidget',
+      scope: {
+        title: '@',
+        icon: '@'
+      },
+      transclude: true,
+      template: '<div class="widget-header"> <i class="fa" ng-class="icon"></i> {{title}} <div class="pull-right" ng-transclude></div></div>',
+      restrict: 'E'
+    };
+  });
+
+angular
+  .module('Wanderlust')
+  .directive('rdWidgetBody', function () {
+    return {
+      restrict: 'E',
+      requires: '^rdWidget',
+      scope: {
+        loading: '=',
+        bodyclass: '@'
+      },
+      transclude: true,
+      template: '<div class="widget-body" data-ng-class="bodyclass">' +
+      '<rd-loading data-ng-show="loading"></rd-loading>' +
+      '<div data-ng-hide="loading" class="widget-content" data-ng-transclude></div></div>'
+    };
+  });
+
 /**
  * Master Controller
  */
@@ -413,11 +482,10 @@ angular
       };
     }
   ])
-  .controller('navigation', [
+  .controller('NavigationController', [
     '$scope',
     'ProvisionerResource',
-    'Session',
-    function ($scope, ProvisionerResource, Session) {
+    function ($scope, ProvisionerResource) {
       'use strict';
 
       function loadProv() {
@@ -436,64 +504,17 @@ angular
 
       $scope.$watch(
         function () {
-          return Session.isLoggedIn();
+          return $scope.session.isLoggedIn(); // from parent scope
         },
-        function (newValue) {
-          if (true === newValue) {
+        function (newValue, oldValue) {
+          if (true === newValue || (false === newValue && true === oldValue)) {
             loadProv();
           }
         }
       );
-      loadProv();
+      $scope.initProvNav = loadProv;
     }
   ]);
-
-/**
- * ErrorInterceptor will be applied in the routes.js file
- */
-angular
-  .module('Wanderlust')
-
-  // loads the user collection when the dashboard website is open.
-  .factory('UserInfoResource', function ($resource, picnicUrls) {
-    return $resource(picnicUrls.users, {});
-  })
-  .factory('SysInfoResource', function ($resource, picnicUrls) {
-    return $resource(picnicUrls.sysinfo, {});
-  })
-  .factory('SysInfoWidgets', function (Session) {
-    var loggedIn = Session.isLoggedIn();
-    return {
-      Goroutines: {
-        "icon": "fa-gears",
-        "title": 0,
-        "comment": "Workers",
-        "loading": !loggedIn,
-        iconColor: "green"
-      },
-      Wanderers: {
-        "icon": "fa-globe",
-        "title": 0,
-        "comment": "Wanderers",
-        "loading": !loggedIn,
-        iconColor: "orange"
-      },
-      Brotzeit: {
-        "icon": "fa-download",
-        "title": 0,
-        "comment": "Brotzeit",
-        "loading": !loggedIn,
-        iconColor: "red"
-      },
-      SessionExpires: {
-        "icon": "fa-clock-o",
-        "title": 0,
-        "comment": "Log out in",
-        "loading": !loggedIn,
-        iconColor: "blue"
-      }
-    };
-  });
 
 angular
   .module('Wanderlust')
@@ -532,14 +553,13 @@ angular
  */
 angular
   .module('Wanderlust')
-  .controller('systemInfo', [
+  .controller('SystemInfoController', [
     '$scope',
     '$timeout',
     'SysInfoResource',
     'SysInfoWidgets',
     function ($scope, $timeout, SysInfoResource, SysInfoWidgets) {
-      var loggedIn = $scope.session.isLoggedIn(),
-          timeoutSecs = 3000,
+      var timeoutSecs = 3000,
           timeoutPromise;
 
       function tick() { // @todo should be websocket
@@ -547,7 +567,6 @@ angular
           angular.forEach(data, function (v, k) {
             if (SysInfoWidgets[k]) {
               SysInfoWidgets[k].title = parseInt(v, 10); // fight against all evil ;-)
-              SysInfoWidgets[k].loading = !loggedIn;
             }
           });
 
@@ -557,22 +576,21 @@ angular
             s = s - (m * 60);
             SysInfoWidgets.SessionExpires.title = m + 'm ' + s + 's';
           }
-
           $scope.sysInfoWidgets = SysInfoWidgets;
           timeoutPromise = $timeout(tick, timeoutSecs);
         }, function error() {
           // this interval cancels itself when the user logs out
-          angular.forEach(SysInfoWidgets, function (obj) {
-            obj.loading = true;
-          });
+          $scope.isLoading = !$scope.session.isLoggedIn();
           $scope.sysInfoWidgets = SysInfoWidgets;
         });
       }
 
-      if (true === loggedIn) {
+      if (true === $scope.session.isLoggedIn()) {
         tick();
       }
+      $scope.isLoading = !$scope.session.isLoggedIn();
       $scope.sysInfoWidgets = SysInfoWidgets;
+
       // Cancel interval on page changes
       $scope.$on('$destroy', function () {
         if (angular.isDefined(timeoutPromise)) {
@@ -581,11 +599,51 @@ angular
         }
       });
     }
-  ])
-  .controller('userInfo', [
+  ]);
+
+angular
+  .module('Wanderlust')
+  .factory('SysInfoResource', function ($resource, picnicUrls) {
+    return $resource(picnicUrls.sysinfo, {});
+  })
+  .factory('SysInfoWidgets', function () {
+    return {
+      Goroutines: {
+        "icon": "fa-gears",
+        "title": 0,
+        "comment": "Workers",
+        iconColor: "green"
+      },
+      Wanderers: {
+        "icon": "fa-globe",
+        "title": 0,
+        "comment": "Wanderers",
+        iconColor: "orange"
+      },
+      Brotzeit: {
+        "icon": "fa-download",
+        "title": 0,
+        "comment": "Brotzeit",
+        iconColor: "red"
+      },
+      SessionExpires: {
+        "icon": "fa-clock-o",
+        "title": 0,
+        "comment": "Log out in",
+        iconColor: "blue"
+      }
+    };
+  });
+
+angular
+  .module('Wanderlust')
+  .controller('UserInfoController', [
     '$scope',
     'UserInfoResource',
     function ($scope, UserInfoResource) {
+      /**
+       * Gets the collection of users and displays them to see who has an account
+       */
       $scope.userCollection = [];
       $scope.isLoading = !$scope.session.isLoggedIn();
       UserInfoResource.get(function (response) {
@@ -594,6 +652,13 @@ angular
     }
   ]);
 
+angular
+  .module('Wanderlust')
+
+  // loads the user collection when the dashboard website is open.
+  .factory('UserInfoResource', function ($resource, picnicUrls) {
+    return $resource(picnicUrls.users, {});
+  });
 
 angular
   .module('Wanderlust')
@@ -645,6 +710,7 @@ angular
       console.log('$scope.name', $scope.name)
     }
   ]);
+
 /**
  * ErrorInterceptor will be applied in the routes.js file
  */
@@ -804,78 +870,4 @@ angular
       }
     }
   ]);
-angular
-  .module('Wanderlust')
-  .directive('rdCheck', function () {
-    return {
-      restrict: 'AE',
-      scope: {
-        checked: '@'
-      },
-      template: '<i class="fa fa-check" data-ng-show="checked"></i><i class="fa fa-times" data-ng-hide="checked"></i>'
-    };
-  }
-);
-
-
-/**
- * Loading Directive
- * @see http://tobiasahlin.com/spinkit/
- */
-angular
-  .module('Wanderlust')
-  .directive('rdLoading', function () {
-    return {
-      restrict: 'AE',
-      template: '<div class="loading"><div class="double-bounce1"></div><div class="double-bounce2"></div></div>'
-    };
-  }
-);
-
-
-angular
-  .module('Wanderlust')
-  .directive('rdWidget', function () {
-    return {
-      transclude: true,
-      template: '<div class="widget" ng-transclude></div>',
-      restrict: 'EA'
-    };
-  }
-);
-
-
-angular
-  .module('Wanderlust')
-  .directive('rdWidgetHeader', function () {
-    return {
-      requires: '^rdWidget',
-      scope: {
-        title: '@',
-        icon: '@'
-      },
-      transclude: true,
-      template: '<div class="widget-header"> <i class="fa" ng-class="icon"></i> {{title}} <div class="pull-right" ng-transclude></div></div>',
-      restrict: 'E'
-    };
-  });
-
-angular
-  .module('Wanderlust')
-  .directive('rdWidgetBody', function () {
-    return {
-      requires: '^rdWidget',
-      scope: {
-        loading: '@?',
-        bodyclass: '@'
-      },
-      transclude: true,
-      template: '<div class="widget-body" ng-class="bodyclass">' +
-        '<rd-loading ng-show="loading"></rd-loading>' +
-        '<div ng-hide="loading" class="widget-content" ng-transclude></div></div>',
-      restrict: 'E'
-    };
-  }
-);
-
 })();

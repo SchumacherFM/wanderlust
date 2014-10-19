@@ -6,6 +6,4 @@ angular
       template: '<div class="widget" ng-transclude></div>',
       restrict: 'EA'
     };
-  }
-);
-
+  });

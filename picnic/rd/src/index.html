@@ -50,19 +50,21 @@
   <script type="text/javascript" src="app/core/CoreFactory.js"></script>
   <script type="text/javascript" src="app/core/CoreRoutes.js"></script>
   <script type="text/javascript" src="app/core/CoreServices.js"></script>
-  <script type="text/javascript" src="app/master/MasterController.js"></script>
-  <script type="text/javascript" src="app/master/MasterFactory.js"></script>
-  <script type="text/javascript" src="app/master/MasterNavigation.js"></script>
-  <script type="text/javascript" src="app/dashboard/DashboardController.js"></script>
-  <script type="text/javascript" src="app/login/LoginController.js"></script>
-  <script type="text/javascript" src="app/provisioner/ProvisionerController.js"></script>
-  <script type="text/javascript" src="app/provisioner/ProvisionerFactory.js"></script>
-  <script type="text/javascript" src="app/marketplace/MarketplaceController.js"></script>
   <script type="text/javascript" src="app/directives/check.js"></script>
   <script type="text/javascript" src="app/directives/loading.js"></script>
   <script type="text/javascript" src="app/directives/widget.js"></script>
   <script type="text/javascript" src="app/directives/widget-header.js"></script>
   <script type="text/javascript" src="app/directives/widget-body.js"></script>
+  <script type="text/javascript" src="app/master/MasterController.js"></script>
+  <script type="text/javascript" src="app/master/MasterDirective.js"></script>
+  <script type="text/javascript" src="app/dashboard/SystemInfoController.js"></script>
+  <script type="text/javascript" src="app/dashboard/SystemInfoFactory.js"></script>
+  <script type="text/javascript" src="app/dashboard/UserInfoController.js"></script>
+  <script type="text/javascript" src="app/dashboard/UserInfoFactory.js"></script>
+  <script type="text/javascript" src="app/login/LoginController.js"></script>
+  <script type="text/javascript" src="app/provisioner/ProvisionerController.js"></script>
+  <script type="text/javascript" src="app/provisioner/ProvisionerFactory.js"></script>
+  <script type="text/javascript" src="app/marketplace/MarketplaceController.js"></script>
   <!-- endbuild -->
   <!-- SCRIPTS -->
 
@@ -92,7 +94,7 @@
   <!-- Sidebar -->
 
   <div id="sidebar-wrapper">
-    <ul class="sidebar" data-ng-controller="navigation">
+    <ul class="sidebar" data-ng-controller="NavigationController" data-ng-init="initProvNav()">
       <li class="sidebar-main">
         <a href="#/" ng-click="toggleSidebar()">
           Wanderlust

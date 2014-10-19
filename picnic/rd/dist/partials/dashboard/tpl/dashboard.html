@@ -1,7 +1,7 @@
-<div class="row" data-ng-controller="systemInfo">
+<div class="row" data-ng-controller="SystemInfoController">
   <div class="col-lg-3 col-md-6 col-xs-12" data-ng-repeat="siw in sysInfoWidgets">
     <rd-widget>
-      <rd-widget-body loading="{{siw.loading}}">
+      <rd-widget-body loading="isLoading">
         <div class="widget-icon {{siw.iconColor}} pull-left">
           <i class="fa {{siw.icon}}"></i>
         </div>
@@ -86,12 +86,12 @@
       </div>
     </div>
   </div>
-  <div class="col-lg-6" data-ng-controller="userInfo">
+  <div class="col-lg-6" data-ng-controller="UserInfoController">
     <rd-widget>
       <rd-widget-header title="Users ({{userCollection.length}})" icon="fa-users">
         <input data-xng-model="u" type="text" placeholder="Search" class="form-control input-sm pull-right search"/>
       </rd-widget-header>
-      <rd-widget-body loading="{{isLoading}}" bodyclass="medium no-padding">
+      <rd-widget-body loading="isLoading" bodyclass="medium no-padding">
         <div class="table-responsive">
           <table class="table">
             <thead>

@@ -66,11 +66,10 @@ angular
       };
     }
   ])
-  .controller('navigation', [
+  .controller('NavigationController', [
     '$scope',
     'ProvisionerResource',
-    'Session',
-    function ($scope, ProvisionerResource, Session) {
+    function ($scope, ProvisionerResource) {
       'use strict';
 
       function loadProv() {
@@ -89,14 +88,14 @@ angular
 
       $scope.$watch(
         function () {
-          return Session.isLoggedIn();
+          return $scope.session.isLoggedIn(); // from parent scope
         },
-        function (newValue) {
-          if (true === newValue) {
+        function (newValue, oldValue) {
+          if (true === newValue || (false === newValue && true === oldValue)) {
             loadProv();
           }
         }
       );
-      loadProv();
+      $scope.initProvNav = loadProv;
     }
   ]);
