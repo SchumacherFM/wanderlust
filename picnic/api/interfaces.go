@@ -22,6 +22,10 @@ import (
 	"time"
 )
 
+// And here we go ... ;-(
+// https://medium.com/@rakyll/interface-pollution-in-go-7d58bccec275
+// Interface Pollution in Go
+
 type (
 	// our custom handler
 	HandlerFunc func(rc RequestContextI, w http.ResponseWriter, r *http.Request) error
@@ -51,8 +55,6 @@ type (
 		GetParamInt64(string) int64
 		GetUser() UserGetPermIf
 	}
-
-	// now that's a hell lot of interfaces ...
 
 	UserIf interface {
 		UserGetterIf
