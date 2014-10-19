@@ -97,8 +97,8 @@ func (mj *UserModel) MarshalJSONBuf(buf *bytes.Buffer) error {
 	} else {
 		buf.WriteString(`,`)
 	}
-	buf.WriteString(`"IsActive":`)
-	if mj.IsActive {
+	buf.WriteString(`"IsActivated":`)
+	if mj.IsActivated {
 		buf.WriteString(`true`)
 	} else {
 		buf.WriteString(`false`)

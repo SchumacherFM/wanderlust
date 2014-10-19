@@ -27,10 +27,10 @@ import (
 type testRequestContext struct {
 }
 
-func (rc *testRequestContext) getApp() PicnicAppI             { return nil }
-func (rc *testRequestContext) getParamString(s string) string { return s }
-func (rc *testRequestContext) getParamInt64(s string) int64   { return 0 }
-func (rc *testRequestContext) getUser() userGetPermIf {
+func (rc *testRequestContext) GetApp() PicnicAppI             { return nil }
+func (rc *testRequestContext) GetParamString(s string) string { return s }
+func (rc *testRequestContext) GetParamInt64(s string) int64   { return 0 }
+func (rc *testRequestContext) GetUser() userGetPermIf {
 	um := NewUserModel("testUser")
 	return um
 }

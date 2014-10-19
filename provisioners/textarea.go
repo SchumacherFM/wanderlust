@@ -17,7 +17,11 @@
 package provisioners
 
 import (
+	"fmt"
+	"github.com/SchumacherFM/wanderlust/helpers"
+	papi "github.com/SchumacherFM/wanderlust/picnic/api"
 	. "github.com/SchumacherFM/wanderlust/provisioners/api"
+	"net/http"
 )
 
 func init() {
@@ -31,9 +35,11 @@ type (
 	}
 )
 
-func (t *ta) MethodA() {
-
+func (t *ta) GetRoute() string {
+	return "textarea"
 }
-func (t *ta) MethodB() {
-
+func (t *ta) GetRouteHandler() papi.HandlerFunc {
+	return func(rc papi.RequestContextI, w http.ResponseWriter, r *http.Request) error {
+		return helpers.RenderString(w, 200, fmt.Sprintf("Found route \n%#v\n %#v\n", r, rc))
+	}
 }

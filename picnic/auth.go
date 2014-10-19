@@ -17,6 +17,7 @@
 package picnic
 
 import (
+	. "github.com/SchumacherFM/wanderlust/picnic/api"
 	"net/http"
 )
 
@@ -30,7 +31,7 @@ const (
 	AUTH_LEVEL_ADMIN                           // admin required, 401 if no user, 403 if not admin
 )
 
-func checkAuthLevel(l authLevel, u userPermissionsIf) error {
+func checkAuthLevel(l authLevel, u UserPermissionsIf) error {
 	var (
 		errLoginRequired = httpError{
 			Status:      http.StatusUnauthorized,
@@ -40,7 +41,7 @@ func checkAuthLevel(l authLevel, u userPermissionsIf) error {
 			Status:      http.StatusPreconditionFailed,
 			Description: "Waiting for login ...",
 		}
-		falseUser = nil == u || false == u.isAuthenticated()
+		falseUser = nil == u || false == u.IsLoggedIn()
 	)
 
 	switch l {
@@ -61,7 +62,7 @@ func checkAuthLevel(l authLevel, u userPermissionsIf) error {
 			logger.Debug("checkAuthLevel 59: user %#v", u)
 			return errLoginRequired
 		}
-		if false == u.isAdmin() {
+		if false == u.IsAdministrator() {
 			return httpError{
 				Status:      http.StatusForbidden,
 				Description: "You must be an admin!",
@@ -73,13 +74,13 @@ func checkAuthLevel(l authLevel, u userPermissionsIf) error {
 
 // lazily fetches the current session user
 // check also JWT
-func (p *PicnicApp) authenticate(r *http.Request, l authLevel) (userIf, error) {
+func (p *PicnicApp) authenticate(r *http.Request, l authLevel) (UserIf, error) {
 
 	if l == AUTH_LEVEL_IGNORE {
 		return nil, nil
 	}
 
-	uid, expiresIn, err := p.session.readToken(r)
+	uid, expiresIn, err := p.session.ReadToken(r)
 	if err != nil {
 		return nil, err
 	}
@@ -89,13 +90,13 @@ func (p *PicnicApp) authenticate(r *http.Request, l authLevel) (userIf, error) {
 		return nil, checkAuthLevel(l, nil)
 	}
 	var f bool
-	f, err = u.findMe()
+	f, err = u.FindMe()
 	if false == f || err != nil {
 		logger.Debug("p.authenticate: user not found in DB %#v", u)
 		return nil, checkAuthLevel(l, nil)
 	}
-	u.setAuthenticated(true)
-	u.setSessionExpiresIn(expiresIn)
+	u.SetAuthenticated(true)
+	u.SetSessionExpiresIn(expiresIn)
 	return u, checkAuthLevel(l, u)
 
 }

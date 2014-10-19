@@ -19,6 +19,7 @@ package picnic
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
 	"github.com/SchumacherFM/wanderlust/helpers"
+	. "github.com/SchumacherFM/wanderlust/picnic/api"
 	"net/http"
 	"runtime"
 )
@@ -36,9 +37,9 @@ func (p *PicnicApp) initRoutesSystemInfo(r *mux.Router) error {
 	return nil
 }
 
-func systemInfoHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
+func systemInfoHandler(rc RequestContextI, w http.ResponseWriter, r *http.Request) error {
 	d := newSystemInfo()
-	d.SessionExpires = rc.getUser().getSessionExpiresIn()
+	d.SessionExpires = rc.GetUser().GetSessionExpiresIn()
 	return helpers.RenderFFJSON(w, d, http.StatusOK)
 }
 

@@ -19,6 +19,7 @@ package picnic
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
 	"github.com/SchumacherFM/wanderlust/helpers"
+	. "github.com/SchumacherFM/wanderlust/picnic/api"
 	"github.com/SchumacherFM/wanderlust/provisioners"
 	"net/http"
 )
@@ -34,10 +35,17 @@ import (
 func (p *PicnicApp) initRoutesProvisioners(r *mux.Router) error {
 	sr := r.PathPrefix("/" + provisioners.GetRoutePathPrefix() + "/").Subrouter()
 	sr.HandleFunc("/", p.handler(availableProvisionersHandler, AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
+
+	//	for _, prov, _ := range provisioners.GetAvailable() {
+	//		sr.HandleFunc("/"+prov.GetRoute(), p.handler(prov.GetRouteHandler(), AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
+	//		sr.HandleFunc("/"+prov.GetRoute()+"/save", p.handler(prov.GetRouteHandler(), AUTH_LEVEL_LOGIN)).Methods("POST")
+	//		sr.HandleFunc("/"+prov.GetRoute(), p.handler(prov.GetRouteHandler(), AUTH_LEVEL_LOGIN)).Methods("DELETE")
+	//	}
+
 	return nil
 }
 
-func availableProvisionersHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
+func availableProvisionersHandler(rc RequestContextI, w http.ResponseWriter, r *http.Request) error {
 	p, err := provisioners.GetAvailable()
 	if nil != err {
 		return httpError{

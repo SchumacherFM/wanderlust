@@ -22,6 +22,7 @@ package picnic
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
 	"github.com/SchumacherFM/wanderlust/helpers"
+	. "github.com/SchumacherFM/wanderlust/picnic/api"
 	"net/http"
 )
 
@@ -38,11 +39,11 @@ func (p *PicnicApp) initRoutesAuth(r *mux.Router) error {
 	return nil
 }
 
-func sessionInfoHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
-	return helpers.RenderFFJSON(w, newSessionInfo(rc.getUser()), http.StatusOK)
+func sessionInfoHandler(rc RequestContextI, w http.ResponseWriter, r *http.Request) error {
+	return helpers.RenderFFJSON(w, newSessionInfo(rc.GetUser()), http.StatusOK)
 }
 
-func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
+func loginHandler(rc RequestContextI, w http.ResponseWriter, r *http.Request) error {
 
 	var errLogin = httpError{
 		Status:      http.StatusBadRequest,
@@ -61,7 +62,7 @@ func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) er
 
 	// find user and login ...
 	u := NewUserModel(lpd.UserName)
-	uFound, uErr := u.findMe()
+	uFound, uErr := u.FindMe()
 	if nil != uErr {
 		return uErr
 	}
@@ -69,23 +70,23 @@ func loginHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) er
 		logger.Debug("loginHandler 148: user not found %#v", uFound)
 		return errLogin
 	}
-	if false == u.checkPassword(lpd.Password) {
+	if false == u.CheckPassword(lpd.Password) {
 		logger.Debug("loginHandler 152: password incorrect %#v", uFound)
 		return errLogin
 	}
 
-	if err := rc.getApp().getSessionManager().writeToken(w, u.getUserName()); nil != err {
+	if err := rc.GetApp().GetSessionManager().WriteToken(w, u.GetUserName()); nil != err {
 		return err
 	}
 
-	u.setAuthenticated(true)
+	u.SetAuthenticated(true)
 	// @todo use websocket to send message
 	return helpers.RenderFFJSON(w, newSessionInfo(u), http.StatusOK)
 }
 
-func logoutHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
+func logoutHandler(rc RequestContextI, w http.ResponseWriter, r *http.Request) error {
 
-	if err := rc.getApp().getSessionManager().writeToken(w, ""); err != nil {
+	if err := rc.GetApp().GetSessionManager().WriteToken(w, ""); err != nil {
 		return err
 	}
 	// @todo use websocket to send message

@@ -18,48 +18,39 @@ package picnic
 
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
+	. "github.com/SchumacherFM/wanderlust/picnic/api"
 	"net/http"
 	"strconv"
 )
 
 type (
-	requestParamsI interface {
-		get(name string) string
-		getInt(name string) int64
-	}
 
 	// contains route parameters in a map
 	requestParams struct {
 		vars map[string]string
-	}
-	requestContextI interface {
-		getApp() PicnicAppI
-		getParamString(string) string
-		getParamInt64(string) int64
-		getUser() userGetPermIf
 	}
 
 	// request-specific requestContext
 	// contains the app config so we have access to all the objects we need
 	requestContext struct {
 		app  PicnicAppI
-		par  requestParamsI
-		user userGetPermIf
+		par  RequestParamsI
+		user UserGetPermIf
 	}
 )
 
-func (r *requestParams) get(name string) string {
+func (r *requestParams) Get(name string) string {
 	return r.vars[name]
 }
 
-func (r *requestParams) getInt(name string) int64 {
+func (r *requestParams) GetInt(name string) int64 {
 	value, _ := strconv.ParseInt(r.vars[name], 10, 0)
 	return value
 }
 
 // invoked in (p *PicnicApp) handler()
 // per request on context
-func newRequestContext(app PicnicAppI, r *http.Request, theUser userGetPermIf) *requestContext {
+func newRequestContext(app PicnicAppI, r *http.Request, theUser UserGetPermIf) *requestContext {
 	ctx := &requestContext{
 		app: app,
 		par: &requestParams{
@@ -70,16 +61,16 @@ func newRequestContext(app PicnicAppI, r *http.Request, theUser userGetPermIf) *
 	return ctx
 }
 
-func (rc *requestContext) getApp() PicnicAppI {
+func (rc *requestContext) GetApp() PicnicAppI {
 	return rc.app
 }
-func (rc *requestContext) getParamString(name string) string {
-	return rc.par.get(name)
+func (rc *requestContext) GetParamString(name string) string {
+	return rc.par.Get(name)
 }
-func (rc *requestContext) getParamInt64(name string) int64 {
-	return rc.par.getInt(name)
+func (rc *requestContext) GetParamInt64(name string) int64 {
+	return rc.par.GetInt(name)
 }
-func (rc *requestContext) getUser() userGetPermIf {
+func (rc *requestContext) GetUser() UserGetPermIf {
 	return rc.user
 }
 

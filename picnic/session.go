@@ -16,6 +16,10 @@
 
 package picnic
 
+import (
+	. "github.com/SchumacherFM/wanderlust/picnic/api"
+)
+
 // Basic user session info
 type SessionInfo struct {
 	UserName string
@@ -26,16 +30,16 @@ type SessionInfo struct {
 }
 
 // newSessionInfo() is used in handlers login, logout, getSessionInfo and signup
-func newSessionInfo(u userSessionIf) *SessionInfo {
-	if nil == u || false == u.isValidForSession() {
+func newSessionInfo(u UserSessionIf) *SessionInfo {
+	if nil == u || false == u.IsValidForSession() {
 		return &SessionInfo{}
 	}
 
 	return &SessionInfo{
-		UserName: u.getUserName(),
-		Name:     u.getName(),
-		Email:    u.getEmail(),
-		IsAdmin:  u.isAdmin(),
+		UserName: u.GetUserName(),
+		Name:     u.GetName(),
+		Email:    u.GetEmail(),
+		IsAdmin:  u.IsAdministrator(),
 		LoggedIn: true,
 	}
 }

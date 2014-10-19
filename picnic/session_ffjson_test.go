@@ -10,11 +10,11 @@ type testUser struct {
 }
 
 // satisfy interface userSessionIf
-func (tu *testUser) getEmail() string        { return "root@localhost.dev" }
-func (tu *testUser) getName() string         { return "Joanna Gopher" }
-func (tu *testUser) getUserName() string     { return "gopher" }
-func (tu *testUser) isAdmin() bool           { return true }
-func (tu *testUser) isValidForSession() bool { return true }
+func (tu *testUser) GetEmail() string        { return "root@localhost.dev" }
+func (tu *testUser) GetName() string         { return "Joanna Gopher" }
+func (tu *testUser) GetUserName() string     { return "gopher" }
+func (tu *testUser) IsAdministrator() bool   { return true }
+func (tu *testUser) IsValidForSession() bool { return true }
 
 var expected = []byte(`{"email":"root@localhost.dev","isAdmin":true,"loggedIn":true,"name":"Joanna Gopher","userName":"gopher"}`)
 

@@ -20,6 +20,7 @@ import (
 	"github.com/SchumacherFM/wanderlust/code.google.com/p/go.crypto/bcrypt"
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 	"github.com/SchumacherFM/wanderlust/helpers"
+	. "github.com/SchumacherFM/wanderlust/picnic/api"
 	"time"
 )
 
@@ -30,67 +31,8 @@ const (
 	USER_ROOT                 = "administrator"
 )
 
-// now that's a hell lot of interfaces ...
-
-type userIf interface {
-	userGetterIf
-	userSetterIf
-	userPermissionsIf
-}
-
-// userGetPermIf is for GetterPermissions Interface
-type userGetPermIf interface {
-	userGetterIf
-	userPermissionsIf
-}
-
-// userSessionIf is special interface only used when requesting the session in a handler
-type userSessionIf interface {
-	getEmail() string
-	getName() string
-	getUserName() string
-	isAdmin() bool
-	isValidForSession() bool
-}
-
-type userGetterIf interface {
-	getId() int
-	getEmail() string
-	getName() string
-	getUserName() string
-	getSessionExpiresIn() int
-	toStringInterface() map[string]interface{}
-	findMe() (bool, error)
-	helpers.FfjsonIf
-}
-
-type userSetterIf interface {
-	setEmail(string) error
-	setName(string) error
-	setUserName(string) error
-	setAuthenticated(bool) error
-	setSessionExpiresIn(time.Duration) error
-	prepareNew() error
-	applyDbData(map[string]interface{}) error
-	// validate(ctx *context, r *http.Request, errors map[string]string) error
-	generateRecoveryCode() (string, error)
-	resetRecoveryCode()
-	generatePassword() error
-	changePassword(string) error
-	encryptPassword() error
-	unsetPassword()
-}
-
-type userPermissionsIf interface {
-	isAuthenticated() bool
-	isAdmin() bool
-	isActive() bool
-	checkPassword(string) bool
-	isValidForSession() bool
-}
-
 type UserModelCollection struct {
-	Users []userIf
+	Users []UserIf
 }
 
 type UserModel struct {
@@ -100,38 +42,38 @@ type UserModel struct {
 	Email            string
 	Password         string
 	IsAdmin          bool
-	IsActive         bool
+	IsActivated      bool
 	RecoveryCode     string
 	IsAuthenticated  bool
 	SessionExpiresIn time.Duration // not exported in JSON
 }
 
-func (u *UserModel) getId() int               { return helpers.StringHash(u.UserName) }
-func (u *UserModel) getEmail() string         { return u.Email }
-func (u *UserModel) getUserName() string      { return u.UserName }
-func (u *UserModel) getName() string          { return u.Name }
-func (u *UserModel) getSessionExpiresIn() int { return int(u.SessionExpiresIn.Seconds()) }
+func (u *UserModel) GetId() int               { return helpers.StringHash(u.UserName) }
+func (u *UserModel) GetEmail() string         { return u.Email }
+func (u *UserModel) GetUserName() string      { return u.UserName }
+func (u *UserModel) GetName() string          { return u.Name }
+func (u *UserModel) GetSessionExpiresIn() int { return int(u.SessionExpiresIn.Seconds()) }
 
-func (u *UserModel) setEmail(e string) error                    { u.Email = e; return nil }
-func (u *UserModel) setName(n string) error                     { u.Name = n; return nil }
-func (u *UserModel) setUserName(n string) error                 { u.UserName = n; return nil }
-func (u *UserModel) setAuthenticated(auth bool) error           { u.IsAuthenticated = auth; return nil }
-func (u *UserModel) setSessionExpiresIn(ei time.Duration) error { u.SessionExpiresIn = ei; return nil }
+func (u *UserModel) SetEmail(e string) error                    { u.Email = e; return nil }
+func (u *UserModel) SetName(n string) error                     { u.Name = n; return nil }
+func (u *UserModel) SetUserName(n string) error                 { u.UserName = n; return nil }
+func (u *UserModel) SetAuthenticated(auth bool) error           { u.IsAuthenticated = auth; return nil }
+func (u *UserModel) SetSessionExpiresIn(ei time.Duration) error { u.SessionExpiresIn = ei; return nil }
 
-func (u *UserModel) isAuthenticated() bool { return u.IsAuthenticated }
-func (u *UserModel) isAdmin() bool         { return u.IsAdmin }
-func (u *UserModel) isActive() bool        { return u.IsActive }
+func (u *UserModel) IsLoggedIn() bool      { return u.IsAuthenticated }
+func (u *UserModel) IsAdministrator() bool { return u.IsAdmin }
+func (u *UserModel) IsActive() bool        { return u.IsActivated }
 
 // PreInsert hook for new users
-func (u *UserModel) prepareNew() error {
-	u.IsActive = true
+func (u *UserModel) PrepareNew() error {
+	u.IsActivated = true
 	u.CreatedAt = time.Now()
-	return u.encryptPassword()
+	return u.EncryptPassword()
 }
 
-// isValidForSession() is only used in newSessionInfo()
-func (u *UserModel) isValidForSession() bool {
-	return true == helpers.ValidateEmail(u.getEmail()) && "" != u.getUserName() && true == u.isAuthenticated()
+// IsValidForSession() is only used in newSessionInfo()
+func (u *UserModel) IsValidForSession() bool {
+	return true == helpers.ValidateEmail(u.GetEmail()) && "" != u.GetUserName() && true == u.IsLoggedIn()
 }
 
 //func (UserModel *UserModel) validate(ctx *context, r *http.Request, errors map[string]string) error {
@@ -171,33 +113,33 @@ func (u *UserModel) isValidForSession() bool {
 //	return nil
 //}
 
-func (u *UserModel) generateRecoveryCode() (string, error) {
+func (u *UserModel) GenerateRecoveryCode() (string, error) {
 	code := helpers.RandomString(USER_RECOVERY_CODE_LENGTH)
 	u.RecoveryCode = code
 	return code, nil
 }
 
-func (u *UserModel) resetRecoveryCode() {
+func (u *UserModel) ResetRecoveryCode() {
 	u.RecoveryCode = ""
 }
 
 // generates an unencrypted password
-func (u *UserModel) generatePassword() error {
+func (u *UserModel) GeneratePassword() error {
 	var err error
 	u.Password, err = helpers.NewPassword(USER_PASSWORD_LENGTH)
 	return err
 }
 
-func (u *UserModel) changePassword(password string) error {
+func (u *UserModel) ChangePassword(password string) error {
 	u.Password = password
-	return u.encryptPassword()
+	return u.EncryptPassword()
 }
 
-func (u *UserModel) unsetPassword() {
+func (u *UserModel) UnsetPassword() {
 	u.Password = ""
 }
 
-func (u *UserModel) encryptPassword() error {
+func (u *UserModel) EncryptPassword() error {
 	if "" == u.Password {
 		return nil
 	}
@@ -210,7 +152,7 @@ func (u *UserModel) encryptPassword() error {
 }
 
 // not sure if it is a good idea to carry the whole time the bcrypted password with the UserModel object ...
-func (u *UserModel) checkPassword(password string) bool {
+func (u *UserModel) CheckPassword(password string) bool {
 	if "" == u.Password {
 		return false
 	}
@@ -218,7 +160,7 @@ func (u *UserModel) checkPassword(password string) bool {
 	return err == nil
 }
 
-func (u *UserModel) toStringInterface() map[string]interface{} {
+func (u *UserModel) ToStringInterface() map[string]interface{} {
 	return map[string]interface{}{
 		"CreatedAt":       u.CreatedAt.Unix(),
 		"UserName":        u.UserName,
@@ -226,26 +168,26 @@ func (u *UserModel) toStringInterface() map[string]interface{} {
 		"Email":           u.Email,
 		"Password":        u.Password,
 		"IsAdmin":         u.IsAdmin,
-		"IsActive":        u.IsActive,
+		"IsActivated":     u.IsActivated,
 		"IsAuthenticated": u.IsAuthenticated,
 	}
 }
 
 // finds a user in the database and fills the struct
-func (u *UserModel) findMe() (bool, error) {
-	searchedUser, _ := rsdb.FindOne(USER_DB_COLLECTION_NAME, u.getId())
+func (u *UserModel) FindMe() (bool, error) {
+	searchedUser, _ := rsdb.FindOne(USER_DB_COLLECTION_NAME, u.GetId())
 	if nil == searchedUser {
 		return false, nil
 	}
-	u.applyDbData(searchedUser)
+	u.ApplyDbData(searchedUser)
 
 	return true, nil
 }
 
-func (u *UserModel) applyDbData(d map[string]interface{}) error {
+func (u *UserModel) ApplyDbData(d map[string]interface{}) error {
 	// panic free type conversion
 	tIsAdmin, _ := d["IsAdmin"].(bool)
-	tIsActive, _ := d["IsActive"].(bool)
+	tIsActivated, _ := d["IsActivated"].(bool)
 	tIsAuthenticated, _ := d["IsAuthenticated"].(bool)
 	tCreatedAt, _ := d["CreatedAt"].(int64)
 	tUserName, _ := d["UserName"].(string)
@@ -259,7 +201,7 @@ func (u *UserModel) applyDbData(d map[string]interface{}) error {
 	u.Email = tEmail
 	u.Password = tPassword
 	u.IsAdmin = tIsAdmin
-	u.IsActive = tIsActive
+	u.IsActivated = tIsActivated
 	u.IsAuthenticated = tIsAuthenticated
 	return nil
 }
@@ -278,8 +220,8 @@ func GetAllUsers() (*UserModelCollection, error) {
 	umc := &UserModelCollection{}
 	for _, u := range col {
 		newUser := NewUserModel("")
-		newUser.applyDbData(u)
-		newUser.unsetPassword()
+		newUser.ApplyDbData(u)
+		newUser.UnsetPassword()
 		umc.Users = append(umc.Users, newUser)
 	}
 	return umc, err
@@ -296,20 +238,20 @@ func initUsers() error {
 	}
 
 	u := UserModel{
-		UserName: USER_ROOT,
-		Name:     "Default Root User",
-		Email:    USER_ROOT + "@localhost",
-		Password: pwd,
-		IsAdmin:  true,
-		IsActive: true,
+		UserName:    USER_ROOT,
+		Name:        "Default Root User",
+		Email:       USER_ROOT + "@localhost",
+		Password:    pwd,
+		IsAdmin:     true,
+		IsActivated: true,
 	}
-	u.generatePassword()
-	root, _ = rsdb.FindOne(USER_DB_COLLECTION_NAME, u.getId())
+	u.GeneratePassword()
+	root, _ = rsdb.FindOne(USER_DB_COLLECTION_NAME, u.GetId())
 
 	if nil == root {
 		logger.Emergency("Created new user %s with password: %s", u.UserName, u.Password)
-		u.prepareNew()
-		rsdb.InsertRecovery(USER_DB_COLLECTION_NAME, u.getId(), u.toStringInterface())
+		u.PrepareNew()
+		rsdb.InsertRecovery(USER_DB_COLLECTION_NAME, u.GetId(), u.ToStringInterface())
 	} else {
 		logger.Emergency("Root user %s already exists!", USER_ROOT)
 	}

@@ -25,16 +25,14 @@ import (
 	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/negroni"
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
 	"github.com/SchumacherFM/wanderlust/helpers"
+	. "github.com/SchumacherFM/wanderlust/picnic/api"
 	"github.com/SchumacherFM/wanderlust/picnic/middleware"
 	"net/http"
 )
 
-// our custom handler
-type handlerFunc func(rc requestContextI, w http.ResponseWriter, r *http.Request) error
-
 // the handler should create a new context on each request, and handle any returned
 // errors appropriately.
-func (p *PicnicApp) handler(h handlerFunc, level authLevel) http.HandlerFunc {
+func (p *PicnicApp) handler(h HandlerFunc, level authLevel) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 
@@ -95,6 +93,6 @@ func handlerFavicon(w http.ResponseWriter, r *http.Request) {
 	w.Write(gzrice.MustFindBox("rd/dist/").MustBytes("img/favicon.ico"))
 }
 
-func noopHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
+func noopHandler(rc RequestContextI, w http.ResponseWriter, r *http.Request) error {
 	return helpers.RenderString(w, 200, fmt.Sprintf("Found route \n%#v\n %#v\n", r, rc))
 }

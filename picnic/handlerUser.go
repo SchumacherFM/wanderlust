@@ -22,6 +22,7 @@ package picnic
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
 	"github.com/SchumacherFM/wanderlust/helpers"
+	. "github.com/SchumacherFM/wanderlust/picnic/api"
 	"net/http"
 )
 
@@ -37,7 +38,7 @@ func (p *PicnicApp) initRoutesUsers(r *mux.Router) error {
 	return nil
 }
 
-func userCollectionHandler(rc requestContextI, w http.ResponseWriter, r *http.Request) error {
+func userCollectionHandler(rc RequestContextI, w http.ResponseWriter, r *http.Request) error {
 	u, err := GetAllUsers()
 	if nil != err {
 		return err

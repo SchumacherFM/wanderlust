@@ -17,7 +17,10 @@
 // this package acts also as an external api to create
 package api
 
-import "bytes"
+import (
+	"bytes"
+	. "github.com/SchumacherFM/wanderlust/picnic/api"
+)
 
 const (
 	// no slashes for this PrePath in the route
@@ -27,8 +30,8 @@ const (
 type (
 	// this methods will be used to query the provisioner instance and set values
 	ProvisionerMethod interface {
-		MethodA()
-		MethodB()
+		GetRoute() string
+		GetRouteHandler() HandlerFunc
 	}
 
 	Provisioner struct {

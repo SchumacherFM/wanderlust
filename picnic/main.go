@@ -20,6 +20,7 @@ import (
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/helpers"
+	. "github.com/SchumacherFM/wanderlust/picnic/api"
 	"github.com/SchumacherFM/wanderlust/rucksack/rucksackdb"
 	"net/http"
 )
@@ -36,19 +37,10 @@ var (
 	logger *log.Logger
 )
 
-type PicnicAppI interface {
-	getSessionManager() sessionManagerI
-	getServer() *http.Server
-	generatePems() (certFile, keyFile string, err error)
-	Execute() error
-	GetListenAddress() string
-	getPemDir() string
-}
-
 type PicnicApp struct {
 	ListenAddress string
 	PemDir        string
-	session       sessionManagerI
+	session       SessionManagerI
 	certFile      string
 	keyFile       string
 }
@@ -62,7 +54,7 @@ func NewPicnicApp(la, pd string, lo *log.Logger, theDb rucksackdb.RDBI) (PicnicA
 		ListenAddress: la,
 		PemDir:        pd,
 	}
-	pa.certFile, pa.keyFile, err = pa.generatePems()
+	pa.certFile, pa.keyFile, err = pa.GeneratePems()
 	if nil != err {
 		return nil, err
 	}
@@ -77,11 +69,11 @@ func NewPicnicApp(la, pd string, lo *log.Logger, theDb rucksackdb.RDBI) (PicnicA
 	return pa, nil
 }
 
-func (p *PicnicApp) getSessionManager() sessionManagerI {
+func (p *PicnicApp) GetSessionManager() SessionManagerI {
 	return p.session
 }
 
-func (p *PicnicApp) getServer() *http.Server {
+func (p *PicnicApp) GetServer() *http.Server {
 	s := &http.Server{
 		Addr:      p.GetListenAddress(),
 		Handler:   p.getHandler(),
@@ -90,13 +82,13 @@ func (p *PicnicApp) getServer() *http.Server {
 	return s
 }
 
-func (p *PicnicApp) getPemDir() string {
+func (p *PicnicApp) GetPemDir() string {
 	return p.PemDir
 }
 
-func (p *PicnicApp) generatePems() (certFile, keyFile string, err error) {
+func (p *PicnicApp) GeneratePems() (certFile, keyFile string, err error) {
 	// PemDir can be empty then it will generate a random one
-	dir, err := helpers.GeneratePems(p.GetListenAddress(), p.getPemDir(), PEM_CERT, PEM_KEY)
+	dir, err := helpers.GeneratePems(p.GetListenAddress(), p.GetPemDir(), PEM_CERT, PEM_KEY)
 	if nil != err {
 		return "", "", err
 	}
@@ -110,7 +102,7 @@ func (p *PicnicApp) generatePems() (certFile, keyFile string, err error) {
 }
 
 func (p *PicnicApp) Execute() error {
-	return errgo.Mask(p.getServer().ListenAndServeTLS(p.certFile, p.keyFile))
+	return errgo.Mask(p.GetServer().ListenAndServeTLS(p.certFile, p.keyFile))
 }
 
 func (p *PicnicApp) GetListenAddress() string {

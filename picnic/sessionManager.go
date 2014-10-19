@@ -19,6 +19,7 @@ package picnic
 import (
 	jwt "github.com/SchumacherFM/wanderlust/github.com/dgrijalva/jwt-go"
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
+	. "github.com/SchumacherFM/wanderlust/picnic/api"
 	"github.com/SchumacherFM/wanderlust/picnic/middleware"
 	"io/ioutil"
 	"net/http"
@@ -29,13 +30,7 @@ const (
 	TOKEN_EXPIRY = 60 // minutes
 )
 
-type sessionManagerI interface {
-	readToken(*http.Request) (string, time.Duration, error)
-	_createToken(string) (string, error)
-	writeToken(http.ResponseWriter, string) error
-}
-
-func newSessionManager(publicKeyFilePath, privateKeyFilePath string) (sessionManagerI, error) {
+func newSessionManager(publicKeyFilePath, privateKeyFilePath string) (SessionManagerI, error) {
 	mgr := &defaultSessionManager{}
 	var err error
 	mgr.signKey, err = ioutil.ReadFile(privateKeyFilePath)
@@ -55,7 +50,7 @@ type defaultSessionManager struct {
 }
 
 // readToken, reads the token, validates it and returns the uid, validity in seconds and err|nil
-func (m *defaultSessionManager) readToken(r *http.Request) (string, time.Duration, error) {
+func (m *defaultSessionManager) ReadToken(r *http.Request) (string, time.Duration, error) {
 	tokenString := r.Header.Get(middleware.HEADER_X_AUTH_TOKEN)
 	if tokenString == "" {
 		return "", 0, nil
@@ -88,7 +83,7 @@ func (m *defaultSessionManager) readToken(r *http.Request) (string, time.Duratio
 }
 
 // creates and signs a token, private method
-func (m *defaultSessionManager) _createToken(userID string) (string, error) {
+func (m *defaultSessionManager) CreateToken(userID string) (string, error) {
 	t := jwt.New(jwt.GetSigningMethod("RS256"))
 	t.Claims["uid"] = userID
 	t.Claims["exp"] = time.Now().Add(time.Minute * TOKEN_EXPIRY).Unix()
@@ -99,8 +94,8 @@ func (m *defaultSessionManager) _createToken(userID string) (string, error) {
 	return tokenString, nil
 }
 
-func (m *defaultSessionManager) writeToken(w http.ResponseWriter, userID string) error {
-	tokenString, err := m._createToken(userID)
+func (m *defaultSessionManager) WriteToken(w http.ResponseWriter, userID string) error {
+	tokenString, err := m.CreateToken(userID)
 	if err != nil {
 		return err
 	}
