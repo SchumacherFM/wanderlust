@@ -121,15 +121,15 @@
           <div class="user pull-right">
             <div class="item dropdown">
 
-              <a href="#" data-ng-click="login()" class="dropdown-toggle" data-ng-show="!session.loggedIn"
+              <a href="#" data-ng-click="login()" class="dropdown-toggle" data-ng-if="!session.loggedIn"
                  data-analytics-on="click" data-analytics-event="login" data-analytics-category="auth">
                 <i class="fa fa-sign-in" style="font-size: 30px" title="Please log in"></i>
               </a>
-              <a href="#" class="dropdown-toggle" data-ng-show="session.loggedIn">
+              <a href="#" class="dropdown-toggle" data-ng-if="session.loggedIn">
                 <img gravatar-src="session.email" alt="Welcome! {{ session.name }}" title="Welcome! {{ session.name }}"/>
               </a>
 
-              <ul data-ng-show="session.loggedIn" class="dropdown-menu dropdown-menu-right">
+              <ul data-ng-if="session.loggedIn" class="dropdown-menu dropdown-menu-right">
                 <li class="dropdown-header"> {{ session.name }}</li>
                 <li class="divider"></li>
                 <li class="link">
@@ -151,7 +151,7 @@
               </ul>
 
             </div>
-            <div class="item dropdown">
+            <div data-ng-if="session.loggedIn" class="item dropdown">
               <a href="#" class="dropdown-toggle">
                 <i class="fa fa-bell-o"></i>
               </a>

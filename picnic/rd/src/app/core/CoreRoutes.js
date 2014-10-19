@@ -51,14 +51,11 @@ angular.module('Wanderlust')
           }
         })
         .state('provisioners', {
-          url: '/provisioners/:type',
-          templateUrl: function ($stateParams) {
-            // 404 errors can occur when a template not exists
-            var type = $stateParams.type || 'textarea';
-            return 'partials/provisioner/tpl/' + type + '.html';
-          },
+          url: '/provisioners/{type:[a-z0-9]{3,20}}',
+          controller: 'ProvisionerController',
+          templateUrl: 'partials/provisioner/tpl/form.html',
           data: {
-            ncyBreadcrumbLabel: 'Provisioner / {{name}}'
+            ncyBreadcrumbLabel: 'Provisioner / {{typeName}}'
           }
         });
 
