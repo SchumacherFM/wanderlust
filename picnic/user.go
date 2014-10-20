@@ -179,12 +179,12 @@ func (u *UserModel) FindMe() (bool, error) {
 	if nil == searchedUser {
 		return false, nil
 	}
-	u.ApplyDbData(searchedUser)
+	u.applyDbData(searchedUser)
 
 	return true, nil
 }
 
-func (u *UserModel) ApplyDbData(d map[string]interface{}) error {
+func (u *UserModel) applyDbData(d map[string]interface{}) error {
 	// panic free type conversion
 	tIsAdmin, _ := d["IsAdmin"].(bool)
 	tIsActivated, _ := d["IsActivated"].(bool)
@@ -220,7 +220,7 @@ func GetAllUsers() (*UserModelCollection, error) {
 	umc := &UserModelCollection{}
 	for _, u := range col {
 		newUser := NewUserModel("")
-		newUser.ApplyDbData(u)
+		newUser.applyDbData(u)
 		newUser.UnsetPassword()
 		umc.Users = append(umc.Users, newUser)
 	}

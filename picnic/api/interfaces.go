@@ -86,7 +86,6 @@ type (
 		SetUserName(string) error
 		SetAuthenticated(bool) error
 		SetSessionExpiresIn(time.Duration) error
-		ApplyDbData(map[string]interface{}) error
 		// validate(ctx *context, r *http.Request, errors map[string]string) error
 		GenerateRecoveryCode() (string, error)
 		ResetRecoveryCode()
