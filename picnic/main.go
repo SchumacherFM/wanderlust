@@ -82,13 +82,13 @@ func (p *PicnicApp) GetServer() *http.Server {
 	return s
 }
 
-func (p *PicnicApp) GetPemDir() string {
+func (p *PicnicApp) getPemDir() string {
 	return p.PemDir
 }
 
 func (p *PicnicApp) GeneratePems() (certFile, keyFile string, err error) {
 	// PemDir can be empty then it will generate a random one
-	dir, err := helpers.GeneratePems(p.GetListenAddress(), p.GetPemDir(), PEM_CERT, PEM_KEY)
+	dir, err := helpers.GeneratePems(p.GetListenAddress(), p.getPemDir(), PEM_CERT, PEM_KEY)
 	if nil != err {
 		return "", "", err
 	}

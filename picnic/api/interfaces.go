@@ -41,7 +41,6 @@ type (
 		GeneratePems() (certFile, keyFile string, err error)
 		Execute() error
 		GetListenAddress() string
-		GetPemDir() string
 	}
 	RequestParamsI interface {
 		Get(name string) string
