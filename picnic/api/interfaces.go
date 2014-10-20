@@ -40,10 +40,6 @@ type (
 		Execute() error
 		GetListenAddress() string
 	}
-	RequestParamsI interface {
-		Get(name string) string
-		GetInt(name string) int64
-	}
 
 	RequestContextI interface {
 		GetApp() PicnicAppI

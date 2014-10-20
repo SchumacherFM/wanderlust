@@ -25,37 +25,21 @@ import (
 
 type (
 
-	// contains route parameters in a map
-	requestParams struct {
-		vars map[string]string
-	}
-
 	// request-specific requestContext
 	// contains the app config so we have access to all the objects we need
 	requestContext struct {
 		app  PicnicAppI
-		par  RequestParamsI
+		vars map[string]string
 		user UserGetPermIf
 	}
 )
-
-func (r *requestParams) Get(name string) string {
-	return r.vars[name]
-}
-
-func (r *requestParams) GetInt(name string) int64 {
-	value, _ := strconv.ParseInt(r.vars[name], 10, 0)
-	return value
-}
 
 // invoked in (p *PicnicApp) handler()
 // per request on context
 func newRequestContext(app PicnicAppI, r *http.Request, theUser UserGetPermIf) *requestContext {
 	ctx := &requestContext{
 		app: app,
-		par: &requestParams{
-			vars: mux.Vars(r),
-		},
+		vars: mux.Vars(r),
 		user: theUser,
 	}
 	return ctx
@@ -64,12 +48,24 @@ func newRequestContext(app PicnicAppI, r *http.Request, theUser UserGetPermIf) *
 func (rc *requestContext) GetApp() PicnicAppI {
 	return rc.app
 }
+
 func (rc *requestContext) GetParamString(name string) string {
-	return rc.par.Get(name)
+	if val, ok := rc.vars[name]; ok {
+		return val
+	}
+	logger.Debug("%s not found request vars %#v", name, rc.vars)
+	return ""
 }
+
 func (rc *requestContext) GetParamInt64(name string) int64 {
-	return rc.par.GetInt(name)
+	v,e := strconv.ParseInt(rc.vars[name], 10, 0);
+	if nil == e {
+		return v
+	}
+	logger.Debug("%s not found request vars %#v", name, rc.vars)
+	return 0
 }
+
 func (rc *requestContext) GetUser() UserGetPermIf {
 	return rc.user
 }
