@@ -65,7 +65,7 @@ func (u *UserModel) IsAdministrator() bool { return u.IsAdmin }
 func (u *UserModel) IsActive() bool        { return u.IsActivated }
 
 // PreInsert hook for new users
-func (u *UserModel) PrepareNew() error {
+func (u *UserModel) prepareNew() error {
 	u.IsActivated = true
 	u.CreatedAt = time.Now()
 	return u.EncryptPassword()
@@ -250,7 +250,7 @@ func initUsers() error {
 
 	if nil == root {
 		logger.Emergency("Created new user %s with password: %s", u.UserName, u.Password)
-		u.PrepareNew()
+		u.prepareNew()
 		rsdb.InsertRecovery(USER_DB_COLLECTION_NAME, u.GetId(), u.ToStringInterface())
 	} else {
 		logger.Emergency("Root user %s already exists!", USER_ROOT)
