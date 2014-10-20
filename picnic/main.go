@@ -73,7 +73,7 @@ func (p *PicnicApp) GetSessionManager() SessionManagerI {
 	return p.session
 }
 
-func (p *PicnicApp) GetServer() *http.Server {
+func (p *PicnicApp) getServer() *http.Server {
 	s := &http.Server{
 		Addr:      p.GetListenAddress(),
 		Handler:   p.getHandler(),
@@ -102,7 +102,7 @@ func (p *PicnicApp) generatePems() (certFile, keyFile string, err error) {
 }
 
 func (p *PicnicApp) Execute() error {
-	return errgo.Mask(p.GetServer().ListenAndServeTLS(p.certFile, p.keyFile))
+	return errgo.Mask(p.getServer().ListenAndServeTLS(p.certFile, p.keyFile))
 }
 
 func (p *PicnicApp) GetListenAddress() string {

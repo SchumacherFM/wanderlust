@@ -37,7 +37,6 @@ type (
 
 	PicnicAppI interface {
 		GetSessionManager() SessionManagerI
-		GetServer() *http.Server
 		Execute() error
 		GetListenAddress() string
 	}
