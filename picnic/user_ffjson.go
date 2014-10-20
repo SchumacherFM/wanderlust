@@ -11,7 +11,7 @@ import (
 	"github.com/SchumacherFM/wanderlust/helpers"
 )
 
-func (mj *UserModelCollection) MarshalJSON() ([]byte, error) {
+func (mj *userModelCollection) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	buf.Grow(1024)
 	err := mj.MarshalJSONBuf(&buf)
@@ -20,7 +20,7 @@ func (mj *UserModelCollection) MarshalJSON() ([]byte, error) {
 	}
 	return buf.Bytes(), nil
 }
-func (mj *UserModelCollection) MarshalJSONBuf(buf *bytes.Buffer) error {
+func (mj *userModelCollection) MarshalJSONBuf(buf *bytes.Buffer) error {
 	var err error
 	var obj []byte
 	var first bool = true
@@ -57,7 +57,7 @@ func (mj *UserModelCollection) MarshalJSONBuf(buf *bytes.Buffer) error {
 	return nil
 }
 
-func (mj *UserModel) MarshalJSON() ([]byte, error) {
+func (mj *userModel) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	buf.Grow(1024)
 	err := mj.MarshalJSONBuf(&buf)
@@ -66,7 +66,7 @@ func (mj *UserModel) MarshalJSON() ([]byte, error) {
 	}
 	return buf.Bytes(), nil
 }
-func (mj *UserModel) MarshalJSONBuf(buf *bytes.Buffer) error {
+func (mj *userModel) MarshalJSONBuf(buf *bytes.Buffer) error {
 	var err error
 	var obj []byte
 	var first bool = true

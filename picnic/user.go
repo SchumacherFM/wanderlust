@@ -32,11 +32,11 @@ const (
 	USER_ROOT                 = "administrator"
 )
 
-type UserModelCollection struct {
+type userModelCollection struct {
 	Users []UserGetterIf
 }
 
-type UserModel struct {
+type userModel struct {
 	CreatedAt        time.Time
 	UserName         string
 	Name             string
@@ -49,40 +49,40 @@ type UserModel struct {
 	SessionExpiresIn time.Duration // not exported in JSON
 }
 
-func (u *UserModel) GetId() int               { return helpers.StringHash(u.UserName) }
-func (u *UserModel) GetEmail() string         { return u.Email }
-func (u *UserModel) GetUserName() string      { return u.UserName }
-func (u *UserModel) GetName() string          { return u.Name }
-func (u *UserModel) GetSessionExpiresIn() int { return int(u.SessionExpiresIn.Seconds()) }
+func (u *userModel) GetId() int               { return helpers.StringHash(u.UserName) }
+func (u *userModel) GetEmail() string         { return u.Email }
+func (u *userModel) GetUserName() string      { return u.UserName }
+func (u *userModel) GetName() string          { return u.Name }
+func (u *userModel) GetSessionExpiresIn() int { return int(u.SessionExpiresIn.Seconds()) }
 
-func (u *UserModel) SetEmail(e string) error                    { u.Email = e; return nil }
-func (u *UserModel) SetName(n string) error                     { u.Name = n; return nil }
-func (u *UserModel) SetUserName(n string) error                 { u.UserName = n; return nil }
-func (u *UserModel) SetAuthenticated(auth bool) error           { u.IsAuthenticated = auth; return nil }
-func (u *UserModel) SetSessionExpiresIn(ei time.Duration) error { u.SessionExpiresIn = ei; return nil }
+func (u *userModel) SetEmail(e string) error                    { u.Email = e; return nil }
+func (u *userModel) SetName(n string) error                     { u.Name = n; return nil }
+func (u *userModel) SetUserName(n string) error                 { u.UserName = n; return nil }
+func (u *userModel) SetAuthenticated(auth bool) error           { u.IsAuthenticated = auth; return nil }
+func (u *userModel) SetSessionExpiresIn(ei time.Duration) error { u.SessionExpiresIn = ei; return nil }
 
-func (u *UserModel) IsLoggedIn() bool      { return u.IsAuthenticated }
-func (u *UserModel) IsAdministrator() bool { return u.IsAdmin }
-func (u *UserModel) IsActive() bool        { return u.IsActivated }
+func (u *userModel) IsLoggedIn() bool      { return u.IsAuthenticated }
+func (u *userModel) IsAdministrator() bool { return u.IsAdmin }
+func (u *userModel) IsActive() bool        { return u.IsActivated }
 
 // PreInsert hook for new users
-func (u *UserModel) prepareNew() error {
+func (u *userModel) prepareNew() error {
 	u.IsActivated = true
 	u.CreatedAt = time.Now()
 	return u.EncryptPassword()
 }
 
 // IsValidForSession() is only used in newSessionInfo()
-func (u *UserModel) IsValidForSession() bool {
+func (u *userModel) IsValidForSession() bool {
 	return true == helpers.ValidateEmail(u.GetEmail()) && "" != u.GetUserName() && true == u.IsLoggedIn()
 }
 
-//func (UserModel *UserModel) validate(ctx *context, r *http.Request, errors map[string]string) error {
+//func (userModel *userModel) validate(ctx *context, r *http.Request, errors map[string]string) error {
 //
-//	if UserModel.Name == "" {
+//	if userModel.Name == "" {
 //		errors["name"] = "Name is missing"
 //	} else {
-//		ok, err := ctx.datamapper.isUserNameAvailable(UserModel)
+//		ok, err := ctx.datamapper.isUserNameAvailable(userModel)
 //		if err != nil {
 //			return err
 //		}
@@ -91,12 +91,12 @@ func (u *UserModel) IsValidForSession() bool {
 //		}
 //	}
 //
-//	if UserModel.Email == "" {
+//	if userModel.Email == "" {
 //		errors["email"] = "Email is missing"
-//	} else if !validateEmail(UserModel.Email) {
+//	} else if !validateEmail(userModel.Email) {
 //		errors["email"] = "Invalid email address"
 //	} else {
-//		ok, err := ctx.datamapper.isUserEmailAvailable(UserModel)
+//		ok, err := ctx.datamapper.isUserEmailAvailable(userModel)
 //		if err != nil {
 //			return err
 //		}
@@ -106,41 +106,41 @@ func (u *UserModel) IsValidForSession() bool {
 //
 //	}
 //
-//	// tbd: we need flag UserModel is third-party
-//	if UserModel.Password == "" {
+//	// tbd: we need flag userModel is third-party
+//	if userModel.Password == "" {
 //		errors["password"] = "Password is missing"
 //	}
 //
 //	return nil
 //}
 
-func (u *UserModel) GenerateRecoveryCode() (string, error) {
+func (u *userModel) GenerateRecoveryCode() (string, error) {
 	code := helpers.RandomString(USER_RECOVERY_CODE_LENGTH)
 	u.RecoveryCode = code
 	return code, nil
 }
 
-func (u *UserModel) ResetRecoveryCode() {
+func (u *userModel) ResetRecoveryCode() {
 	u.RecoveryCode = ""
 }
 
 // generates an unencrypted password
-func (u *UserModel) GeneratePassword() error {
+func (u *userModel) GeneratePassword() error {
 	var err error
 	u.Password, err = helpers.NewPassword(USER_PASSWORD_LENGTH)
 	return err
 }
 
-func (u *UserModel) ChangePassword(password string) error {
+func (u *userModel) ChangePassword(password string) error {
 	u.Password = password
 	return u.EncryptPassword()
 }
 
-func (u *UserModel) UnsetPassword() {
+func (u *userModel) UnsetPassword() {
 	u.Password = ""
 }
 
-func (u *UserModel) EncryptPassword() error {
+func (u *userModel) EncryptPassword() error {
 	if "" == u.Password {
 		return nil
 	}
@@ -152,8 +152,8 @@ func (u *UserModel) EncryptPassword() error {
 	return nil
 }
 
-// not sure if it is a good idea to carry the whole time the bcrypted password with the UserModel object ...
-func (u *UserModel) CheckPassword(password string) bool {
+// not sure if it is a good idea to carry the whole time the bcrypted password with the userModel object ...
+func (u *userModel) CheckPassword(password string) bool {
 	if "" == u.Password {
 		return false
 	}
@@ -161,7 +161,7 @@ func (u *UserModel) CheckPassword(password string) bool {
 	return err == nil
 }
 
-func (u *UserModel) ToStringInterface() map[string]interface{} {
+func (u *userModel) ToStringInterface() map[string]interface{} {
 	return map[string]interface{}{
 		"CreatedAt":       u.CreatedAt.Unix(),
 		"UserName":        u.UserName,
@@ -175,7 +175,7 @@ func (u *UserModel) ToStringInterface() map[string]interface{} {
 }
 
 // finds a user in the database and fills the struct
-func (u *UserModel) FindMe(db rucksackdb.RDBIF) (bool, error) {
+func (u *userModel) FindMe(db rucksackdb.RDBIF) (bool, error) {
 	searchedUser, _ := db.FindOne(USER_DB_COLLECTION_NAME, u.GetId())
 	if nil == searchedUser {
 		return false, nil
@@ -185,7 +185,7 @@ func (u *UserModel) FindMe(db rucksackdb.RDBIF) (bool, error) {
 	return true, nil
 }
 
-func (u *UserModel) applyDbData(d map[string]interface{}) error {
+func (u *userModel) applyDbData(d map[string]interface{}) error {
 	// panic free type conversion
 	tIsAdmin, _ := d["IsAdmin"].(bool)
 	tIsActivated, _ := d["IsActivated"].(bool)
@@ -208,17 +208,17 @@ func (u *UserModel) applyDbData(d map[string]interface{}) error {
 }
 
 // needed in auth when user tries to login
-func NewUserModel(userName string) *UserModel {
-	u := &UserModel{
+func NewUserModel(userName string) *userModel {
+	u := &userModel{
 		UserName: userName,
 	}
 	return u
 }
 
 // GetAllUsers returns a user collection with empty passwords
-func GetAllUsers(db rucksackdb.RDBIF) (*UserModelCollection, error) {
+func GetAllUsers(db rucksackdb.RDBIF) (*userModelCollection, error) {
 	col, err := db.FindAll(USER_DB_COLLECTION_NAME)
-	umc := &UserModelCollection{}
+	umc := &userModelCollection{}
 	for _, u := range col {
 		newUser := NewUserModel("")
 		newUser.applyDbData(u)
@@ -238,7 +238,7 @@ func initUsers(db rucksackdb.RDBIF) error {
 		return errgo.Mask(err)
 	}
 
-	u := &UserModel{
+	u := &userModel{
 		UserName:    USER_ROOT,
 		Name:        "Default Root User",
 		Email:       USER_ROOT + "@localhost",
