@@ -46,7 +46,7 @@ type PicnicApp struct {
 }
 
 // la = listen address, pd = pemDir, lo = logger
-func NewPicnicApp(la, pd string, lo *log.Logger, theDb rucksackdb.RDBI) (PicnicAppI, error) {
+func NewPicnicApp(la, pd string, lo *log.Logger, theDb rucksackdb.RDBI) (*PicnicApp, error) {
 	var err error
 	rsdb = theDb
 	logger = lo
@@ -54,7 +54,7 @@ func NewPicnicApp(la, pd string, lo *log.Logger, theDb rucksackdb.RDBI) (PicnicA
 		ListenAddress: la,
 		PemDir:        pd,
 	}
-	pa.certFile, pa.keyFile, err = pa.GeneratePems()
+	pa.certFile, pa.keyFile, err = pa.generatePems()
 	if nil != err {
 		return nil, err
 	}
@@ -86,7 +86,7 @@ func (p *PicnicApp) getPemDir() string {
 	return p.PemDir
 }
 
-func (p *PicnicApp) GeneratePems() (certFile, keyFile string, err error) {
+func (p *PicnicApp) generatePems() (certFile, keyFile string, err error) {
 	// PemDir can be empty then it will generate a random one
 	dir, err := helpers.GeneratePems(p.GetListenAddress(), p.getPemDir(), PEM_CERT, PEM_KEY)
 	if nil != err {

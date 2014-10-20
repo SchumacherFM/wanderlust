@@ -38,7 +38,6 @@ type (
 	PicnicAppI interface {
 		GetSessionManager() SessionManagerI
 		GetServer() *http.Server
-		GeneratePems() (certFile, keyFile string, err error)
 		Execute() error
 		GetListenAddress() string
 	}
