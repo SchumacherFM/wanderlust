@@ -32,7 +32,6 @@ type (
 
 	SessionManagerI interface {
 		ReadToken(*http.Request) (string, time.Duration, error)
-		CreateToken(string) (string, error)
 		WriteToken(http.ResponseWriter, string) error
 	}
 

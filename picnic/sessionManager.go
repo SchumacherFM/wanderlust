@@ -19,7 +19,6 @@ package picnic
 import (
 	jwt "github.com/SchumacherFM/wanderlust/github.com/dgrijalva/jwt-go"
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
-	. "github.com/SchumacherFM/wanderlust/picnic/api"
 	"github.com/SchumacherFM/wanderlust/picnic/middleware"
 	"io/ioutil"
 	"net/http"
@@ -30,7 +29,7 @@ const (
 	TOKEN_EXPIRY = 60 // minutes
 )
 
-func newSessionManager(publicKeyFilePath, privateKeyFilePath string) (SessionManagerI, error) {
+func newSessionManager(publicKeyFilePath, privateKeyFilePath string) (*defaultSessionManager, error) {
 	mgr := &defaultSessionManager{}
 	var err error
 	mgr.signKey, err = ioutil.ReadFile(privateKeyFilePath)
@@ -83,7 +82,7 @@ func (m *defaultSessionManager) ReadToken(r *http.Request) (string, time.Duratio
 }
 
 // creates and signs a token, private method
-func (m *defaultSessionManager) CreateToken(userID string) (string, error) {
+func (m *defaultSessionManager) createToken(userID string) (string, error) {
 	t := jwt.New(jwt.GetSigningMethod("RS256"))
 	t.Claims["uid"] = userID
 	t.Claims["exp"] = time.Now().Add(time.Minute * TOKEN_EXPIRY).Unix()
@@ -95,7 +94,7 @@ func (m *defaultSessionManager) CreateToken(userID string) (string, error) {
 }
 
 func (m *defaultSessionManager) WriteToken(w http.ResponseWriter, userID string) error {
-	tokenString, err := m.CreateToken(userID)
+	tokenString, err := m.createToken(userID)
 	if err != nil {
 		return err
 	}
