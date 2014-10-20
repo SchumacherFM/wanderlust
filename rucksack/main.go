@@ -23,7 +23,7 @@ import (
 )
 
 type RucksackApp struct {
-	rdb    rucksackdb.RDBI
+	rdb    rucksackdb.RDBIF
 	Logger *log.Logger
 }
 
@@ -46,6 +46,6 @@ func (r *RucksackApp) initDb(dbDir string) error {
 	return err
 }
 
-func (r *RucksackApp) GetDb() rucksackdb.RDBI {
+func (r *RucksackApp) GetDb() rucksackdb.RDBIF {
 	return r.rdb
 }

@@ -90,7 +90,7 @@ func (p *PicnicApp) authenticate(r *http.Request, l authLevel) (UserSessionIf, e
 		return nil, checkAuthLevel(l, nil)
 	}
 	var f bool
-	f, err = u.FindMe()
+	f, err = u.FindMe(rsdb)
 	if false == f || err != nil {
 		logger.Debug("p.authenticate: user not found in DB %#v", u)
 		return nil, checkAuthLevel(l, nil)

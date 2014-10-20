@@ -62,7 +62,7 @@ func loginHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) e
 
 	// find user and login ...
 	u := NewUserModel(lpd.UserName)
-	uFound, uErr := u.FindMe()
+	uFound, uErr := u.FindMe(rsdb)
 	if nil != uErr {
 		return uErr
 	}

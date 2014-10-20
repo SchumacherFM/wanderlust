@@ -33,7 +33,7 @@ var (
 	CliContext *cli.Context
 	waitGroup  sync.WaitGroup
 	logger     *log.Logger
-	db         rucksackdb.RDBI
+	db         rucksackdb.RDBIF
 )
 
 func Boot() {

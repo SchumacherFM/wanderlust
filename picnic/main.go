@@ -33,7 +33,7 @@ const (
 )
 
 var (
-	rsdb   rucksackdb.RDBI
+	rsdb   rucksackdb.RDBIF
 	logger *log.Logger
 )
 
@@ -47,7 +47,7 @@ type PicnicApp struct {
 }
 
 // la = listen address, pd = pemDir, lo = logger
-func NewPicnicApp(la, pd string, lo *log.Logger, theDb rucksackdb.RDBI) (*PicnicApp, error) {
+func NewPicnicApp(la, pd string, lo *log.Logger, theDb rucksackdb.RDBIF) (*PicnicApp, error) {
 	var err error
 	rsdb = theDb
 	logger = lo
@@ -63,7 +63,7 @@ func NewPicnicApp(la, pd string, lo *log.Logger, theDb rucksackdb.RDBI) (*Picnic
 	if nil != err {
 		return nil, err
 	}
-	err = initUsers()
+	err = initUsers(rsdb)
 	if nil != err {
 		return nil, err
 	}

@@ -21,6 +21,7 @@ import (
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	. "github.com/SchumacherFM/wanderlust/picnic/api"
+	"github.com/SchumacherFM/wanderlust/rucksack/rucksackdb"
 	"time"
 )
 
@@ -174,8 +175,8 @@ func (u *UserModel) ToStringInterface() map[string]interface{} {
 }
 
 // finds a user in the database and fills the struct
-func (u *UserModel) FindMe() (bool, error) {
-	searchedUser, _ := rsdb.FindOne(USER_DB_COLLECTION_NAME, u.GetId())
+func (u *UserModel) FindMe(db rucksackdb.RDBIF) (bool, error) {
+	searchedUser, _ := db.FindOne(USER_DB_COLLECTION_NAME, u.GetId())
 	if nil == searchedUser {
 		return false, nil
 	}
@@ -215,8 +216,8 @@ func NewUserModel(userName string) *UserModel {
 }
 
 // GetAllUsers returns a user collection with empty passwords
-func GetAllUsers() (*UserModelCollection, error) {
-	col, err := rsdb.FindAll(USER_DB_COLLECTION_NAME)
+func GetAllUsers(db rucksackdb.RDBIF) (*UserModelCollection, error) {
+	col, err := db.FindAll(USER_DB_COLLECTION_NAME)
 	umc := &UserModelCollection{}
 	for _, u := range col {
 		newUser := NewUserModel("")
@@ -228,11 +229,11 @@ func GetAllUsers() (*UserModelCollection, error) {
 }
 
 // initUsers() runs in NewPicnicApp() function
-func initUsers() error {
+func initUsers(db rucksackdb.RDBIF) error {
 	var err error
 	var root map[string]interface{}
 	var pwd string
-	err = rsdb.CreateDatabase(USER_DB_COLLECTION_NAME)
+	err = db.CreateDatabase(USER_DB_COLLECTION_NAME)
 	if nil != err {
 		return errgo.Mask(err)
 	}
@@ -246,12 +247,12 @@ func initUsers() error {
 		IsActivated: true,
 	}
 	u.GeneratePassword()
-	root, _ = rsdb.FindOne(USER_DB_COLLECTION_NAME, u.GetId())
+	root, _ = db.FindOne(USER_DB_COLLECTION_NAME, u.GetId())
 
 	if nil == root {
 		logger.Emergency("Created new user %s with password: %s", u.UserName, u.Password)
 		u.prepareNew()
-		rsdb.InsertRecovery(USER_DB_COLLECTION_NAME, u.GetId(), u.ToStringInterface())
+		db.InsertRecovery(USER_DB_COLLECTION_NAME, u.GetId(), u.ToStringInterface())
 	} else {
 		logger.Emergency("Root user %s already exists!", USER_ROOT)
 	}
