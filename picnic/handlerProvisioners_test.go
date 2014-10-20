@@ -18,6 +18,7 @@ package picnic
 
 import (
 	"bytes"
+	. "github.com/SchumacherFM/wanderlust/picnic/api"
 	"github.com/SchumacherFM/wanderlust/provisioners"
 	"net/http"
 	"net/http/httptest"
@@ -30,7 +31,7 @@ type testRequestContext struct {
 func (rc *testRequestContext) GetApp() PicnicAppIf            { return nil }
 func (rc *testRequestContext) GetParamString(s string) string { return s }
 func (rc *testRequestContext) GetParamInt64(s string) int64   { return 0 }
-func (rc *testRequestContext) GetUser() userGetPermIf {
+func (rc *testRequestContext) GetUser() UserSessionIf {
 	um := NewUserModel("testUser")
 	return um
 }
