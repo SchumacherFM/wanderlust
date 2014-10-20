@@ -17,12 +17,12 @@
 package picnic
 
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	. "github.com/SchumacherFM/wanderlust/picnic/api"
 	"github.com/SchumacherFM/wanderlust/rucksack/rucksackdb"
 	"net/http"
+	"sync"
 )
 
 const (
@@ -43,6 +43,7 @@ type PicnicApp struct {
 	session       SessionManagerI
 	certFile      string
 	keyFile       string
+	httpRunning   sync.Once
 }
 
 // la = listen address, pd = pemDir, lo = logger
@@ -96,13 +97,17 @@ func (p *PicnicApp) generatePems() (certFile, keyFile string, err error) {
 		logger.Notice("PEM certificate temp directory is %s", dir)
 	}
 	p.PemDir = dir
-	certFile = dir + PEM_CERT
-	keyFile = dir + PEM_KEY
+	certFile = dir+PEM_CERT
+	keyFile = dir+PEM_KEY
 	return
 }
 
+// make sure to execute only once
 func (p *PicnicApp) Execute() error {
-	return errgo.Mask(p.getServer().ListenAndServeTLS(p.certFile, p.keyFile))
+	p.httpRunning.Do(func() {
+		logger.Check(p.getServer().ListenAndServeTLS(p.certFile, p.keyFile))
+	})
+	return nil
 }
 
 func (p *PicnicApp) GetListenAddress() string {

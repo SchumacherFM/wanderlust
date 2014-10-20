@@ -96,12 +96,8 @@ func BootPicnic() {
 	if "" != picnicApp.GetListenAddress() { // don't start if empty
 		waitGroup.Add(1)
 		go func() {
-			var err error
 			defer waitGroup.Done()
-			err = picnicApp.Execute()
-			if nil != err {
-				logger.Check(err)
-			}
+			logger.Check(picnicApp.Execute())
 		}()
 		logger.Notice("Picnic Running https://%s", picnicApp.GetListenAddress())
 	}
