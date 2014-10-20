@@ -48,7 +48,7 @@ func (p *PicnicApp) initRoutesProvisioners(r *mux.Router) error {
 	return nil
 }
 
-func availableProvisionersHandler(rc RequestContextI, w http.ResponseWriter, r *http.Request) error {
+func availableProvisionersHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 	p, err := provisioners.GetAvailable()
 	if nil != err {
 		return httpError{

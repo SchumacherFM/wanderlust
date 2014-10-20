@@ -38,7 +38,7 @@ func (p *PicnicApp) initRoutesUsers(r *mux.Router) error {
 	return nil
 }
 
-func userCollectionHandler(rc RequestContextI, w http.ResponseWriter, r *http.Request) error {
+func userCollectionHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 	u, err := GetAllUsers()
 	if nil != err {
 		return err

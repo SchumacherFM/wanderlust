@@ -40,7 +40,7 @@ var (
 type PicnicApp struct {
 	ListenAddress string
 	PemDir        string
-	session       SessionManagerI
+	session       SessionManagerIf
 	certFile      string
 	keyFile       string
 	httpRunning   sync.Once
@@ -70,7 +70,7 @@ func NewPicnicApp(la, pd string, lo *log.Logger, theDb rucksackdb.RDBI) (*Picnic
 	return pa, nil
 }
 
-func (p *PicnicApp) GetSessionManager() SessionManagerI {
+func (p *PicnicApp) GetSessionManager() SessionManagerIf {
 	return p.session
 }
 

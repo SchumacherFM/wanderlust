@@ -28,7 +28,7 @@ type (
 	// request-specific requestContext
 	// contains the app config so we have access to all the objects we need
 	requestContext struct {
-		app  PicnicAppI
+		app  PicnicAppIf
 		vars map[string]string
 		user UserSessionIf
 	}
@@ -36,7 +36,7 @@ type (
 
 // invoked in (p *PicnicApp) handler()
 // per request on context
-func newRequestContext(app PicnicAppI, r *http.Request, u UserSessionIf) *requestContext {
+func newRequestContext(app PicnicAppIf, r *http.Request, u UserSessionIf) *requestContext {
 	ctx := &requestContext{
 		app:  app,
 		vars: mux.Vars(r),
@@ -45,7 +45,7 @@ func newRequestContext(app PicnicAppI, r *http.Request, u UserSessionIf) *reques
 	return ctx
 }
 
-func (rc *requestContext) GetApp() PicnicAppI {
+func (rc *requestContext) GetApp() PicnicAppIf {
 	return rc.app
 }
 

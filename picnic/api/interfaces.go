@@ -28,21 +28,21 @@ import (
 
 type (
 	// our custom handler
-	HandlerFunc func(rc RequestContextI, w http.ResponseWriter, r *http.Request) error
+	HandlerFunc func(rc RequestContextIf, w http.ResponseWriter, r *http.Request) error
 
-	SessionManagerI interface {
+	SessionManagerIf interface {
 		ReadToken(*http.Request) (string, time.Duration, error)
 		WriteToken(http.ResponseWriter, string) error
 	}
 
-	PicnicAppI interface {
-		GetSessionManager() SessionManagerI
+	PicnicAppIf interface {
+		GetSessionManager() SessionManagerIf
 		Execute() error
 		GetListenAddress() string
 	}
 
-	RequestContextI interface {
-		GetApp() PicnicAppI
+	RequestContextIf interface {
+		GetApp() PicnicAppIf
 		GetParamString(string) string
 		GetParamInt64(string) int64
 		GetUser() UserSessionIf

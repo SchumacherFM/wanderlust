@@ -44,7 +44,7 @@ func (t *ta) GetRoute() string {
 }
 
 func (t *ta) GetRouteHandler() picnicApi.HandlerFunc {
-	return func(rc picnicApi.RequestContextI, w http.ResponseWriter, r *http.Request) error {
+	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 		return helpers.RenderString(w, 200, fmt.Sprintf("Found route \n%#v\n %#v\n", r, rc))
 	}
 }
