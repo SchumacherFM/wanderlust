@@ -37,6 +37,7 @@ type userModelCollection struct {
 }
 
 type userModel struct {
+	// @todo field names to lower case as they are private
 	CreatedAt        time.Time
 	UserName         string
 	Name             string
