@@ -18,6 +18,7 @@ package api
 
 import (
 	"github.com/SchumacherFM/wanderlust/helpers"
+	"github.com/SchumacherFM/wanderlust/rucksack/rucksackdb"
 	"net/http"
 	"time"
 )
@@ -28,36 +29,24 @@ import (
 
 type (
 	// our custom handler
-	HandlerFunc func(rc RequestContextI, w http.ResponseWriter, r *http.Request) error
+	HandlerFunc func(rc RequestContextIf, w http.ResponseWriter, r *http.Request) error
 
-	SessionManagerI interface {
+	SessionManagerIf interface {
 		ReadToken(*http.Request) (string, time.Duration, error)
 		WriteToken(http.ResponseWriter, string) error
 	}
 
-	PicnicAppI interface {
-		GetSessionManager() SessionManagerI
+	PicnicAppIf interface {
+		GetSessionManager() SessionManagerIf
 		Execute() error
 		GetListenAddress() string
 	}
 
-	RequestContextI interface {
-		GetApp() PicnicAppI
+	RequestContextIf interface {
+		GetApp() PicnicAppIf
 		GetParamString(string) string
 		GetParamInt64(string) int64
-		GetUser() UserGetPermIf
-	}
-
-	UserIf interface {
-		UserGetterIf
-		UserSetterIf
-		UserPermissionsIf
-	}
-
-	// UserGetPermIf is for GetterPermissions Interface
-	UserGetPermIf interface {
-		UserGetterIf
-		UserPermissionsIf
+		GetUser() UserSessionIf
 	}
 
 	// UserSessionIf is special interface only used when requesting the session in a handler
@@ -65,8 +54,14 @@ type (
 		GetEmail() string
 		GetName() string
 		GetUserName() string
+		IsLoggedIn() bool
+		IsActive() bool
 		IsAdministrator() bool
 		IsValidForSession() bool
+		SetAuthenticated(bool) error
+		SetSessionExpiresIn(time.Duration) error
+		GetSessionExpiresIn() int
+		CheckPassword(string) bool
 	}
 
 	UserGetterIf interface {
@@ -76,7 +71,7 @@ type (
 		GetUserName() string
 		GetSessionExpiresIn() int
 		ToStringInterface() map[string]interface{}
-		FindMe() (bool, error)
+		FindMe(rucksackdb.RDBIF) (bool, error)
 		helpers.FfjsonIf
 	}
 
@@ -84,8 +79,7 @@ type (
 		SetEmail(string) error
 		SetName(string) error
 		SetUserName(string) error
-		SetAuthenticated(bool) error
-		SetSessionExpiresIn(time.Duration) error
+
 		// validate(ctx *context, r *http.Request, errors map[string]string) error
 		GenerateRecoveryCode() (string, error)
 		ResetRecoveryCode()
@@ -93,13 +87,5 @@ type (
 		ChangePassword(string) error
 		EncryptPassword() error
 		UnsetPassword()
-	}
-
-	UserPermissionsIf interface {
-		IsLoggedIn() bool
-		IsAdministrator() bool
-		IsActive() bool
-		CheckPassword(string) bool
-		IsValidForSession() bool
 	}
 )

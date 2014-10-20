@@ -4,17 +4,24 @@ import (
 	"bytes"
 	"encoding/json"
 	"testing"
+	"time"
 )
 
 type testUser struct {
 }
 
 // satisfy interface userSessionIf
-func (tu *testUser) GetEmail() string        { return "root@localhost.dev" }
-func (tu *testUser) GetName() string         { return "Joanna Gopher" }
-func (tu *testUser) GetUserName() string     { return "gopher" }
-func (tu *testUser) IsAdministrator() bool   { return true }
-func (tu *testUser) IsValidForSession() bool { return true }
+func (tu *testUser) GetEmail() string                          { return "root@localhost.dev" }
+func (tu *testUser) GetName() string                           { return "Joanna Gopher" }
+func (tu *testUser) GetUserName() string                       { return "gopher" }
+func (tu *testUser) IsAdministrator() bool                     { return true }
+func (tu *testUser) IsValidForSession() bool                   { return true }
+func (tu *testUser) IsLoggedIn() bool                          { return true }
+func (tu *testUser) IsActive() bool                            { return true }
+func (tu *testUser) SetAuthenticated(a bool) error             { return nil }
+func (tu *testUser) SetSessionExpiresIn(t time.Duration) error { return nil }
+func (tu *testUser) GetSessionExpiresIn() int                  { return 0 }
+func (tu *testUser) CheckPassword(p string) bool               { return true }
 
 var expected = []byte(`{"email":"root@localhost.dev","isAdmin":true,"loggedIn":true,"name":"Joanna Gopher","userName":"gopher"}`)
 

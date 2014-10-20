@@ -33,21 +33,21 @@ const (
 )
 
 var (
-	rsdb   rucksackdb.RDBI
+	rsdb   rucksackdb.RDBIF
 	logger *log.Logger
 )
 
 type PicnicApp struct {
 	ListenAddress string
 	PemDir        string
-	session       SessionManagerI
+	session       SessionManagerIf
 	certFile      string
 	keyFile       string
 	httpRunning   sync.Once
 }
 
 // la = listen address, pd = pemDir, lo = logger
-func NewPicnicApp(la, pd string, lo *log.Logger, theDb rucksackdb.RDBI) (*PicnicApp, error) {
+func NewPicnicApp(la, pd string, lo *log.Logger, theDb rucksackdb.RDBIF) (*PicnicApp, error) {
 	var err error
 	rsdb = theDb
 	logger = lo
@@ -63,14 +63,14 @@ func NewPicnicApp(la, pd string, lo *log.Logger, theDb rucksackdb.RDBI) (*Picnic
 	if nil != err {
 		return nil, err
 	}
-	err = initUsers()
+	err = initUsers(rsdb)
 	if nil != err {
 		return nil, err
 	}
 	return pa, nil
 }
 
-func (p *PicnicApp) GetSessionManager() SessionManagerI {
+func (p *PicnicApp) GetSessionManager() SessionManagerIf {
 	return p.session
 }
 
@@ -97,8 +97,8 @@ func (p *PicnicApp) generatePems() (certFile, keyFile string, err error) {
 		logger.Notice("PEM certificate temp directory is %s", dir)
 	}
 	p.PemDir = dir
-	certFile = dir+PEM_CERT
-	keyFile = dir+PEM_KEY
+	certFile = dir + PEM_CERT
+	keyFile = dir + PEM_KEY
 	return
 }
 

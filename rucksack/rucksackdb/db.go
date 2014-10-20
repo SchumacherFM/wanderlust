@@ -23,7 +23,7 @@ import (
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 )
 
-type RDBI interface {
+type RDBIF interface {
 	CreateDatabase(name string) error
 	Close() error
 	UseDatabase(name string) *db.Col
@@ -37,7 +37,7 @@ type RDB struct {
 	db *db.DB
 }
 
-func NewRDB(dbDir string) (RDBI, error) {
+func NewRDB(dbDir string) (RDBIF, error) {
 	rdb := &RDB{}
 	var err error
 	rdb.db, err = db.OpenDB(dbDir)

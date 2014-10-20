@@ -39,11 +39,11 @@ func (p *PicnicApp) initRoutesAuth(r *mux.Router) error {
 	return nil
 }
 
-func sessionInfoHandler(rc RequestContextI, w http.ResponseWriter, r *http.Request) error {
+func sessionInfoHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 	return helpers.RenderFFJSON(w, newSessionInfo(rc.GetUser()), http.StatusOK)
 }
 
-func loginHandler(rc RequestContextI, w http.ResponseWriter, r *http.Request) error {
+func loginHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 
 	var errLogin = httpError{
 		Status:      http.StatusBadRequest,
@@ -62,7 +62,7 @@ func loginHandler(rc RequestContextI, w http.ResponseWriter, r *http.Request) er
 
 	// find user and login ...
 	u := NewUserModel(lpd.UserName)
-	uFound, uErr := u.FindMe()
+	uFound, uErr := u.FindMe(rsdb)
 	if nil != uErr {
 		return uErr
 	}
@@ -84,7 +84,7 @@ func loginHandler(rc RequestContextI, w http.ResponseWriter, r *http.Request) er
 	return helpers.RenderFFJSON(w, newSessionInfo(u), http.StatusOK)
 }
 
-func logoutHandler(rc RequestContextI, w http.ResponseWriter, r *http.Request) error {
+func logoutHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 
 	if err := rc.GetApp().GetSessionManager().WriteToken(w, ""); err != nil {
 		return err
