@@ -97,8 +97,8 @@ func (p *PicnicApp) generatePems() (certFile, keyFile string, err error) {
 		logger.Notice("PEM certificate temp directory is %s", dir)
 	}
 	p.PemDir = dir
-	certFile = dir+PEM_CERT
-	keyFile = dir+PEM_KEY
+	certFile = dir + PEM_CERT
+	keyFile = dir + PEM_KEY
 	return
 }
 

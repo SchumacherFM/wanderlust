@@ -45,19 +45,7 @@ type (
 		GetApp() PicnicAppI
 		GetParamString(string) string
 		GetParamInt64(string) int64
-		GetUser() UserGetPermIf
-	}
-
-	UserIf interface {
-		UserGetterIf
-		UserSetterIf
-		UserPermissionsIf
-	}
-
-	// UserGetPermIf is for GetterPermissions Interface
-	UserGetPermIf interface {
-		UserGetterIf
-		UserPermissionsIf
+		GetUser() UserSessionIf
 	}
 
 	// UserSessionIf is special interface only used when requesting the session in a handler
@@ -65,8 +53,14 @@ type (
 		GetEmail() string
 		GetName() string
 		GetUserName() string
+		IsLoggedIn() bool
+		IsActive() bool
 		IsAdministrator() bool
 		IsValidForSession() bool
+		SetAuthenticated(bool) error
+		SetSessionExpiresIn(time.Duration) error
+		GetSessionExpiresIn() int
+		CheckPassword(string) bool
 	}
 
 	UserGetterIf interface {
@@ -84,8 +78,7 @@ type (
 		SetEmail(string) error
 		SetName(string) error
 		SetUserName(string) error
-		SetAuthenticated(bool) error
-		SetSessionExpiresIn(time.Duration) error
+
 		// validate(ctx *context, r *http.Request, errors map[string]string) error
 		GenerateRecoveryCode() (string, error)
 		ResetRecoveryCode()
@@ -93,13 +86,5 @@ type (
 		ChangePassword(string) error
 		EncryptPassword() error
 		UnsetPassword()
-	}
-
-	UserPermissionsIf interface {
-		IsLoggedIn() bool
-		IsAdministrator() bool
-		IsActive() bool
-		CheckPassword(string) bool
-		IsValidForSession() bool
 	}
 )

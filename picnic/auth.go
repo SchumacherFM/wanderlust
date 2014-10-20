@@ -31,7 +31,7 @@ const (
 	AUTH_LEVEL_ADMIN                           // admin required, 401 if no user, 403 if not admin
 )
 
-func checkAuthLevel(l authLevel, u UserPermissionsIf) error {
+func checkAuthLevel(l authLevel, u UserSessionIf) error {
 	var (
 		errLoginRequired = httpError{
 			Status:      http.StatusUnauthorized,
@@ -74,7 +74,7 @@ func checkAuthLevel(l authLevel, u UserPermissionsIf) error {
 
 // lazily fetches the current session user
 // check also JWT
-func (p *PicnicApp) authenticate(r *http.Request, l authLevel) (UserIf, error) {
+func (p *PicnicApp) authenticate(r *http.Request, l authLevel) (UserSessionIf, error) {
 
 	if l == AUTH_LEVEL_IGNORE {
 		return nil, nil

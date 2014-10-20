@@ -32,7 +32,7 @@ const (
 )
 
 type UserModelCollection struct {
-	Users []UserIf
+	Users []UserGetterIf
 }
 
 type UserModel struct {
@@ -237,7 +237,7 @@ func initUsers() error {
 		return errgo.Mask(err)
 	}
 
-	u := UserModel{
+	u := &UserModel{
 		UserName:    USER_ROOT,
 		Name:        "Default Root User",
 		Email:       USER_ROOT + "@localhost",

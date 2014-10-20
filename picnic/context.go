@@ -30,17 +30,17 @@ type (
 	requestContext struct {
 		app  PicnicAppI
 		vars map[string]string
-		user UserGetPermIf
+		user UserSessionIf
 	}
 )
 
 // invoked in (p *PicnicApp) handler()
 // per request on context
-func newRequestContext(app PicnicAppI, r *http.Request, theUser UserGetPermIf) *requestContext {
+func newRequestContext(app PicnicAppI, r *http.Request, u UserSessionIf) *requestContext {
 	ctx := &requestContext{
-		app: app,
+		app:  app,
 		vars: mux.Vars(r),
-		user: theUser,
+		user: u,
 	}
 	return ctx
 }
@@ -58,7 +58,7 @@ func (rc *requestContext) GetParamString(name string) string {
 }
 
 func (rc *requestContext) GetParamInt64(name string) int64 {
-	v,e := strconv.ParseInt(rc.vars[name], 10, 0);
+	v, e := strconv.ParseInt(rc.vars[name], 10, 0)
 	if nil == e {
 		return v
 	}
@@ -66,7 +66,7 @@ func (rc *requestContext) GetParamInt64(name string) int64 {
 	return 0
 }
 
-func (rc *requestContext) GetUser() UserGetPermIf {
+func (rc *requestContext) GetUser() UserSessionIf {
 	return rc.user
 }
 
