@@ -32,9 +32,12 @@ import (
 var (
 	// these are the routes where we expect that the length of data is below ~100 bytes
 	// because then gzip compression fails, that means you can't decode it ... no idea why.
-	skipCompressionRoutes = map[string]bool{
-		"/sysinfo/": true,
+	skipCompressionRoutes = [...]string{
+		"/sysinfo/",
+		"/provisioners/",
+		// more routes will be added
 	}
+	skipCompressionRoutesLen = len(skipCompressionRoutes)
 )
 
 // These compression constants are copied from the compress/gzip package.
@@ -49,6 +52,16 @@ const (
 
 	indexPage = "index.html"
 )
+
+// faster and less memory usage than a map[]
+func isCompressionRoute(key string) bool {
+	for i := 0; i < skipCompressionRoutesLen; i = i + 1 {
+		if key == skipCompressionRoutes[i] {
+			return true
+		}
+	}
+	return false
+}
 
 func prepareRequestUri(uri string) string {
 	if "" == uri || "/" == uri {
@@ -86,7 +99,7 @@ func GzipContentTypeMiddleware(res http.ResponseWriter, req *http.Request, next 
 		return
 	}
 
-	if _, isSet := skipCompressionRoutes[req.RequestURI]; true == isSet {
+	if isCompressionRoute(req.RequestURI) {
 		next(res, req)
 		return
 	}

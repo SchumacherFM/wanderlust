@@ -14,19 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-// https://github.com/phyber/negroni-gzip/blob/master/LICENSE
-// The MIT License (MIT)
-// Copyright (c) 2013 Jeremy Saenz; 2014 David O'Rourke
-// and modified by Cyrill
-
 package middleware
 
 import (
 	"testing"
 )
 
+// run via $ go test -v --bench=. -test.benchmem .
+
 var (
-	prepareRequestUriTests = map[string]string{
+	prepareRequestUriMap = map[string]string{
 		"":                                                         "/index.html",
 		"/":                                                        "/index.html",
 		"dashboard/":                                               "dashboard/index.html",
@@ -35,12 +32,59 @@ var (
 		"/lib/font-awesome/fonts/fontawesome-webfont.woff?v=4.1.0": "/lib/font-awesome/fonts/fontawesome-webfont.woff",
 		"/lib/angular/angular.js?v=2.1&a=b":                        "/lib/angular/angular.js",
 	}
+	prepareRequestUriSlice = []string{
+		"",            // input
+		"/index.html", // expected
+		"/",           // input
+		"/index.html", // expected
+		"dashboard/",
+		"dashboard/index.html",
+		"dashboard",
+		"dashboard",
+		"/lib/bootstrap/css/bootstrap.css",
+		"/lib/bootstrap/css/bootstrap.css",
+		"/lib/font-awesome/fonts/fontawesome-webfont.woff?v=4.1.0",
+		"/lib/font-awesome/fonts/fontawesome-webfont.woff",
+		"/lib/angular/angular.js?v=2.1&a=b",
+		"/lib/angular/angular.js",
+	}
 )
 
 func TestPrepareRequestUri(t *testing.T) {
-	for input, expected := range prepareRequestUriTests {
+	for input, expected := range prepareRequestUriMap {
 		if expected != prepareRequestUri(input) {
 			t.Error("No equal: ", input, expected)
 		}
 	}
+}
+
+// BenchmarkPrepareRequestUriMap	 1000000	      1230 ns/op	     150 B/op	       6 allocs/op
+func BenchmarkPrepareRequestUriMap(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		for input, expected := range prepareRequestUriMap {
+			if expected != prepareRequestUri(input) {
+				b.Log(expected)
+			}
+		}
+	}
+}
+
+// Using an array instead of a slice is around 1180 ns/op
+// BenchmarkPrepareRequestUriSlice	 1000000	      1075 ns/op	     150 B/op	       6 allocs/op
+func BenchmarkPrepareRequestUriSlice(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		for i := 0; i < len(prepareRequestUriSlice); i += 2 {
+			input := prepareRequestUriSlice[i]
+			expected := prepareRequestUriSlice[i+1]
+			//b.Log(input,expected)
+			if expected != prepareRequestUri(input) {
+				b.Error(expected)
+			}
+		}
+	}
+}
+
+// @todo
+func TestGzipContentTypeMiddleware(t *testing.T) {
+
 }
