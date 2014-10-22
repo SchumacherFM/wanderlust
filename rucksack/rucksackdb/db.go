@@ -37,7 +37,7 @@ type RDB struct {
 	db *db.DB
 }
 
-func NewRDB(dbDir string) (RDBIF, error) {
+func NewRDB(dbDir string) (*RDB, error) {
 	rdb := &RDB{}
 	var err error
 	rdb.db, err = db.OpenDB(dbDir)
