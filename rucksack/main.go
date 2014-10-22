@@ -27,22 +27,23 @@ type RucksackApp struct {
 	Logger *log.Logger
 }
 
-func NewRucksackApp(dbDir string, logger *log.Logger) (*RucksackApp, error) {
+func NewRucksackApp(dbFileName string, logger *log.Logger) (*RucksackApp, error) {
 	rucksackApp := &RucksackApp{
 		Logger: logger,
 	}
-	rucksackApp.initDb(dbDir)
+	rucksackApp.initDb(dbFileName)
 	return rucksackApp, nil
 }
 
-func (r *RucksackApp) initDb(dbDir string) error {
+func (r *RucksackApp) initDb(dbFileName string) error {
 	var err error
-	if "" == dbDir {
-		dbDir = helpers.GetTempDir() + "wldb_" + helpers.RandomString(10)
-		r.Logger.Notice("Database temp directory is %s", dbDir)
+	if "" == dbFileName {
+		dbFileName = helpers.GetTempDir() + "wldb_" + helpers.RandomString(10) + ".db"
+		r.Logger.Notice("Database temp directory is %s", dbFileName)
 	}
-	helpers.CreateDirectoryIfNotExists(dbDir)
-	r.rdb, err = rucksackdb.NewRDB(dbDir)
+	helpers.CreateFileIfNotExists(dbFileName)
+	r.rdb, err = rucksackdb.NewRDB(dbFileName)
+	go r.rdb.GoRoutineWriter()
 	return err
 }
 

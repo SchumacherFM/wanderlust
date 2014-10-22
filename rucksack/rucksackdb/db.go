@@ -16,32 +16,64 @@
 
 package rucksackdb
 
-// tiedot is pretty slow database. but lets replace it later
-
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/HouzuoGuo/tiedot/db"
+	"github.com/SchumacherFM/wanderlust/github.com/boltdb/bolt"
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
+	"time"
 )
 
-type RDBIF interface {
-	CreateDatabase(name string) error
-	Close() error
-	UseDatabase(name string) *db.Col
-	FindOne(dbName string, documentId int) (doc map[string]interface{}, err error)
-	FindAll(dbName string) (doc []map[string]interface{}, err error)
-	Insert(dbName string, doc map[string]interface{}) (id int, err error)
-	InsertRecovery(dbName string, id int, doc map[string]interface{}) (err error)
-}
+type (
+	RDBIF interface {
+		GoRoutineWriter()
+		CreateDatabase(name string) error
+		Close() error
+		UseDatabase(name string) *db.Col
+		FindOne(dbName string, documentId int) (doc map[string]interface{}, err error)
+		FindAll(dbName string) (doc []map[string]interface{}, err error)
+		Insert(dbName string, doc map[string]interface{}) (id int, err error)
+		InsertRecovery(dbName string, id int, doc map[string]interface{}) (err error)
+	}
+	WriteChan chan struct {
+		Bucket string
+		Key    string
+		Data   []byte
+	}
 
-type RDB struct {
-	db *db.DB
-}
+	RDB struct {
+		db         *bolt.DB
+		writerChan WriteChan
+	}
+)
 
-func NewRDB(dbDir string) (*RDB, error) {
-	rdb := &RDB{}
+func NewRDB(dbFileName string, wc WriteChan) (*RDB, error) {
 	var err error
-	rdb.db, err = db.OpenDB(dbDir)
-	return rdb, err
+	var db *bolt.DB
+	// @see idea from http://paulosuzart.github.io/blog/2014/07/07/going-back-to-go/
+	boltOpt := &bolt.Options{
+		Timeout: 1 * time.Second,
+	}
+	db, err = bolt.Open(dbFileName, 0600, boltOpt)
+	rdb := &RDB{
+		db:         db,
+		writerChan: wc,
+	}
+	return rdb, errgo.Mask(err)
+}
+
+func (this *RDB) GoRoutineWriter() {
+	for data := range this.writerChan {
+		err := this.DB.Update(func(tx *bolt.Tx) error {
+			b, err := tx.CreateBucketIfNotExists([]byte(data.Bucket))
+			if err != nil {
+				return err
+			}
+			return b.Put([]byte(data.Key), data.Data)
+		})
+		if err != nil {
+			// TODO: Handle instead of panic
+			panic(err)
+		}
+	}
 }
 
 func (rdb *RDB) CreateDatabase(name string) error {
