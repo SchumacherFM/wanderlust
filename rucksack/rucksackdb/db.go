@@ -33,7 +33,7 @@ type (
 		Insert(dbName string, doc map[string]interface{}) (id int, err error)
 		InsertRecovery(dbName string, id int, doc map[string]interface{}) (err error)
 	}
-	WriteChan chan struct {
+	DbEntity struct {
 		Bucket string
 		Key    string
 		Data   []byte
@@ -41,11 +41,11 @@ type (
 
 	RDB struct {
 		db         *bolt.DB
-		writerChan WriteChan
+		writerChan chan DbEntity
 	}
 )
 
-func NewRDB(dbFileName string, wc WriteChan) (*RDB, error) {
+func NewRDB(dbFileName string, eChan chan DbEntity) (*RDB, error) {
 	var err error
 	var db *bolt.DB
 	// @see idea from http://paulosuzart.github.io/blog/2014/07/07/going-back-to-go/
@@ -55,7 +55,7 @@ func NewRDB(dbFileName string, wc WriteChan) (*RDB, error) {
 	db, err = bolt.Open(dbFileName, 0600, boltOpt)
 	rdb := &RDB{
 		db:         db,
-		writerChan: wc,
+		writerChan: eChan,
 	}
 	return rdb, errgo.Mask(err)
 }
