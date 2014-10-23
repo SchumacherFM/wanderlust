@@ -24,12 +24,12 @@ import (
 
 type RucksackApp struct {
 	rdb    rucksackdb.RDBIF
-	Logger *log.Logger
+	logger *log.Logger
 }
 
-func NewRucksackApp(dbFileName string, logger *log.Logger) (*RucksackApp, error) {
+func NewRucksackApp(dbFileName string, l *log.Logger) (*RucksackApp, error) {
 	rucksackApp := &RucksackApp{
-		Logger: logger,
+		logger: l,
 	}
 	rucksackApp.initDb(dbFileName)
 	return rucksackApp, nil
@@ -39,11 +39,9 @@ func (r *RucksackApp) initDb(dbFileName string) error {
 	var err error
 	if "" == dbFileName {
 		dbFileName = helpers.GetTempDir() + "wldb_" + helpers.RandomString(10) + ".db"
-		r.Logger.Notice("Database temp directory is %s", dbFileName)
+		r.logger.Notice("Database temp directory is %s", dbFileName)
 	}
-	helpers.CreateFileIfNotExists(dbFileName)
-	r.rdb, err = rucksackdb.NewRDB(dbFileName)
-	go r.rdb.GoRoutineWriter()
+	r.rdb, err = rucksackdb.NewRDB(dbFileName, r.logger)
 	return err
 }
 

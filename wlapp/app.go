@@ -65,18 +65,24 @@ func initLogger() {
 	}
 }
 
-// @todo remove this and add it to the picnic app as a feature to start and stop the DB backend via web panel
-// inits the rucksack and boots on the default http mux
+// BootRucksack inits the rucksack database and starts the background jobs
 func BootRucksack() {
 
 	rucksackApp, err := rucksack.NewRucksackApp(
 		CliContext.String("rucksack-dir"),
 		logger,
 	)
-	if nil != err {
-		logger.Check(err)
-	}
+	logger.Check(err)
+
 	db = rucksackApp.GetDb()
+	waitGroup.Add(1)
+	// here should be added more services
+	go func() {
+		defer waitGroup.Done()
+		logger.Check(db.GoRoutineWriter())
+	}()
+	logger.Notice("DB Background Services started")
+
 }
 
 // starts the HTTP server for the picnic web interface and runs it in a goroutine

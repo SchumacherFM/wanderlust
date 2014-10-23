@@ -19,73 +19,77 @@ package rucksackdb
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/boltdb/bolt"
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
+	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"time"
 )
 
 type (
 	RDBIF interface {
-		GoRoutineWriter()
-		CreateDatabase(name string) error
+		GoRoutineWriter() error
 		Close() error
-		UseDatabase(name string) *db.Col
+		//		CreateDatabase(name string) error
+		//		UseDatabase(name string) *db.Col
 		FindOne(dbName string, documentId int) (doc map[string]interface{}, err error)
 		FindAll(dbName string) (doc []map[string]interface{}, err error)
-		Insert(dbName string, doc map[string]interface{}) (id int, err error)
-		InsertRecovery(dbName string, id int, doc map[string]interface{}) (err error)
+		// Inserts Data: b = bucket Name, k = key, d = data
+		Insert(b, k string, d []byte) error
 	}
-	DbEntity struct {
-		Bucket string
-		Key    string
-		Data   []byte
+	bEntity struct {
+		bucket string
+		key    string
+		data   []byte
 	}
 
 	RDB struct {
 		db         *bolt.DB
-		writerChan chan DbEntity
+		writerChan chan *bEntity
+		logger     *log.Logger
 	}
 )
 
-func NewRDB(dbFileName string, eChan chan DbEntity) (*RDB, error) {
+func NewRDB(dbFileName string, l *log.Logger) (*RDB, error) {
 	var err error
 	var db *bolt.DB
 	// @see idea from http://paulosuzart.github.io/blog/2014/07/07/going-back-to-go/
 	boltOpt := &bolt.Options{
 		Timeout: 1 * time.Second,
 	}
+	w := make(chan *bEntity, 10)
 	db, err = bolt.Open(dbFileName, 0600, boltOpt)
 	rdb := &RDB{
 		db:         db,
-		writerChan: eChan,
+		writerChan: w,
+		logger:     l,
 	}
 	return rdb, errgo.Mask(err)
 }
 
-func (this *RDB) GoRoutineWriter() {
+func (this *RDB) GoRoutineWriter() error {
 	for data := range this.writerChan {
-		err := this.DB.Update(func(tx *bolt.Tx) error {
+		err := this.db.Update(func(tx *bolt.Tx) error {
 			b, err := tx.CreateBucketIfNotExists([]byte(data.Bucket))
 			if err != nil {
 				return err
 			}
 			return b.Put([]byte(data.Key), data.Data)
 		})
-		if err != nil {
-			// TODO: Handle instead of panic
-			panic(err)
+		if nil != err {
+			this.logger.Emergency("DB update failed: %s", err)
 		}
-	}
-}
-
-func (rdb *RDB) CreateDatabase(name string) error {
-	if nil == rdb.UseDatabase(name) {
-		return rdb.db.Create(name)
 	}
 	return nil
 }
 
-func (rdb *RDB) UseDatabase(name string) *db.Col {
-	return rdb.db.Use(name)
-}
+//func (rdb *RDB) CreateDatabase(name string) error {
+//	if nil == rdb.UseDatabase(name) {
+//		return rdb.db.Create(name)
+//	}
+//	return nil
+//}
+//
+//func (rdb *RDB) UseDatabase(name string) *db.Col {
+//	return rdb.db.Use(name)
+//}
 
 func (rdb *RDB) Close() error {
 	return rdb.db.Close()
@@ -121,12 +125,12 @@ func (rdb *RDB) FindAll(dbName string) (docs []map[string]interface{}, err error
 	return
 }
 
-func (rdb *RDB) Insert(dbName string, doc map[string]interface{}) (id int, err error) {
-	id, err = rdb.UseDatabase(dbName).Insert(doc)
-	return
-}
-
-func (rdb *RDB) InsertRecovery(dbName string, id int, doc map[string]interface{}) (err error) {
-	err = rdb.UseDatabase(dbName).InsertRecovery(id, doc)
-	return
+func (rdb *RDB) Insert(b, k string, d []byte) error {
+	be := &bEntity{
+		bucket: b,
+		key:    k,
+		data:   d,
+	}
+	rdb.writerChan <- be
+	return nil
 }
