@@ -23,14 +23,18 @@ import (
 	"time"
 )
 
+var (
+	ErrEntityNotFound = errgo.New("Entity not found")
+)
+
 type (
 	RDBIF interface {
 		GoRoutineWriter() error
 		Close() error
 		//		CreateDatabase(name string) error
 		//		UseDatabase(name string) *db.Col
-		FindOne(dbName string, documentId int) (doc map[string]interface{}, err error)
-		FindAll(dbName string) (doc []map[string]interface{}, err error)
+		FindOne(b, k string) ([]byte, error)
+		//		FindAll(dbName string) (doc []map[string]interface{}, err error)
 		// Inserts Data: b = bucket Name, k = key, d = data
 		Insert(b, k string, d []byte) error
 	}
@@ -46,6 +50,13 @@ type (
 		logger     *log.Logger
 	}
 )
+
+func (this *bEntity) getBucketByte() []byte {
+	return []byte(this.bucket)
+}
+func (this *bEntity) getKeyByte() []byte {
+	return []byte(this.key)
+}
 
 func NewRDB(dbFileName string, l *log.Logger) (*RDB, error) {
 	var err error
@@ -67,11 +78,11 @@ func NewRDB(dbFileName string, l *log.Logger) (*RDB, error) {
 func (this *RDB) GoRoutineWriter() error {
 	for data := range this.writerChan {
 		err := this.db.Update(func(tx *bolt.Tx) error {
-			b, err := tx.CreateBucketIfNotExists([]byte(data.Bucket))
+			b, err := tx.CreateBucketIfNotExists(data.getBucketByte())
 			if err != nil {
 				return err
 			}
-			return b.Put([]byte(data.Key), data.Data)
+			return b.Put(data.getKeyByte(), data.data)
 		})
 		if nil != err {
 			this.logger.Emergency("DB update failed: %s", err)
@@ -91,39 +102,56 @@ func (this *RDB) GoRoutineWriter() error {
 //	return rdb.db.Use(name)
 //}
 
-func (rdb *RDB) Close() error {
-	return rdb.db.Close()
+func (this *RDB) Close() error {
+	return this.db.Close()
 }
 
-func (rdb *RDB) FindOne(dbName string, documentId int) (doc map[string]interface{}, err error) {
-	doc, err = rdb.UseDatabase(dbName).Read(documentId)
-	return
-}
-
-func (rdb *RDB) FindAll(dbName string) (docs []map[string]interface{}, err error) {
-	var currentDb *db.Col
-	err = nil
-	currentDb = rdb.UseDatabase(dbName)
-	queryResult := make(map[int]struct{}) // query result (document IDs) goes into map keys
-	err = db.EvalAllIDs(currentDb, &queryResult)
-	if nil != err {
-		return nil, errgo.Mask(err)
+func (this *RDB) FindOne(b, k string) ([]byte, error) {
+	data := &bEntity{
+		bucket: b,
+		key:    k,
 	}
+	this.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket(data.getBucketByte())
 
-	docs = make([]map[string]interface{}, len(queryResult))
-
-	// Query result are document IDs
-	c := 0
-	for id, _ := range queryResult {
-		d, err := currentDb.Read(id)
-		if nil != err {
-			return nil, err
+		if nil == b {
+			return errgo.Newf("Bucket %s not found", data.bucket)
 		}
-		docs[c] = d
-		c++
+
+		data.data = b.Get(data.getKeyByte())
+		return nil
+	})
+	if nil == data.data {
+		return nil, ErrEntityNotFound
 	}
-	return
+	return data.data, nil
 }
+
+//
+//func (rdb *RDB) FindAll(dbName string) (docs []map[string]interface{}, err error) {
+//	var currentDb *db.Col
+//	err = nil
+//	currentDb = rdb.UseDatabase(dbName)
+//	queryResult := make(map[int]struct{}) // query result (document IDs) goes into map keys
+//	err = db.EvalAllIDs(currentDb, &queryResult)
+//	if nil != err {
+//		return nil, errgo.Mask(err)
+//	}
+//
+//	docs = make([]map[string]interface{}, len(queryResult))
+//
+//	// Query result are document IDs
+//	c := 0
+//	for id, _ := range queryResult {
+//		d, err := currentDb.Read(id)
+//		if nil != err {
+//			return nil, err
+//		}
+//		docs[c] = d
+//		c++
+//	}
+//	return
+//}
 
 func (rdb *RDB) Insert(b, k string, d []byte) error {
 	be := &bEntity{
