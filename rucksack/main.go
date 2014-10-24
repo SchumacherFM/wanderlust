@@ -19,11 +19,11 @@ package rucksack
 import (
 	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/helpers"
-	"github.com/SchumacherFM/wanderlust/rucksack/rucksackdb"
+	rdb "github.com/SchumacherFM/wanderlust/rucksack/api"
 )
 
 type RucksackApp struct {
-	rdb    rucksackdb.RDBIF
+	rdb    rdb.RDBIF
 	logger *log.Logger
 }
 
@@ -41,10 +41,10 @@ func (r *RucksackApp) initDb(dbFileName string) error {
 		dbFileName = helpers.GetTempDir() + "wldb_" + helpers.RandomString(10) + ".db"
 		r.logger.Notice("Database temp directory is %s", dbFileName)
 	}
-	r.rdb, err = rucksackdb.NewRDB(dbFileName, r.logger)
+	r.rdb, err = rdb.NewRDB(dbFileName, r.logger)
 	return err
 }
 
-func (r *RucksackApp) GetDb() rucksackdb.RDBIF {
+func (r *RucksackApp) GetDb() rdb.RDBIF {
 	return r.rdb
 }

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package rucksackdb
+package api
 
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/boltdb/bolt"
@@ -23,13 +23,21 @@ import (
 	"time"
 )
 
+const (
+	WRITER_CHANNEL_BUFFER_SIZE = 10
+)
+
 var (
 	ErrEntityNotFound = errgo.New("Entity not found")
+	// Hook that may be overridden for integration tests.
+	writerDone = func() {}
 )
 
 type (
 	RDBIF interface {
-		GoRoutineWriter() error
+		// Writer runs in a goroutine and waits for data coming through the channel
+		Writer()
+		// Close closes the database when terminating the app
 		Close() error
 		//		CreateDatabase(name string) error
 		//		UseDatabase(name string) *db.Col
@@ -51,6 +59,15 @@ type (
 	}
 )
 
+func newbEntity(b, k string, d []byte) *bEntity {
+	be := &bEntity{
+		bucket: b,
+		key:    k,
+		data:   d,
+	}
+	return be
+}
+
 func (this *bEntity) getBucketByte() []byte {
 	return []byte(this.bucket)
 }
@@ -65,7 +82,7 @@ func NewRDB(dbFileName string, l *log.Logger) (*RDB, error) {
 	boltOpt := &bolt.Options{
 		Timeout: 1 * time.Second,
 	}
-	w := make(chan *bEntity, 10)
+	w := make(chan *bEntity, WRITER_CHANNEL_BUFFER_SIZE)
 	db, err = bolt.Open(dbFileName, 0600, boltOpt)
 	rdb := &RDB{
 		db:         db,
@@ -75,7 +92,8 @@ func NewRDB(dbFileName string, l *log.Logger) (*RDB, error) {
 	return rdb, errgo.Mask(err)
 }
 
-func (this *RDB) GoRoutineWriter() error {
+// Writer method runs in a goroutine and waits to data in the channel to write into the boltdb
+func (this *RDB) Writer() {
 	for data := range this.writerChan {
 		err := this.db.Update(func(tx *bolt.Tx) error {
 			b, err := tx.CreateBucketIfNotExists(data.getBucketByte())
@@ -87,8 +105,10 @@ func (this *RDB) GoRoutineWriter() error {
 		if nil != err {
 			this.logger.Emergency("DB update failed: %s", err)
 		}
+		if 0 == len(this.writerChan) {
+			writerDone()
+		}
 	}
-	return nil
 }
 
 //func (rdb *RDB) CreateDatabase(name string) error {
@@ -107,17 +127,12 @@ func (this *RDB) Close() error {
 }
 
 func (this *RDB) FindOne(b, k string) ([]byte, error) {
-	data := &bEntity{
-		bucket: b,
-		key:    k,
-	}
+	data := newbEntity(b, k, nil)
 	this.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket(data.getBucketByte())
-
 		if nil == b {
 			return errgo.Newf("Bucket %s not found", data.bucket)
 		}
-
 		data.data = b.Get(data.getKeyByte())
 		return nil
 	})

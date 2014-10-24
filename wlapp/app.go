@@ -21,7 +21,7 @@ import (
 	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/picnic"
 	"github.com/SchumacherFM/wanderlust/rucksack"
-	"github.com/SchumacherFM/wanderlust/rucksack/rucksackdb"
+	rdb "github.com/SchumacherFM/wanderlust/rucksack/api"
 	"os"
 	"os/signal"
 	"runtime"
@@ -33,7 +33,7 @@ var (
 	CliContext *cli.Context
 	waitGroup  sync.WaitGroup
 	logger     *log.Logger
-	db         rucksackdb.RDBIF
+	db         rdb.RDBIF
 )
 
 func Boot() {

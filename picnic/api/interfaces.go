@@ -18,7 +18,7 @@ package api
 
 import (
 	"github.com/SchumacherFM/wanderlust/helpers"
-	"github.com/SchumacherFM/wanderlust/rucksack/rucksackdb"
+	rdb "github.com/SchumacherFM/wanderlust/rucksack/api"
 	"net/http"
 	"time"
 )
@@ -71,7 +71,7 @@ type (
 		GetUserName() string
 		GetSessionExpiresIn() int
 		ToStringInterface() map[string]interface{}
-		FindMe(rucksackdb.RDBIF) (bool, error)
+		FindMe(rdb.RDBIF) (bool, error)
 		helpers.FfjsonIf
 	}
 

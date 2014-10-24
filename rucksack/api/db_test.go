@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package rucksackdb
+package api
 
 import (
 	"bytes"
@@ -22,6 +22,7 @@ import (
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"os"
 	"reflect"
+	"strconv"
 	"testing"
 )
 
@@ -79,7 +80,7 @@ func TestNewRDB(t *testing.T) {
 	}
 }
 
-func TestGoRoutineWriter(t *testing.T) {
+func TestWriterIntegration(t *testing.T) {
 
 	f := helpers.GetTempDir() + "wldbTEST2_" + helpers.RandomString(10) + ".db"
 	db, _, err := setUpDb(f)
@@ -93,24 +94,44 @@ func TestGoRoutineWriter(t *testing.T) {
 	if nil != err {
 		t.Error(err)
 	}
-	go func() {
-		err := db.GoRoutineWriter()
+
+	// Replace writerDone with a closure that will tell us when the writer is
+	// exiting.
+	done := make(chan bool)
+	writerDone = func() {
+		close(db.writerChan)
+		done <- true
+	}
+
+	// Put things as they were when the test finishes.
+	defer func() {
+		writerDone = func() {}
+	}()
+
+	go db.Writer()
+
+	// here we create 10 entries in the boltdb by writing into the channel
+	testData := [10][]byte{} // []byte array with 10 entries
+	for i := 0; i < 10; i++ {
+		testData[i] = []byte(helpers.RandomString(i + 1*10))
+		err = db.Insert("TestBucket", "TestKey"+strconv.Itoa(i), testData[i])
 		if nil != err {
 			t.Error(err)
 		}
-	}()
-
-	testData := []byte(helpers.RandomString(100))
-	err = db.Insert("TestBucket", "TestKey", testData)
-	if nil != err {
-		t.Error(err)
 	}
 
-	foundData, err := db.FindOne("TestBucket", "TestKey")
-	if nil != err {
-		t.Error(err)
-	}
-	if 0 != bytes.Compare(testData, foundData) {
-		t.Errorf("Data found!\nE: %#v\nA: %#v\n", testData, foundData)
+	// I think that is lame with time.Sleep, waiting for the end of the write
+	//	time.Sleep(1 * time.Millisecond)
+
+	<-done // Wait for Writer() to empty the channel
+
+	for i := 0; i < 10; i++ {
+		foundData, err := db.FindOne("TestBucket", "TestKey"+strconv.Itoa(i))
+		if nil != err {
+			t.Error(err)
+		}
+		if 0 != bytes.Compare(testData[i], foundData) {
+			t.Errorf("Data NOT found!\nE: %#v\nA: %#v\n", testData, foundData)
+		}
 	}
 }

@@ -21,7 +21,7 @@ import (
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	. "github.com/SchumacherFM/wanderlust/picnic/api"
-	"github.com/SchumacherFM/wanderlust/rucksack/rucksackdb"
+	rdb "github.com/SchumacherFM/wanderlust/rucksack/api"
 	"time"
 )
 
@@ -176,7 +176,7 @@ func (u *userModel) ToStringInterface() map[string]interface{} {
 }
 
 // finds a user in the database and fills the struct
-func (u *userModel) FindMe(db rucksackdb.RDBIF) (bool, error) {
+func (u *userModel) FindMe(db rdb.RDBIF) (bool, error) {
 	searchedUser, _ := db.FindOne(USER_DB_COLLECTION_NAME, u.GetId())
 	if nil == searchedUser {
 		return false, nil
@@ -217,7 +217,7 @@ func NewUserModel(userName string) *userModel {
 }
 
 // GetAllUsers returns a user collection with empty passwords
-func GetAllUsers(db rucksackdb.RDBIF) (*userModelCollection, error) {
+func GetAllUsers(db rdb.RDBIF) (*userModelCollection, error) {
 	col, err := db.FindAll(USER_DB_COLLECTION_NAME)
 	umc := &userModelCollection{}
 	for _, u := range col {
@@ -230,7 +230,7 @@ func GetAllUsers(db rucksackdb.RDBIF) (*userModelCollection, error) {
 }
 
 // initUsers() runs in NewPicnicApp() function
-func initUsers(db rucksackdb.RDBIF) error {
+func initUsers(db rdb.RDBIF) error {
 	var err error
 	var root map[string]interface{}
 	var pwd string
