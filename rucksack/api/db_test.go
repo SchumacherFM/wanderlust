@@ -23,8 +23,33 @@ import (
 	"os"
 	"reflect"
 	"strconv"
+	"strings"
 	"testing"
 )
+
+var (
+	bucketName  = "RBucket"
+	keyPrefix   = "RKey"
+	benchMarkDb = helpers.GetTempDir() + "wldbBENCH_" + helpers.RandomString(10) + ".db"
+	benchDb     *RDB
+)
+
+func init() {
+	benchDb, _, _ = setUpDb(benchMarkDb)
+	go benchDb.Writer()
+
+	isBench := false
+	for _, arg := range os.Args {
+		if false == isBench && strings.Contains(arg, ".bench") {
+			isBench = true
+			break
+		}
+	}
+	// remove created bench.db when no benchmark is required ... :-\
+	if false == isBench {
+		defer os.Remove(benchMarkDb)
+	}
+}
 
 func bytesCompare(t *testing.T, expected, actual []byte) {
 	if 0 != bytes.Compare(expected, actual) {
@@ -83,11 +108,6 @@ func TestNewRDB(t *testing.T) {
 }
 
 func TestWriterIntegration(t *testing.T) {
-
-	var (
-		bucketName = "TestBucket"
-		keyPrefix  = "TestKey"
-	)
 
 	f := helpers.GetTempDir() + "wldbTEST2_" + helpers.RandomString(10) + ".db"
 	db, _, err := setUpDb(f)
@@ -153,6 +173,37 @@ func TestWriterIntegration(t *testing.T) {
 		bytesCompare(t, testData[ti], actualVal)
 		if 0 == j%2 {
 			ti++
+		}
+	}
+}
+
+// BufferSize = 10
+// BenchmarkInsert	    5000	    432939 ns/op	   38337 B/op	      63 allocs/op 2.218s
+// BufferSize = 100
+// BenchmarkInsert	   10000	    437301 ns/op	   42151 B/op	      67 allocs/op 4.392s
+func BenchmarkInsert(b *testing.B) {
+	// would be nice to get the current iteration of calling BenchmarkInsert to be more unique for the key ;-)
+	for i := 0; i < b.N; i++ {
+		key := keyPrefix + strconv.Itoa(i)
+		err := benchDb.Insert(bucketName, key, []byte(`http://www.youtube.com/watch?v=LJvEIjRBSDA`))
+		if nil != err {
+			b.Error(err)
+		}
+	}
+}
+
+// BenchmarkFindOne	 1000000	      6728 ns/op	    1243 B/op	      20 allocs/op
+func BenchmarkFindOne(b *testing.B) {
+
+	// hmm no tear down .... so place that always in the last benchmark to run :-(
+	defer os.Remove(benchMarkDb)
+
+	// this benchmark will find entries which have not been created in the func BenchmarkInsert :-( @todo refactor
+	for i := 0; i < b.N; i++ {
+		key := keyPrefix + strconv.Itoa(i)
+		_, err := benchDb.FindOne(bucketName, key)
+		if nil != err {
+			b.Log(key, err)
 		}
 	}
 }
