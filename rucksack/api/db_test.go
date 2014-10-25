@@ -26,6 +26,12 @@ import (
 	"testing"
 )
 
+func bytesCompare(t *testing.T, expected, actual []byte) {
+	if 0 != bytes.Compare(expected, actual) {
+		t.Errorf("\nExpected\t%s\nActual\t\t%s\n", expected, actual)
+	}
+}
+
 func TestGetBucketByte(t *testing.T) {
 	expectedB := []byte(`Bucket`)
 	be := &bEntity{
@@ -33,9 +39,7 @@ func TestGetBucketByte(t *testing.T) {
 		key:    "Key",
 		data:   []byte(`Data`),
 	}
-	if 0 != bytes.Compare(expectedB, be.getBucketByte()) {
-		t.Errorf("\nExpected\t%s\nActual\t\t%s\n", expectedB, be.getBucketByte())
-	}
+	bytesCompare(t, expectedB, be.getBucketByte())
 }
 
 func TestGetKeyByte(t *testing.T) {
@@ -45,9 +49,7 @@ func TestGetKeyByte(t *testing.T) {
 		key:    "Key",
 		data:   []byte(`Data`),
 	}
-	if 0 != bytes.Compare(expectedK, be.getKeyByte()) {
-		t.Errorf("\nExpected\t%s\nActual\t\t%s\n", expectedK, be.getKeyByte())
-	}
+	bytesCompare(t, expectedK, be.getKeyByte())
 }
 
 func setUpDb(f string) (*RDB, *log.Logger, error) {
@@ -82,6 +84,11 @@ func TestNewRDB(t *testing.T) {
 
 func TestWriterIntegration(t *testing.T) {
 
+	var (
+		bucketName = "TestBucket"
+		keyPrefix  = "TestKey"
+	)
+
 	f := helpers.GetTempDir() + "wldbTEST2_" + helpers.RandomString(10) + ".db"
 	db, _, err := setUpDb(f)
 	defer func() {
@@ -114,7 +121,7 @@ func TestWriterIntegration(t *testing.T) {
 	testData := [10][]byte{} // []byte array with 10 entries
 	for i := 0; i < 10; i++ {
 		testData[i] = []byte(helpers.RandomString(i + 1*10))
-		err = db.Insert("TestBucket", "TestKey"+strconv.Itoa(i), testData[i])
+		err = db.Insert(bucketName, keyPrefix+strconv.Itoa(i), testData[i])
 		if nil != err {
 			t.Error(err)
 		}
@@ -126,12 +133,26 @@ func TestWriterIntegration(t *testing.T) {
 	<-done // Wait for Writer() to empty the channel
 
 	for i := 0; i < 10; i++ {
-		foundData, err := db.FindOne("TestBucket", "TestKey"+strconv.Itoa(i))
+		foundData, err := db.FindOne(bucketName, keyPrefix+strconv.Itoa(i))
 		if nil != err {
 			t.Error(err)
 		}
-		if 0 != bytes.Compare(testData[i], foundData) {
-			t.Errorf("Data NOT found!\nE: %#v\nA: %#v\n", testData, foundData)
+		bytesCompare(t, testData[i], foundData)
+	}
+
+	// test FindAll
+	result, err := db.FindAll(bucketName)
+	if nil != err {
+		t.Error(err)
+	}
+	ti := 0
+	for j := 0; j < len(result); j = j + 2 {
+		actualKey := result[j]
+		actualVal := result[j+1]
+		bytesCompare(t, []byte(keyPrefix+strconv.Itoa(ti)), actualKey)
+		bytesCompare(t, testData[ti], actualVal)
+		if 0 == j%2 {
+			ti++
 		}
 	}
 }

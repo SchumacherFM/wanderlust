@@ -24,11 +24,12 @@ import (
 )
 
 const (
-	WRITER_CHANNEL_BUFFER_SIZE = 10
+	WRITER_CHANNEL_BUFFER_SIZE = 100
 )
 
 var (
-	ErrEntityNotFound = errgo.New("Entity not found")
+	ErrDatabaseNotFound = errgo.New("Database not found")
+	ErrEntityNotFound   = errgo.New("Entity not found")
 	// Hook that may be overridden for integration tests.
 	writerDone = func() {}
 )
@@ -37,12 +38,15 @@ type (
 	RDBIF interface {
 		// Writer runs in a goroutine and waits for data coming through the channel
 		Writer()
+
+		// WriterOnce() @todo checks if the key already exists, if so returns something that key exits
+
 		// Close closes the database when terminating the app
 		Close() error
-		//		CreateDatabase(name string) error
-		//		UseDatabase(name string) *db.Col
+
 		FindOne(b, k string) ([]byte, error)
-		//		FindAll(dbName string) (doc []map[string]interface{}, err error)
+
+		FindAll(bn string) ([][]byte, error)
 		// Inserts Data: b = bucket Name, k = key, d = data
 		Insert(b, k string, d []byte) error
 	}
@@ -111,21 +115,12 @@ func (this *RDB) Writer() {
 	}
 }
 
-//func (rdb *RDB) CreateDatabase(name string) error {
-//	if nil == rdb.UseDatabase(name) {
-//		return rdb.db.Create(name)
-//	}
-//	return nil
-//}
-//
-//func (rdb *RDB) UseDatabase(name string) *db.Col {
-//	return rdb.db.Use(name)
-//}
-
+// Close closes the database during app shutdown sequence
 func (this *RDB) Close() error {
 	return this.db.Close()
 }
 
+// FindOne returns a value for a bucketName and keyName
 func (this *RDB) FindOne(b, k string) ([]byte, error) {
 	data := newbEntity(b, k, nil)
 	this.db.View(func(tx *bolt.Tx) error {
@@ -142,31 +137,29 @@ func (this *RDB) FindOne(b, k string) ([]byte, error) {
 	return data.data, nil
 }
 
-//
-//func (rdb *RDB) FindAll(dbName string) (docs []map[string]interface{}, err error) {
-//	var currentDb *db.Col
-//	err = nil
-//	currentDb = rdb.UseDatabase(dbName)
-//	queryResult := make(map[int]struct{}) // query result (document IDs) goes into map keys
-//	err = db.EvalAllIDs(currentDb, &queryResult)
-//	if nil != err {
-//		return nil, errgo.Mask(err)
-//	}
-//
-//	docs = make([]map[string]interface{}, len(queryResult))
-//
-//	// Query result are document IDs
-//	c := 0
-//	for id, _ := range queryResult {
-//		d, err := currentDb.Read(id)
-//		if nil != err {
-//			return nil, err
-//		}
-//		docs[c] = d
-//		c++
-//	}
-//	return
-//}
+// FindAll finds all keys belonging to a bucketName. Returns an array i = key, i+1 = value
+func (this *RDB) FindAll(bn string) ([][]byte, error) {
+
+	tx, err := this.db.Begin(false)
+	if nil != err {
+		return nil, err
+	}
+	b := tx.Bucket([]byte(bn))
+	if nil == b {
+		return nil, ErrDatabaseNotFound
+	}
+	bStat := b.Stats()
+	ret := make([][]byte, 2*bStat.KeyN)
+	var i = 0
+	b.ForEach(func(k, v []byte) error {
+		ret[i] = k
+		ret[i+1] = v
+		i = i + 2
+		return nil
+	})
+	tx.Commit()
+	return ret, nil
+}
 
 func (rdb *RDB) Insert(b, k string, d []byte) error {
 	be := &bEntity{
