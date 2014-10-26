@@ -227,8 +227,6 @@ func (uc *userModelCollection) FindAllUsers() error {
 
 // initUsers() runs in NewPicnicApp() function
 func initUsers(db rdb.RDBIF) error {
-	var err error
-
 	var pwd string
 
 	u := &userModel{
@@ -241,7 +239,7 @@ func initUsers(db rdb.RDBIF) error {
 	}
 	u.GeneratePassword()
 	userByte, err := db.FindOne(USER_DB_COLLECTION_NAME, u.GetId())
-	bug
+
 	switch err {
 	case nil:
 		break
@@ -254,9 +252,11 @@ func initUsers(db rdb.RDBIF) error {
 	if nil == userByte {
 		logger.Emergency("Created new user %s with password: %s", u.UserName, u.Password)
 		u.prepareNew()
-		//		db.InsertRecovery(USER_DB_COLLECTION_NAME, u.GetId(), u.ToStringInterface())
+		ue, err := u.Encode()
+		logger.Check(err)
+		db.Insert(USER_DB_COLLECTION_NAME, u.GetId(), ue)
 	} else {
 		logger.Emergency("Root user %s already exists!", USER_ROOT)
 	}
-	return errgo.Mask(err)
+	return nil
 }
