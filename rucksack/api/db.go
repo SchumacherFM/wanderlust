@@ -17,8 +17,8 @@
 package api
 
 import (
+	"errors"
 	"github.com/SchumacherFM/wanderlust/github.com/boltdb/bolt"
-	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"time"
 )
@@ -28,13 +28,22 @@ const (
 )
 
 var (
-	ErrDatabaseNotFound = errgo.New("Database not found")
-	ErrEntityNotFound   = errgo.New("DB Entity not found")
+	ErrDatabaseNotFound = errors.New("Database not found")
+	ErrEntityNotFound   = errors.New("DB Entity not found")
 	// Hook that may be overridden for integration tests.
 	writerDone = func() {}
 )
 
 type (
+	// @todo use encoding BinaryMarshaler and BinaryUnmarshaler interface
+	// This interface can have various implementation for saving struct in database. JSON is only one option.
+	UserEncoding interface {
+		// Decode decodes the data which is coming from the database
+		Decode(data []byte) error
+		// Encode encodes the data for saving in the database
+		Encode() ([]byte, error)
+	}
+
 	RDBIF interface {
 		// Writer runs in a goroutine and waits for data coming through the channel
 		Writer()
@@ -93,7 +102,7 @@ func NewRDB(dbFileName string, l *log.Logger) (*RDB, error) {
 		writerChan: w,
 		logger:     l,
 	}
-	return rdb, errgo.Mask(err)
+	return rdb, err
 }
 
 // Writer method runs in a goroutine and waits to data in the channel to write into the boltdb
@@ -126,13 +135,13 @@ func (this *RDB) FindOne(b, k string) ([]byte, error) {
 	this.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket(data.getBucketByte())
 		if nil == b {
-			return errgo.Mask(ErrDatabaseNotFound)
+			return ErrDatabaseNotFound
 		}
 		data.data = b.Get(data.getKeyByte())
 		return nil
 	})
 	if nil == data.data {
-		return nil, errgo.Mask(ErrEntityNotFound)
+		return nil, ErrEntityNotFound
 	}
 	return data.data, nil
 }
@@ -146,7 +155,7 @@ func (this *RDB) FindAll(bn string) ([][]byte, error) {
 	}
 	b := tx.Bucket([]byte(bn))
 	if nil == b {
-		return nil, errgo.Mask(ErrDatabaseNotFound)
+		return nil, ErrDatabaseNotFound
 	}
 	bStat := b.Stats()
 	ret := make([][]byte, 2*bStat.KeyN)

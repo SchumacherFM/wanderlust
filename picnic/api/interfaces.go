@@ -87,12 +87,4 @@ type (
 		EncryptPassword() error
 		UnsetPassword()
 	}
-
-	// This interface can have various implementation for saving struct in database. JSON is only one option.
-	UserEncoding interface {
-		// Decode decodes the data which is coming from the database
-		Decode(data []byte) error
-		// Encode encodes the data for saving in the database
-		Encode() ([]byte, error)
-	}
 )
