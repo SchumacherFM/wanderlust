@@ -20,10 +20,11 @@ import (
 	crand "crypto/rand"
 	"io"
 	mrand "math/rand"
+	"strconv"
 	"time"
 )
 
-// Hash a string using sdbm algorithm.
+// StringHash hashes a string using sdbm algorithm and returns an int
 func StringHash(str string) int {
 	var hash int
 	for _, c := range str {
@@ -33,6 +34,11 @@ func StringHash(str string) int {
 		return -hash
 	}
 	return hash
+}
+
+// StringHashString hashes a string using sdbm algorithm and returns an int as string
+func StringHashString(str string) string {
+	return strconv.Itoa(StringHash(str))
 }
 
 func RandomInt(n int) int {

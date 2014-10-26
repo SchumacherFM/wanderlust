@@ -39,9 +39,10 @@ func (p *PicnicApp) initRoutesUsers(r *mux.Router) error {
 }
 
 func userCollectionHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) error {
-	u, err := GetAllUsers(rsdb)
+	uc := NewUserModelCollection(rsdb)
+	err := uc.FindAllUsers()
 	if nil != err {
 		return err
 	}
-	return helpers.RenderFFJSON(w, u, http.StatusOK)
+	return helpers.RenderFFJSON(w, uc, http.StatusOK)
 }

@@ -79,7 +79,7 @@ func BootRucksack() {
 	// here should be added more services
 	go func() {
 		defer waitGroup.Done()
-		logger.Check(db.GoRoutineWriter())
+		db.Writer()
 	}()
 	logger.Notice("DB Background Services started")
 

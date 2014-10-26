@@ -84,13 +84,13 @@ func (p *PicnicApp) authenticate(r *http.Request, l authLevel) (UserSessionIf, e
 	if err != nil {
 		return nil, err
 	}
-	u := NewUserModel(uid)
+	u := NewUserModel(rsdb, uid)
 	if "" == uid {
 		logger.Debug("p.authenticate: userID from token is empty")
 		return nil, checkAuthLevel(l, nil)
 	}
 	var f bool
-	f, err = u.FindMe(rsdb)
+	f, err = u.FindMe()
 	if false == f || err != nil {
 		logger.Debug("p.authenticate: user not found in DB %#v", u)
 		return nil, checkAuthLevel(l, nil)

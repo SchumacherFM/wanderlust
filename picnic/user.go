@@ -17,6 +17,7 @@
 package picnic
 
 import (
+	"encoding/json"
 	"github.com/SchumacherFM/wanderlust/code.google.com/p/go.crypto/bcrypt"
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 	"github.com/SchumacherFM/wanderlust/helpers"
@@ -33,10 +34,12 @@ const (
 )
 
 type userModelCollection struct {
-	Users []UserGetterIf
+	db    rdb.RDBIF
+	Users []UserGetterIf // is that an anti pattern to use an interface?
 }
 
 type userModel struct {
+	db rdb.RDBIF
 	// @todo field names to lower case as they are private
 	CreatedAt        time.Time
 	UserName         string
@@ -50,7 +53,7 @@ type userModel struct {
 	SessionExpiresIn time.Duration // not exported in JSON
 }
 
-func (u *userModel) GetId() int               { return helpers.StringHash(u.UserName) }
+func (u *userModel) GetId() string            { return helpers.StringHashString(u.UserName) }
 func (u *userModel) GetEmail() string         { return u.Email }
 func (u *userModel) GetUserName() string      { return u.UserName }
 func (u *userModel) GetName() string          { return u.Name }
@@ -71,6 +74,14 @@ func (u *userModel) prepareNew() error {
 	u.IsActivated = true
 	u.CreatedAt = time.Now()
 	return u.EncryptPassword()
+}
+
+func (u *userModel) Decode(data []byte) error {
+	return json.Unmarshal(data, u)
+}
+
+func (u *userModel) Encode() ([]byte, error) {
+	return u.MarshalJSON()
 }
 
 // IsValidForSession() is only used in newSessionInfo()
@@ -162,82 +173,63 @@ func (u *userModel) CheckPassword(password string) bool {
 	return err == nil
 }
 
-func (u *userModel) ToStringInterface() map[string]interface{} {
-	return map[string]interface{}{
-		"CreatedAt":       u.CreatedAt.Unix(),
-		"UserName":        u.UserName,
-		"Name":            u.Name,
-		"Email":           u.Email,
-		"Password":        u.Password,
-		"IsAdmin":         u.IsAdmin,
-		"IsActivated":     u.IsActivated,
-		"IsAuthenticated": u.IsAuthenticated,
-	}
-}
-
 // finds a user in the database and fills the struct
-func (u *userModel) FindMe(db rdb.RDBIF) (bool, error) {
-	searchedUser, _ := db.FindOne(USER_DB_COLLECTION_NAME, u.GetId())
-	if nil == searchedUser {
-		return false, nil
+func (u *userModel) FindMe() (bool, error) {
+	b, err := u.db.FindOne(USER_DB_COLLECTION_NAME, u.GetId())
+	if nil == b || nil != err {
+		return false, err
 	}
-	u.applyDbData(searchedUser)
-
-	return true, nil
-}
-
-func (u *userModel) applyDbData(d map[string]interface{}) error {
-	// panic free type conversion
-	tIsAdmin, _ := d["IsAdmin"].(bool)
-	tIsActivated, _ := d["IsActivated"].(bool)
-	tIsAuthenticated, _ := d["IsAuthenticated"].(bool)
-	tCreatedAt, _ := d["CreatedAt"].(int64)
-	tUserName, _ := d["UserName"].(string)
-	tName, _ := d["Name"].(string)
-	tEmail, _ := d["Email"].(string)
-	tPassword, _ := d["Password"].(string)
-
-	u.CreatedAt = time.Unix(tCreatedAt, 0)
-	u.UserName = tUserName
-	u.Name = tName
-	u.Email = tEmail
-	u.Password = tPassword
-	u.IsAdmin = tIsAdmin
-	u.IsActivated = tIsActivated
-	u.IsAuthenticated = tIsAuthenticated
-	return nil
+	err = u.Decode(b)
+	return true, err
 }
 
 // needed in auth when user tries to login
-func NewUserModel(userName string) *userModel {
+func NewUserModel(db rdb.RDBIF, userName string) *userModel {
 	u := &userModel{
-		UserName: userName,
+		db:        db,
+		UserName:  userName,
+		CreatedAt: time.Now(),
 	}
 	return u
 }
 
-// GetAllUsers returns a user collection with empty passwords
-func GetAllUsers(db rdb.RDBIF) (*userModelCollection, error) {
-	col, err := db.FindAll(USER_DB_COLLECTION_NAME)
-	umc := &userModelCollection{}
-	for _, u := range col {
-		newUser := NewUserModel("")
-		newUser.applyDbData(u)
-		newUser.UnsetPassword()
-		umc.Users = append(umc.Users, newUser)
+// needed in auth when user tries to login
+func NewUserModelCollection(db rdb.RDBIF) *userModelCollection {
+	uc := &userModelCollection{
+		db: db,
 	}
-	return umc, err
+	return uc
+}
+
+// FindAllUsers populates the internal User slice.
+// Returns errors like Database, tx failed or userIds are not matching
+func (uc *userModelCollection) FindAllUsers() error {
+	d, err := uc.db.FindAll(USER_DB_COLLECTION_NAME)
+	if nil != err {
+		return err
+	}
+
+	for i := 0; i < len(d); i = i + 2 {
+		id := string(d[i])
+		ud := d[i+1]
+		newUser := NewUserModel(nil, "") // no database connection needed
+		newUser.Decode(ud)
+		newUser.UnsetPassword()
+
+		if newUser.GetId() != id {
+			return errgo.Newf("UserID corrupt!\nExpected: %s\nActual: %s\n", newUser.GetId(), id)
+		}
+
+		uc.Users = append(uc.Users, newUser)
+	}
+	return nil
 }
 
 // initUsers() runs in NewPicnicApp() function
 func initUsers(db rdb.RDBIF) error {
 	var err error
-	var root map[string]interface{}
+
 	var pwd string
-	err = db.CreateDatabase(USER_DB_COLLECTION_NAME)
-	if nil != err {
-		return errgo.Mask(err)
-	}
 
 	u := &userModel{
 		UserName:    USER_ROOT,
@@ -248,12 +240,21 @@ func initUsers(db rdb.RDBIF) error {
 		IsActivated: true,
 	}
 	u.GeneratePassword()
-	root, _ = db.FindOne(USER_DB_COLLECTION_NAME, u.GetId())
+	userByte, err := db.FindOne(USER_DB_COLLECTION_NAME, u.GetId())
+	bug
+	switch err {
+	case nil:
+		break
+	case rdb.ErrEntityNotFound:
+		break
+	default:
+		return errgo.Mask(err)
+	}
 
-	if nil == root {
+	if nil == userByte {
 		logger.Emergency("Created new user %s with password: %s", u.UserName, u.Password)
 		u.prepareNew()
-		db.InsertRecovery(USER_DB_COLLECTION_NAME, u.GetId(), u.ToStringInterface())
+		//		db.InsertRecovery(USER_DB_COLLECTION_NAME, u.GetId(), u.ToStringInterface())
 	} else {
 		logger.Emergency("Root user %s already exists!", USER_ROOT)
 	}

@@ -29,7 +29,7 @@ const (
 
 var (
 	ErrDatabaseNotFound = errgo.New("Database not found")
-	ErrEntityNotFound   = errgo.New("Entity not found")
+	ErrEntityNotFound   = errgo.New("DB Entity not found")
 	// Hook that may be overridden for integration tests.
 	writerDone = func() {}
 )
@@ -126,13 +126,13 @@ func (this *RDB) FindOne(b, k string) ([]byte, error) {
 	this.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket(data.getBucketByte())
 		if nil == b {
-			return errgo.Newf("Bucket %s not found", data.bucket)
+			return errgo.Mask(ErrDatabaseNotFound)
 		}
 		data.data = b.Get(data.getKeyByte())
 		return nil
 	})
 	if nil == data.data {
-		return nil, ErrEntityNotFound
+		return nil, errgo.Mask(ErrEntityNotFound)
 	}
 	return data.data, nil
 }
@@ -146,7 +146,7 @@ func (this *RDB) FindAll(bn string) ([][]byte, error) {
 	}
 	b := tx.Bucket([]byte(bn))
 	if nil == b {
-		return nil, ErrDatabaseNotFound
+		return nil, errgo.Mask(ErrDatabaseNotFound)
 	}
 	bStat := b.Stats()
 	ret := make([][]byte, 2*bStat.KeyN)

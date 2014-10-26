@@ -32,7 +32,7 @@ func (rc *testRequestContext) GetApp() PicnicAppIf            { return nil }
 func (rc *testRequestContext) GetParamString(s string) string { return s }
 func (rc *testRequestContext) GetParamInt64(s string) int64   { return 0 }
 func (rc *testRequestContext) GetUser() UserSessionIf {
-	um := NewUserModel("testUser")
+	um := NewUserModel(nil, "testUser")
 	return um
 }
 

@@ -18,7 +18,6 @@ package api
 
 import (
 	"github.com/SchumacherFM/wanderlust/helpers"
-	rdb "github.com/SchumacherFM/wanderlust/rucksack/api"
 	"net/http"
 	"time"
 )
@@ -65,13 +64,13 @@ type (
 	}
 
 	UserGetterIf interface {
-		GetId() int
+		GetId() string
 		GetEmail() string
 		GetName() string
 		GetUserName() string
 		GetSessionExpiresIn() int
-		ToStringInterface() map[string]interface{}
-		FindMe(rdb.RDBIF) (bool, error)
+		// FindMe searches a user in the database and fills the underlaying struct with the data
+		FindMe() (bool, error)
 		helpers.FfjsonIf
 	}
 
@@ -87,5 +86,13 @@ type (
 		ChangePassword(string) error
 		EncryptPassword() error
 		UnsetPassword()
+	}
+
+	// This interface can have various implementation for saving struct in database. JSON is only one option.
+	UserEncoding interface {
+		// Decode decodes the data which is coming from the database
+		Decode(data []byte) error
+		// Encode encodes the data for saving in the database
+		Encode() ([]byte, error)
 	}
 )
