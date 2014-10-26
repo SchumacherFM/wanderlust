@@ -24,7 +24,7 @@ import (
 )
 
 var (
-	provisionerCollection = &Provisioners{}
+	provisionerCollection = NewProvisioners()
 	ErrCollectionEmpty    = errgo.New("Provisioner Collection is empty")
 )
 
