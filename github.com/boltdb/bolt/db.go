@@ -538,7 +538,7 @@ func (db *DB) meta() *meta {
 func (db *DB) allocate(count int) (*page, error) {
 	// Allocate a temporary buffer for the page.
 	buf := make([]byte, count*db.pageSize)
-	defer func(){
+	defer func() {
 		buf = nil // free all the buffers!
 	}()
 	p := (*page)(unsafe.Pointer(&buf[0]))
