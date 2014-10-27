@@ -69,9 +69,6 @@ func (u *userModel) GetUserName() string      { return u.UserName }
 func (u *userModel) GetName() string          { return u.Name }
 func (u *userModel) GetSessionExpiresIn() int { return int(u.SessionExpiresIn.Seconds()) }
 
-func (u *userModel) SetEmail(e string) error                    { u.Email = e; return nil }
-func (u *userModel) SetName(n string) error                     { u.Name = n; return nil }
-func (u *userModel) SetUserName(n string) error                 { u.UserName = n; return nil }
 func (u *userModel) SetAuthenticated(auth bool) error           { u.IsAuthenticated = auth; return nil }
 func (u *userModel) SetSessionExpiresIn(ei time.Duration) error { u.SessionExpiresIn = ei; return nil }
 

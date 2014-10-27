@@ -75,10 +75,6 @@ type (
 	}
 
 	UserSetterIf interface {
-		SetEmail(string) error
-		SetName(string) error
-		SetUserName(string) error
-
 		// validate(ctx *context, r *http.Request, errors map[string]string) error
 		GenerateRecoveryCode() (string, error)
 		ResetRecoveryCode()
