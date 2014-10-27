@@ -21,6 +21,7 @@ import (
 	"github.com/SchumacherFM/wanderlust/helpers"
 )
 
+// MarshalJSON implements encoding/json.Marshaler interface
 func (mj *Provisioner) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	buf.Grow(1024)

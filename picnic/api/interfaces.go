@@ -18,7 +18,6 @@ package api
 
 import (
 	"github.com/SchumacherFM/wanderlust/helpers"
-	"github.com/SchumacherFM/wanderlust/rucksack/rucksackdb"
 	"net/http"
 	"time"
 )
@@ -65,13 +64,13 @@ type (
 	}
 
 	UserGetterIf interface {
-		GetId() int
+		GetId() string
 		GetEmail() string
 		GetName() string
 		GetUserName() string
 		GetSessionExpiresIn() int
-		ToStringInterface() map[string]interface{}
-		FindMe(rucksackdb.RDBIF) (bool, error)
+		// FindMe searches a user in the database and fills the underlaying struct with the data
+		FindMe() (bool, error)
 		helpers.FfjsonIf
 	}
 

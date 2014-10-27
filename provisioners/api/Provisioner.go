@@ -18,7 +18,6 @@
 package api
 
 import (
-	"bytes"
 	. "github.com/SchumacherFM/wanderlust/picnic/api"
 )
 
@@ -31,13 +30,16 @@ type (
 	// this methods will be used to query the provisioner instance and set values
 	ProvisionerApi interface {
 		// GetRoutes returns the endpoint of the route
-		GetRoute() string
+		Route() string
 		// GetRouteHandler returns a handler which must manage GET, POST and DELETE methods
 		// GET returns the config for the <form> fields and also the saved data for the inputs
 		// POST saves the data from the input field into the rucksack
-		GetRouteHandler() HandlerFunc
+		RouteHandler() HandlerFunc
+
+		// maybe more methods to add ...
 	}
 
+	// Implements encoding/json.Marshaler interface
 	Provisioner struct {
 		// This name appears in the frontend
 		Name string
@@ -48,17 +50,12 @@ type (
 		// internal handler
 		Api ProvisionerApi
 	}
-
-	ProvisionerJsonIf interface {
-		MarshalJSON() ([]byte, error)
-		MarshalJSONBuf(buf *bytes.Buffer) error
-	}
 )
 
 func NewProvisioner(n, i string, a ProvisionerApi) *Provisioner {
 	return &Provisioner{
 		Name: n,
-		Url:  "/" + URL_PRE_ROUTE + "/" + a.GetRoute(),
+		Url:  "/" + URL_PRE_ROUTE + "/" + a.Route(),
 		Icon: i,
 		Api:  a,
 	}

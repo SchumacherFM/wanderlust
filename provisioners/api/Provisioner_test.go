@@ -25,10 +25,10 @@ import (
 type testPapi struct {
 }
 
-func (this *testPapi) GetRoute() string {
+func (this *testPapi) Route() string {
 	return "TestRoute"
 }
-func (this *testPapi) GetRouteHandler() picnicApi.HandlerFunc {
+func (this *testPapi) RouteHandler() picnicApi.HandlerFunc {
 	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 		return nil
 	}

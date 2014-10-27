@@ -20,6 +20,7 @@ import (
 	"bytes"
 )
 
+// MarshalJSON implements encoding/json.Marshaler interface
 func (mj *Provisioners) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	buf.Grow(1024)

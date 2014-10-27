@@ -37,3 +37,7 @@ func (p *Provisioners) Add(prov *Provisioner) {
 func (p *Provisioners) Length() int {
 	return len(p.Collection)
 }
+
+func NewProvisioners() *Provisioners {
+	return &Provisioners{}
+}

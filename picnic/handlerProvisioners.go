@@ -41,9 +41,9 @@ func (p *PicnicApp) initRoutesProvisioners(r *mux.Router) error {
 		return err
 	}
 	for _, prov := range pc.Collection {
-		sr.HandleFunc("/"+prov.Api.GetRoute(), p.handler(prov.Api.GetRouteHandler(), AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
-		sr.HandleFunc("/"+prov.Api.GetRoute()+"/save", p.handler(prov.Api.GetRouteHandler(), AUTH_LEVEL_LOGIN)).Methods("POST")
-		sr.HandleFunc("/"+prov.Api.GetRoute(), p.handler(prov.Api.GetRouteHandler(), AUTH_LEVEL_LOGIN)).Methods("DELETE")
+		sr.HandleFunc("/"+prov.Api.Route(), p.handler(prov.Api.RouteHandler(), AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
+		sr.HandleFunc("/"+prov.Api.Route()+"/save", p.handler(prov.Api.RouteHandler(), AUTH_LEVEL_LOGIN)).Methods("POST")
+		sr.HandleFunc("/"+prov.Api.Route(), p.handler(prov.Api.RouteHandler(), AUTH_LEVEL_LOGIN)).Methods("DELETE")
 	}
 	return nil
 }

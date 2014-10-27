@@ -20,7 +20,7 @@ import (
 	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	. "github.com/SchumacherFM/wanderlust/picnic/api"
-	"github.com/SchumacherFM/wanderlust/rucksack/rucksackdb"
+	"github.com/SchumacherFM/wanderlust/rucksack"
 	"net/http"
 	"sync"
 )
@@ -33,8 +33,8 @@ const (
 )
 
 var (
-	rsdb   rucksackdb.RDBIF
-	logger *log.Logger
+	backpacker rucksack.Backpacker
+	logger     *log.Logger
 )
 
 type PicnicApp struct {
@@ -47,9 +47,9 @@ type PicnicApp struct {
 }
 
 // la = listen address, pd = pemDir, lo = logger
-func NewPicnicApp(la, pd string, lo *log.Logger, theDb rucksackdb.RDBIF) (*PicnicApp, error) {
+func NewPicnicApp(la, pd string, lo *log.Logger, db rucksack.Backpacker) (*PicnicApp, error) {
 	var err error
-	rsdb = theDb
+	backpacker = db
 	logger = lo
 	pa := &PicnicApp{
 		ListenAddress: la,
@@ -63,7 +63,7 @@ func NewPicnicApp(la, pd string, lo *log.Logger, theDb rucksackdb.RDBIF) (*Picni
 	if nil != err {
 		return nil, err
 	}
-	err = initUsers(rsdb)
+	err = initUsers(backpacker)
 	if nil != err {
 		return nil, err
 	}

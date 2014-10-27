@@ -38,11 +38,11 @@ type (
 	}
 )
 
-func (s *sm) GetRoute() string {
+func (s *sm) Route() string {
 	return s.url
 }
 
-func (s *sm) GetRouteHandler() picnicApi.HandlerFunc {
+func (s *sm) RouteHandler() picnicApi.HandlerFunc {
 	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 		return helpers.RenderString(w, 200, fmt.Sprintf("Found route \n%#v\n %#v\n", r, rc))
 	}
