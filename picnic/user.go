@@ -22,7 +22,7 @@ import (
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	. "github.com/SchumacherFM/wanderlust/picnic/api"
-	rdb "github.com/SchumacherFM/wanderlust/rucksack/api"
+	"github.com/SchumacherFM/wanderlust/rucksack"
 	"time"
 )
 
@@ -34,12 +34,12 @@ const (
 )
 
 type userModelCollection struct {
-	db    rdb.RDBIF
+	db    rucksack.Backpacker
 	Users []UserGetterIf // is that an anti pattern to use an interface?
 }
 
 type userModel struct {
-	db rdb.RDBIF
+	db rucksack.Backpacker
 	// @todo field names to lower case as they are private
 	CreatedAt        time.Time
 	UserName         string
@@ -51,6 +51,16 @@ type userModel struct {
 	RecoveryCode     string
 	IsAuthenticated  bool
 	SessionExpiresIn time.Duration // not exported in JSON
+}
+
+// needed in auth when user tries to login
+func NewUserModel(db rucksack.Backpacker, userName string) *userModel {
+	u := &userModel{
+		db:        db,
+		UserName:  userName,
+		CreatedAt: time.Now(),
+	}
+	return u
 }
 
 func (u *userModel) GetId() string            { return helpers.StringHashString(u.UserName) }
@@ -184,17 +194,7 @@ func (u *userModel) FindMe() (bool, error) {
 }
 
 // needed in auth when user tries to login
-func NewUserModel(db rdb.RDBIF, userName string) *userModel {
-	u := &userModel{
-		db:        db,
-		UserName:  userName,
-		CreatedAt: time.Now(),
-	}
-	return u
-}
-
-// needed in auth when user tries to login
-func NewUserModelCollection(db rdb.RDBIF) *userModelCollection {
+func NewUserModelCollection(db rucksack.Backpacker) *userModelCollection {
 	uc := &userModelCollection{
 		db: db,
 	}
@@ -211,9 +211,8 @@ func (uc *userModelCollection) FindAllUsers() error {
 
 	for i := 0; i < len(d); i = i + 2 {
 		id := string(d[i])
-		ud := d[i+1]
 		newUser := NewUserModel(nil, "") // no database connection needed
-		newUser.Decode(ud)
+		newUser.Decode(d[i+1])
 		newUser.UnsetPassword()
 
 		if newUser.GetId() != id {
@@ -226,7 +225,7 @@ func (uc *userModelCollection) FindAllUsers() error {
 }
 
 // initUsers() runs in NewPicnicApp() function
-func initUsers(db rdb.RDBIF) error {
+func initUsers(db rucksack.Backpacker) error {
 	var pwd string
 
 	u := &userModel{
@@ -243,7 +242,7 @@ func initUsers(db rdb.RDBIF) error {
 	switch err {
 	case nil:
 		break
-	case rdb.ErrEntityNotFound:
+	case rucksack.ErrBreadNotFound:
 		break
 	default:
 		return errgo.Mask(err)

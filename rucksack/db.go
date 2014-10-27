@@ -14,12 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package api
+package rucksack
 
 import (
 	"errors"
 	"github.com/SchumacherFM/wanderlust/github.com/boltdb/bolt"
 	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
+	"github.com/SchumacherFM/wanderlust/helpers"
 	"time"
 )
 
@@ -28,23 +29,14 @@ const (
 )
 
 var (
-	ErrDatabaseNotFound = errors.New("Database not found")
-	ErrEntityNotFound   = errors.New("DB Entity not found")
+	ErrBreadbasketNotFound = errors.New("Breadbasket / Database not found")
+	ErrBreadNotFound       = errors.New("Bread / DB Entity not found")
 	// Hook that may be overridden for integration tests.
 	writerDone = func() {}
 )
 
 type (
-	// @todo use encoding BinaryMarshaler and BinaryUnmarshaler interface
-	// This interface can have various implementation for saving struct in database. JSON is only one option.
-	UserEncoding interface {
-		// Decode decodes the data which is coming from the database
-		Decode(data []byte) error
-		// Encode encodes the data for saving in the database
-		Encode() ([]byte, error)
-	}
-
-	RDBIF interface {
+	Backpacker interface {
 		// Writer runs in a goroutine and waits for data coming through the channel
 		Writer()
 
@@ -65,7 +57,7 @@ type (
 		data   []byte
 	}
 
-	RDB struct {
+	Rucksack struct {
 		db         *bolt.DB
 		writerChan chan *bEntity
 		logger     *log.Logger
@@ -88,16 +80,20 @@ func (this *bEntity) getKeyByte() []byte {
 	return []byte(this.key)
 }
 
-func NewRDB(dbFileName string, l *log.Logger) (*RDB, error) {
-	var err error
-	var db *bolt.DB
-	// @see idea from http://paulosuzart.github.io/blog/2014/07/07/going-back-to-go/
+func NewRucksack(dbFileName string, l *log.Logger) (*Rucksack, error) {
+
+	if "" == dbFileName {
+		dbFileName = helpers.GetTempDir() + "wldb_" + helpers.RandomString(10) + ".db"
+		l.Notice("Database temp directory is %s", dbFileName)
+	}
+
+	// @see idea from http://paulosuzart.github.io/blog/2014/07/07/going-back-to-go/ regarding channel
 	boltOpt := &bolt.Options{
 		Timeout: 1 * time.Second,
 	}
 	w := make(chan *bEntity, WRITER_CHANNEL_BUFFER_SIZE)
-	db, err = bolt.Open(dbFileName, 0600, boltOpt)
-	rdb := &RDB{
+	db, err := bolt.Open(dbFileName, 0600, boltOpt)
+	rdb := &Rucksack{
 		db:         db,
 		writerChan: w,
 		logger:     l,
@@ -106,7 +102,7 @@ func NewRDB(dbFileName string, l *log.Logger) (*RDB, error) {
 }
 
 // Writer method runs in a goroutine and waits to data in the channel to write into the boltdb
-func (this *RDB) Writer() {
+func (this *Rucksack) Writer() {
 	for data := range this.writerChan {
 		err := this.db.Update(func(tx *bolt.Tx) error {
 			b, err := tx.CreateBucketIfNotExists(data.getBucketByte())
@@ -125,29 +121,29 @@ func (this *RDB) Writer() {
 }
 
 // Close closes the database during app shutdown sequence
-func (this *RDB) Close() error {
+func (this *Rucksack) Close() error {
 	return this.db.Close()
 }
 
 // FindOne returns a value for a bucketName and keyName
-func (this *RDB) FindOne(b, k string) ([]byte, error) {
+func (this *Rucksack) FindOne(b, k string) ([]byte, error) {
 	data := newbEntity(b, k, nil)
 	this.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket(data.getBucketByte())
 		if nil == b {
-			return ErrDatabaseNotFound
+			return ErrBreadbasketNotFound
 		}
 		data.data = b.Get(data.getKeyByte())
 		return nil
 	})
 	if nil == data.data {
-		return nil, ErrEntityNotFound
+		return nil, ErrBreadNotFound
 	}
 	return data.data, nil
 }
 
 // FindAll finds all keys belonging to a bucketName. Returns an array i = key, i+1 = value
-func (this *RDB) FindAll(bn string) ([][]byte, error) {
+func (this *Rucksack) FindAll(bn string) ([][]byte, error) {
 
 	tx, err := this.db.Begin(false)
 	if nil != err {
@@ -155,7 +151,7 @@ func (this *RDB) FindAll(bn string) ([][]byte, error) {
 	}
 	b := tx.Bucket([]byte(bn))
 	if nil == b {
-		return nil, ErrDatabaseNotFound
+		return nil, ErrBreadbasketNotFound
 	}
 	bStat := b.Stats()
 	ret := make([][]byte, 2*bStat.KeyN)
@@ -170,12 +166,12 @@ func (this *RDB) FindAll(bn string) ([][]byte, error) {
 	return ret, nil
 }
 
-func (rdb *RDB) Insert(b, k string, d []byte) error {
+func (this *Rucksack) Insert(b, k string, d []byte) error {
 	be := &bEntity{
 		bucket: b,
 		key:    k,
 		data:   d,
 	}
-	rdb.writerChan <- be
+	this.writerChan <- be
 	return nil
 }

@@ -84,7 +84,7 @@ func (p *PicnicApp) authenticate(r *http.Request, l authLevel) (UserSessionIf, e
 	if err != nil {
 		return nil, err
 	}
-	u := NewUserModel(rsdb, uid)
+	u := NewUserModel(backpacker, uid)
 	if "" == uid {
 		logger.Debug("p.authenticate: userID from token is empty")
 		return nil, checkAuthLevel(l, nil)

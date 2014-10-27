@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package api
+package rucksack
 
 import (
 	"bytes"
@@ -31,7 +31,7 @@ var (
 	bucketName  = "RBucket"
 	keyPrefix   = "RKey"
 	benchMarkDb = helpers.GetTempDir() + "wldbBENCH_" + helpers.RandomString(10) + ".db"
-	benchDb     *RDB
+	benchDb     *Rucksack
 )
 
 func init() {
@@ -77,9 +77,9 @@ func TestGetKeyByte(t *testing.T) {
 	bytesCompare(t, expectedK, be.getKeyByte())
 }
 
-func setUpDb(f string) (*RDB, *log.Logger, error) {
+func setUpDb(f string) (*Rucksack, *log.Logger, error) {
 	l := log.New(os.Stdout, log.DEBUG, "Testing")
-	db, err := NewRDB(f, l)
+	db, err := NewRucksack(f, l)
 	return db, l, err
 }
 

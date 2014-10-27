@@ -21,7 +21,6 @@ import (
 	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/picnic"
 	"github.com/SchumacherFM/wanderlust/rucksack"
-	rdb "github.com/SchumacherFM/wanderlust/rucksack/api"
 	"os"
 	"os/signal"
 	"runtime"
@@ -31,9 +30,9 @@ import (
 
 var (
 	CliContext *cli.Context
-	waitGroup  sync.WaitGroup
+	wg         sync.WaitGroup
 	logger     *log.Logger
-	db         rdb.RDBIF
+	rs         rucksack.Backpacker
 )
 
 func Boot() {
@@ -67,22 +66,20 @@ func initLogger() {
 
 // BootRucksack inits the rucksack database and starts the background jobs
 func BootRucksack() {
-
-	rucksackApp, err := rucksack.NewRucksackApp(
+	var err error
+	rs, err = rucksack.NewRucksack(
 		CliContext.String("rucksack-dir"),
 		logger,
 	)
 	logger.Check(err)
 
-	db = rucksackApp.GetDb()
-	waitGroup.Add(1)
-	// here should be added more services
+	wg.Add(1)
+	// here can be added more services
 	go func() {
-		defer waitGroup.Done()
-		db.Writer()
+		defer wg.Done()
+		rs.Writer()
 	}()
 	logger.Notice("DB Background Services started")
-
 }
 
 // starts the HTTP server for the picnic web interface and runs it in a goroutine
@@ -92,7 +89,7 @@ func BootPicnic() {
 		CliContext.String("picnic-listen-address"),
 		CliContext.String("picnic-pem-dir"),
 		logger,
-		db,
+		rs,
 	)
 
 	if nil != err {
@@ -100,9 +97,9 @@ func BootPicnic() {
 	}
 
 	if "" != picnicApp.GetListenAddress() { // don't start if empty
-		waitGroup.Add(1)
+		wg.Add(1)
 		go func() {
-			defer waitGroup.Done()
+			defer wg.Done()
 			logger.Check(picnicApp.Execute())
 		}()
 		logger.Notice("Picnic Running https://%s", picnicApp.GetListenAddress())
@@ -111,9 +108,9 @@ func BootPicnic() {
 
 func BootBrotzeit() {
 	//	if "" != rucksackApp.ListenAddress {
-	//		waitGroup.Add(1)
+	//		wg.Add(1)
 	//		go func() {
-	//			defer waitGroup.Done()
+	//			defer wg.Done()
 	//			rucksackApp.StartHttp()
 	//		}()
 	//	}
@@ -128,7 +125,7 @@ func BootWanderer() {
 func Finalizer() {
 	logger.Notice("GOMAXPROCS is set to %d", runtime.NumCPU())
 	catchSysCall()
-	waitGroup.Wait()
+	wg.Wait()
 }
 
 // catchSysCall ends the program correctly when receiving a sys call
@@ -145,7 +142,7 @@ func catchSysCall() {
 	go func() {
 		for sig := range signalChannel {
 			logger.Notice("Received signal: %s. Closing database ...", sig.String())
-			if err := db.Close(); nil != err {
+			if err := rs.Close(); nil != err {
 				logger.Check(err)
 			} else {
 				logger.Notice("Database successful closed!")
