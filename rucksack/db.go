@@ -84,7 +84,7 @@ func NewRucksack(dbFileName string, l *log.Logger) (*Rucksack, error) {
 
 	if "" == dbFileName {
 		dbFileName = helpers.GetTempDir() + "wldb_" + helpers.RandomString(10) + ".db"
-		l.Notice("Database temp directory is %s", dbFileName)
+		l.Notice("Database created: %s", dbFileName)
 	}
 
 	// @see idea from http://paulosuzart.github.io/blog/2014/07/07/going-back-to-go/ regarding channel
