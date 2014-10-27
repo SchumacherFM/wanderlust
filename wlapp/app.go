@@ -22,6 +22,7 @@ import (
 	"github.com/SchumacherFM/wanderlust/picnic"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 	"os"
+	"os/exec"
 	"os/signal"
 	"runtime"
 	"sync"
@@ -102,7 +103,14 @@ func BootPicnic() {
 			defer wg.Done()
 			logger.Check(picnicApp.Execute())
 		}()
-		logger.Notice("Picnic Running https://%s", picnicApp.GetListenAddress())
+		url := "https://" + picnicApp.GetListenAddress()
+		logger.Notice("Picnic Running %s", url)
+		if true == CliContext.Bool("browser") {
+			_, err := exec.Command("which", "open").Output()
+			if err == nil {
+				exec.Command("open", url).Output()
+			}
+		}
 	}
 }
 

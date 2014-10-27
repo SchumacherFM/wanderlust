@@ -82,10 +82,9 @@ func main() {
 					Value: "",
 					Usage: "Log to file or if empty to os.Stderr",
 				},
-				cli.StringFlag{
-					Name:  "logLevel,ll",
-					Value: "",
-					Usage: "Log level: debug, info, notice, warning, error, critical, alert, emergency. Default: debug",
+				cli.BoolFlag{
+					Name:  "browser",
+					Usage: "If set opens your web browser with the picnic URL immediately. Default false.",
 				},
 			},
 		},
