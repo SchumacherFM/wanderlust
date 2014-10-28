@@ -41,9 +41,6 @@ func AddProvisioner(p *Provisioner) {
 }
 
 func GetAvailable() (*Provisioners, error) {
-	if 0 == provisionerCollection.Length() {
-		return nil, ErrCollectionEmpty
-	}
 	return provisionerCollection, nil
 }
 
