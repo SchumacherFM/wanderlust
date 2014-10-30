@@ -64,7 +64,7 @@ $ go tool pprof [--pdf|svg|gif] ./wanderlust /path/to/cpu.pprof
 
 # Contributing
 
-Please do not hesitate to send pull requests.
+Please do not hesitate to send pull requests or tweet me.
 
 # Free vs. Commercial Version
 
@@ -78,7 +78,12 @@ As soon as you buy (via in-app-purchase) one provisioner you'll get the commerci
 Each provisioner has a recurring monthly fee. Provisioners must be compiled into this source code so delivery 
 of the new binary file may take some time. With the commercial version tracking is removed.
 
-Available provisioners:
+Available build-in free provisioners:
+
+- Sitemap (up to XX URLs crawled randomly) 
+- Textarea (up to XX URLs crawled randomly)
+
+Available In-App provisioners for purchase:
 
 - Google Analytics
 - Piwik
@@ -88,11 +93,21 @@ Available provisioners:
 
 (2) Module is open source but for Wanderlust integration a recurring fee is required.
 
+##### Some thoughts
+
+In-App-Purchases may take a while to deliver in the early days because the Go binaries needs to be recompiled.
+
+Depending on how much you contribute you can get modules for free or even share in revenue.
+
+Open Source ain’t Charity.
+
+The shop system is provided via a Magento REST API hosted on my server.
+
 # License
 
 Will change in the future.
 
-General Public License
+General Public License *may change the license*
 
 [http://www.gnu.org/copyleft/gpl.html](http://www.gnu.org/copyleft/gpl.html)
 
@@ -103,5 +118,3 @@ General Public License
 [@SchumacherFM](https://twitter.com/SchumacherFM)
 
 Made in Sydney, Australia :-)
-
-

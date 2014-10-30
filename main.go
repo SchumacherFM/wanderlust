@@ -37,6 +37,7 @@ func mainAction(c *cli.Context) {
 	wlapp.Boot()
 }
 
+// @todo maybe use https://github.com/spf13/viper
 func main() {
 	setMaxParallelism()
 
