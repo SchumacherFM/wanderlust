@@ -69,7 +69,7 @@ func initLogger() {
 func BootRucksack() {
 	var err error
 	rs, err = rucksack.NewRucksack(
-		CliContext.String("rucksack-dir"),
+		CliContext.String("rucksack-file"),
 		logger,
 	)
 	logger.Check(err)

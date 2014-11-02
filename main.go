@@ -74,9 +74,9 @@ func main() {
 					Usage: "Directory to store the .pem certificates. If empty will throw it somewhere in the system. If provided file names must be cert.pem and key.pem!",
 				},
 				cli.StringFlag{
-					Name:  "rucksack-dir,rd",
+					Name:  "rucksack-file,rf",
 					Value: "",
-					Usage: "Storage directory of the rucksack files. If empty then /tmp/random directory will be used.",
+					Usage: "Storage DB file for the rucksack. If empty then a /tmp/random.db file will be created.",
 				},
 				cli.StringFlag{
 					Name:  "logFile,lf",
