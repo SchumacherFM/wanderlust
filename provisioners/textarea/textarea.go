@@ -50,8 +50,8 @@ func (s *ta) FormHandler() picnicApi.HandlerFunc {
 
 func (s *ta) SaveHandler() picnicApi.HandlerFunc {
 	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
-		x:="Saved Data"
-		return helpers.RenderJSON(w, x,200)
+		x := "Saved Data"
+		return helpers.RenderJSON(w, x, 200)
 	}
 }
 

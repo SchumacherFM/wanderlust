@@ -107,7 +107,8 @@ angular.module('Wanderlust')
     '$stateProvider',
     '$urlRouterProvider',
     '$httpProvider',
-    function ($stateProvider, $urlRouterProvider, $httpProvider) {
+    'picnicUrls',
+    function ($stateProvider, $urlRouterProvider, $httpProvider, picnicUrls) {
 
       // For unmatched routes
       $urlRouterProvider.otherwise('/');
@@ -152,9 +153,11 @@ angular.module('Wanderlust')
           }
         })
         .state('provisioners', {
-          url: '/provisioners/{type:[a-z0-9]{3,20}}',
+          url: picnicUrls.provisioners + '{type:[a-z0-9]{3,20}}',
           controller: 'ProvisionerController',
-          templateUrl: 'partials/provisioner/tpl/form.html',
+          templateUrl: function (matchedParts) {
+            return picnicUrls.provisioners + (matchedParts.type || '');
+          },
           data: {
             ncyBreadcrumbLabel: 'Provisioner / {{typeName}}'
           }
