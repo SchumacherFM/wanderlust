@@ -23,12 +23,11 @@ import (
 	"encoding/json"
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 	"net/http"
-	"strconv"
 )
 
 func WriteBody(w http.ResponseWriter, body []byte, status int, contentType string) error {
 	w.Header().Set("Content-Type", contentType+"; charset=UTF8")
-	w.Header().Set("Content-Length", strconv.Itoa(len(body)))
+	//w.Header().Set("Content-Length", strconv.Itoa(len(body))) Length will be set via GZIP middleware
 	w.WriteHeader(status)
 	_, err := w.Write(body)
 	return errgo.Mask(err)
@@ -52,6 +51,10 @@ func RenderJSON(w http.ResponseWriter, value interface{}, status int) error {
 
 func RenderString(w http.ResponseWriter, status int, msg string) error {
 	return WriteBody(w, []byte(msg), status, "text/plain")
+}
+
+func RenderHTML(w http.ResponseWriter, status int, msg string) error {
+	return WriteBody(w, []byte(msg), status, "text/html")
 }
 
 func DecodeJSON(r *http.Request, value interface{}) error {

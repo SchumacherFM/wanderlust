@@ -32,11 +32,11 @@ import (
 var (
 	// these are the routes where we expect that the length of data is below ~100 bytes
 	// because then gzip compression fails, that means you can't decode it ... no idea why.
-	skipCompressionRoutes = [...]string{
-		"/sysinfo/",
-		"/provisioners/",
-		// more routes will be added
-	}
+	skipCompressionRoutes    = [...]string{
+	"/sysinfo/",
+	"/provisioners/",
+	// more routes will be added
+}
 	skipCompressionRoutesLen = len(skipCompressionRoutes)
 )
 
@@ -55,7 +55,7 @@ const (
 
 // faster and less memory usage than a map[]
 func isCompressionRoute(key string) bool {
-	for i := 0; i < skipCompressionRoutesLen; i = i + 1 {
+	for i := 0; i < skipCompressionRoutesLen; i = i+1 {
 		if key == skipCompressionRoutes[i] {
 			return true
 		}
@@ -151,13 +151,10 @@ func (h *gzipHandler) ServeHTTP(w http.ResponseWriter, r *http.Request, next htt
 		gz,
 		nrw,
 	}
-
 	// Call the next gzipHandler supplying the gzipResponseWriter instead of
 	// the original.
 	next(grw, r)
 
-	// Delete the content length after we know we have been written to.
-	grw.Header().Del(headerContentLength)
 }
 
 // gzipResponseWriter is the ResponseWriter that negroni.ResponseWriter is
@@ -171,7 +168,7 @@ type gzipResponseWriter struct {
 // header using the net/http library content type detection if the Content-Type
 // header was not set yet.
 func (grw gzipResponseWriter) Write(b []byte) (int, error) {
-	if len(grw.Header().Get(headerContentType)) == 0 {
+	if 0 == len(grw.Header().Get(headerContentType)) {
 		grw.Header().Set(headerContentType, http.DetectContentType(b))
 	}
 	return grw.w.Write(b)
