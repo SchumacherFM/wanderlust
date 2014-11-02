@@ -18,7 +18,7 @@ package main
 
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/cli"
-	"github.com/SchumacherFM/wanderlust/github.com/davecheney/profile"
+	"github.com/SchumacherFM/wanderlust/github.com/pkg/profile"
 	"github.com/SchumacherFM/wanderlust/wlapp"
 	"os"
 	"runtime"
