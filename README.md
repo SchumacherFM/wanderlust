@@ -1,9 +1,11 @@
 # Wanderlust - WIP
 
-### Cache warmer with priorities
+### Cache warmer/primer with priorities
 
 Wanderlust, the yearning to travel through Google Analytics (1), Piwik (1), 
 REST endpoints (1), sitemap.xml, textarea input, etc to warm up the caches of your website.
+
+An app for priming your cache to help avoid a [cache stampede](http://en.wikipedia.org/wiki/Cache_stampede).
 
 (1) available to buy.
 
