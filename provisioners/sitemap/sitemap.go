@@ -17,7 +17,6 @@
 package sitemap
 
 import (
-	"fmt"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	picnicApi "github.com/SchumacherFM/wanderlust/picnic/api"
 	. "github.com/SchumacherFM/wanderlust/provisioners/api"
@@ -42,8 +41,20 @@ func (s *sm) Route() string {
 	return s.url
 }
 
-func (s *sm) RouteHandler() picnicApi.HandlerFunc {
+func (s *sm) FormHandler() picnicApi.HandlerFunc {
 	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
-		return helpers.RenderString(w, 200, fmt.Sprintf("Found route \n%#v\n %#v\n", r, rc))
+		return helpers.RenderString(w, 200, "<h1>Hello Sitemap</h1>")
+	}
+}
+
+func (s *sm) SaveHandler() picnicApi.HandlerFunc {
+	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+		return helpers.RenderString(w, 200, "[\"Saved Data\"]")
+	}
+}
+
+func (s *sm) DeleteHandler() picnicApi.HandlerFunc {
+	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+		return helpers.RenderString(w, 200, "[\"Deleted Data\"]")
 	}
 }

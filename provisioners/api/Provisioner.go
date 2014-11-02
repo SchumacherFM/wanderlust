@@ -31,10 +31,12 @@ type (
 	ProvisionerApi interface {
 		// GetRoutes returns the endpoint of the route
 		Route() string
-		// GetRouteHandler returns a handler which must manage GET, POST and DELETE methods
-		// GET returns the config for the <form> fields and also the saved data for the inputs
-		// POST saves the data from the input field into the rucksack
-		RouteHandler() HandlerFunc
+		// FormHandler returns the bootstrap HTML for the <form> fields and also the saved data for the inputs
+		FormHandler() HandlerFunc
+		// SaveHandler saves the POSTed data from the input fields into the rucksack
+		SaveHandler() HandlerFunc
+		// DeleteHandler removes data from the rucksack and clears everything out
+		DeleteHandler() HandlerFunc
 
 		// maybe more methods to add ...
 	}

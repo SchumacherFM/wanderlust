@@ -17,7 +17,6 @@
 package textarea
 
 import (
-	"fmt"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	picnicApi "github.com/SchumacherFM/wanderlust/picnic/api"
 	. "github.com/SchumacherFM/wanderlust/provisioners/api"
@@ -43,8 +42,21 @@ func (t *ta) Route() string {
 	return t.url
 }
 
-func (t *ta) RouteHandler() picnicApi.HandlerFunc {
+func (s *ta) FormHandler() picnicApi.HandlerFunc {
 	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
-		return helpers.RenderString(w, 200, fmt.Sprintf("Found route \n%#v\n %#v\n", r, rc))
+		return helpers.RenderHTML(w, 200, "<h1>Hello Textarea.</h1>")
+	}
+}
+
+func (s *ta) SaveHandler() picnicApi.HandlerFunc {
+	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+		x:="Saved Data"
+		return helpers.RenderJSON(w, x,200)
+	}
+}
+
+func (s *ta) DeleteHandler() picnicApi.HandlerFunc {
+	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+		return helpers.RenderString(w, 200, "[\"Deleted Data\"]")
 	}
 }

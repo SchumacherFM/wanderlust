@@ -17,7 +17,7 @@
 package provisioners
 
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
+	"errors"
 	. "github.com/SchumacherFM/wanderlust/provisioners/api"
 	"github.com/SchumacherFM/wanderlust/provisioners/sitemap"
 	"github.com/SchumacherFM/wanderlust/provisioners/textarea"
@@ -25,15 +25,13 @@ import (
 
 var (
 	provisionerCollection = NewProvisioners()
-	ErrCollectionEmpty    = errgo.New("Provisioner Collection is empty")
+	ErrCollectionEmpty    = errors.New("Provisioner Collection is empty")
 )
 
 // initializes all the build-in provisioners, every custom provisioner will be added via build tag
 func init() {
-	sm := sitemap.GetProvisioner()
-	AddProvisioner(sm)
-	ta := textarea.GetProvisioner()
-	AddProvisioner(ta)
+	AddProvisioner(sitemap.GetProvisioner())
+	AddProvisioner(textarea.GetProvisioner())
 }
 
 func AddProvisioner(p *Provisioner) {

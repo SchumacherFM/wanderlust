@@ -26,6 +26,5 @@ import (
 )
 
 func init() {
-	gap := ga.GetProvisioner()
-	AddProvisioner(gap)
+	AddProvisioner(ga.GetProvisioner())
 }
