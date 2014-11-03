@@ -26,6 +26,7 @@ import (
 func GetProvisioner() *Provisioner {
 	t := &ta{
 		myRoute: "textarea",
+		Data:    &storage{},
 	}
 	p := NewProvisioner("Textarea", "fa-file-text-o", t)
 	return p
@@ -33,7 +34,10 @@ func GetProvisioner() *Provisioner {
 
 type (
 	ta struct {
-		myRoute      string
+		myRoute string
+		Data    *storage `json:"data"`
+	}
+	storage struct {
 		TextAreaData string
 	}
 )
@@ -44,7 +48,7 @@ func (t *ta) Route() string {
 
 func (t *ta) FormHandler() picnicApi.HandlerFunc {
 	rs := helpers.RandomString(10)
-	t.TextAreaData = `http://wwww.` + rs + `.com/page1.html
+	t.Data.TextAreaData = `http://wwww.` + rs + `.com/page1.html
 http://wwww.demosite.com/page2.html
 http://wwww.demosite.com/page3.html`
 
@@ -53,10 +57,11 @@ http://wwww.demosite.com/page3.html`
 	}
 }
 
+// https://restful-api-design.readthedocs.org/en/latest/methods.html#standard-methods
 func (t *ta) SaveHandler() picnicApi.HandlerFunc {
 	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
-		x := "Saved Data"
-		return helpers.RenderJSON(w, x, 200)
+		status := http.StatusOK
+		return helpers.RenderString(w, status, "")
 	}
 }
 

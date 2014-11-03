@@ -56,9 +56,13 @@ func (s *sm) FormHandler() picnicApi.HandlerFunc {
 	}
 }
 
+// https://restful-api-design.readthedocs.org/en/latest/methods.html#standard-methods
 func (s *sm) SaveHandler() picnicApi.HandlerFunc {
 	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
-		return helpers.RenderString(w, 200, "[\"Saved Data\"]")
+		// status 200 is ok, and
+		//		status := http.StatusBadRequest
+		status := http.StatusOK
+		return helpers.RenderString(w, status, "")
 	}
 }
 
