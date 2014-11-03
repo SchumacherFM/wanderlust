@@ -24,14 +24,6 @@ import (
 	"net/http"
 )
 
-// a provisioner can be:
-// ga (Google Analytics), pw (Piwik), sm (URL to sitemap.xml), url (any URL), json (our special JSON format)
-//provisionerApi := router.PathPrefix("/provisioners/").Subrouter()
-//provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")        // get account
-//provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("DELETE")     // delete account
-//provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}/save", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("PATCH") // save account data
-//provisionerApi.HandleFunc("/{provisioner}/{id:[0-9]+}/urls", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")   // retrieve all urls associated
-
 func (p *PicnicApp) initRoutesProvisioners(r *mux.Router) error {
 	sr := r.PathPrefix("/" + provisioners.GetRoutePathPrefix() + "/").Subrouter()
 	sr.HandleFunc("/", p.handler(availableProvisionersHandler, AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
@@ -41,7 +33,7 @@ func (p *PicnicApp) initRoutesProvisioners(r *mux.Router) error {
 		return err
 	}
 	for _, prov := range pc.Collection {
-		sr.HandleFunc("/"+prov.Api.Route(), p.handler(prov.Api.FormHandler(), AUTH_LEVEL_IGNORE)).Methods("GET")
+		sr.HandleFunc("/"+prov.Api.Route(), p.handler(prov.Api.FormHandler(), AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
 		sr.HandleFunc("/"+prov.Api.Route()+"/save", p.handler(prov.Api.SaveHandler(), AUTH_LEVEL_LOGIN)).Methods("POST")
 		sr.HandleFunc("/"+prov.Api.Route(), p.handler(prov.Api.DeleteHandler(), AUTH_LEVEL_LOGIN)).Methods("DELETE")
 	}

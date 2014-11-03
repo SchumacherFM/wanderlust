@@ -55,7 +55,7 @@ angular.module('Wanderlust')
           url: picnicUrls.provisioners + '{type:[a-z0-9]{3,20}}',
           controller: 'ProvisionerController',
           templateUrl: function (matchedParts) {
-            return picnicUrls.provisioners + (matchedParts.type || '');
+            return 'partials' + picnicUrls.provisioners + 'tpl/' + (matchedParts.type || '') + '.html';
           },
           data: {
             ncyBreadcrumbLabel: 'Provisioner / {{typeName}}'

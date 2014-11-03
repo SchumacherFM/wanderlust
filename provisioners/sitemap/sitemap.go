@@ -25,7 +25,8 @@ import (
 
 func GetProvisioner() *Provisioner {
 	sitemap := &sm{
-		url: "sitemap",
+		myRoute: "sitemap",
+		Data:    &storage{},
 	}
 	p := NewProvisioner("Sitemap", "fa-sitemap", sitemap)
 	return p
@@ -33,17 +34,25 @@ func GetProvisioner() *Provisioner {
 
 type (
 	sm struct {
-		url string
+		myRoute string
+		Data    *storage `json:"data"`
+	}
+
+	storage struct {
+		SiteMapUrl string
 	}
 )
 
 func (s *sm) Route() string {
-	return s.url
+	return s.myRoute
 }
 
 func (s *sm) FormHandler() picnicApi.HandlerFunc {
+	rs := helpers.RandomString(10)
+	s.Data.SiteMapUrl = "http://www." + rs + ".com/sitemap.xml"
+
 	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
-		return helpers.RenderString(w, 200, "<h1>Hello Sitemap</h1>")
+		return helpers.RenderJSON(w, s, 200)
 	}
 }
 

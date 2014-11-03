@@ -156,7 +156,7 @@ angular.module('Wanderlust')
           url: picnicUrls.provisioners + '{type:[a-z0-9]{3,20}}',
           controller: 'ProvisionerController',
           templateUrl: function (matchedParts) {
-            return picnicUrls.provisioners + (matchedParts.type || '');
+            return 'partials' + picnicUrls.provisioners + 'tpl/' + (matchedParts.type || '') + '.html';
           },
           data: {
             ncyBreadcrumbLabel: 'Provisioner / {{typeName}}'
@@ -704,43 +704,27 @@ angular
     '$scope',
     '$stateParams',
     'ProvisionerResource',
-    function ($scope, $stateParams, ProvisionerResource) {
+    'Alert',
+    function ($scope, $stateParams, ProvisionerResource, Alert) {
       var type = $stateParams.type || 'textarea';
       $scope.typeName = type;
 
       ProvisionerResource.get({prov: type}).$promise.then(
         function success(data) {
-          "use strict";
-          console.log('data success', data);
+          angular.forEach(data, function (value, key) {
+            // make sure we're not adding $resolved and $promise
+            if (!this[key] && (angular.isString(value) || angular.isNumber(value))) {
+              this[key] = value;
+              // addWatcher(key)
+            }
+          }, $scope);
         },
         function err(data) {
-          "use strict";
+          Alert.warning("Error in retrieving provisioner data. See console.log for more info.");
           console.log('data err', data);
         }
       );
-
-      //var formContent = [
-      //  {
-      //    label: "URL to sitemap.xml",
-      //    input: {
-      //      type: "text",
-      //      name: "sitemap1",
-      //      model: "sitemap",
-      //      pattern: /^http.+\.xml$/gi,
-      //      placeholder: "http://my-server.com/sitemap.xml"
-      //    },
-      //    helpBlock: "Please enter a valid sitemap URL.",
-      //    infoBlock: "Only the first 10 URLs will be parsed."
-      //  }
-      //];
-
-      $scope.sitemap = '';
-
-      $scope.provSave = function (e) {
-        console.log('save', $scope.sitemap, e);
-      };
-      $scope.validSitemap = /^http.+\.xml$/gi;
-
+      // @todo http://adamalbrecht.com/2013/10/30/auto-save-your-model-in-angular-js-with-watch-and-debounce/
     }
   ]);
 

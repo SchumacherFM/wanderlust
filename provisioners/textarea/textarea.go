@@ -24,38 +24,43 @@ import (
 )
 
 func GetProvisioner() *Provisioner {
-	textarea := &ta{
-		url: "textarea",
+	t := &ta{
+		myRoute: "textarea",
 	}
-	p := NewProvisioner("Textarea", "fa-file-text-o", textarea)
+	p := NewProvisioner("Textarea", "fa-file-text-o", t)
 	return p
 }
 
 type (
 	ta struct {
-		data string
-		url  string
+		myRoute      string
+		TextAreaData string
 	}
 )
 
 func (t *ta) Route() string {
-	return t.url
+	return t.myRoute
 }
 
-func (s *ta) FormHandler() picnicApi.HandlerFunc {
+func (t *ta) FormHandler() picnicApi.HandlerFunc {
+	rs := helpers.RandomString(10)
+	t.TextAreaData = `http://wwww.` + rs + `.com/page1.html
+http://wwww.demosite.com/page2.html
+http://wwww.demosite.com/page3.html`
+
 	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
-		return helpers.RenderHTML(w, 200, "<h1>Hello Textarea.</h1>")
+		return helpers.RenderJSON(w, t, 200)
 	}
 }
 
-func (s *ta) SaveHandler() picnicApi.HandlerFunc {
+func (t *ta) SaveHandler() picnicApi.HandlerFunc {
 	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 		x := "Saved Data"
 		return helpers.RenderJSON(w, x, 200)
 	}
 }
 
-func (s *ta) DeleteHandler() picnicApi.HandlerFunc {
+func (t *ta) DeleteHandler() picnicApi.HandlerFunc {
 	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 		return helpers.RenderString(w, 200, "[\"Deleted Data\"]")
 	}

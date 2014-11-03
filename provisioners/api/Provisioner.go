@@ -31,7 +31,8 @@ type (
 	ProvisionerApi interface {
 		// GetRoutes returns the endpoint of the route
 		Route() string
-		// FormHandler returns the bootstrap HTML for the <form> fields and also the saved data for the inputs
+		// FormHandler returns a JSON object with a key called data which contains a key/value object
+		// key is the form field name/id and value the value
 		FormHandler() HandlerFunc
 		// SaveHandler saves the POSTed data from the input fields into the rucksack
 		SaveHandler() HandlerFunc
