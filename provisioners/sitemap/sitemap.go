@@ -20,6 +20,7 @@ import (
 	"github.com/SchumacherFM/wanderlust/helpers"
 	picnicApi "github.com/SchumacherFM/wanderlust/picnic/api"
 	. "github.com/SchumacherFM/wanderlust/provisioners/api"
+	"github.com/SchumacherFM/wanderlust/rucksack"
 	"net/http"
 )
 
@@ -41,6 +42,11 @@ type (
 	storage struct {
 		SiteMapUrl string
 	}
+
+	// @todo urgent temp implementation. needs to be more global.
+	postData struct {
+		Key, Prov, Value string
+	}
 )
 
 func (s *sm) Route() string {
@@ -48,10 +54,15 @@ func (s *sm) Route() string {
 }
 
 func (s *sm) FormHandler() picnicApi.HandlerFunc {
-	rs := helpers.RandomString(10)
-	s.Data.SiteMapUrl = "http://www." + rs + ".com/sitemap.xml"
 
 	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+
+		// @todo also that App().Backpacker() is way tooooooo long
+		url, err := rc.App().Backpacker().FindOne(s.Route(), "SiteMapUrl")
+		if nil != err && rucksack.ErrBreadNotFound != err {
+			return err
+		}
+		s.Data.SiteMapUrl = string(url)
 		return helpers.RenderJSON(w, s, 200)
 	}
 }
@@ -61,7 +72,14 @@ func (s *sm) SaveHandler() picnicApi.HandlerFunc {
 	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 		// status 200 is ok, and
 		//		status := http.StatusBadRequest
-		// rc.App().Backpacker().Insert()
+
+		jsonData := &postData{}
+		err := helpers.DecodeJSON(r, jsonData)
+		if nil != err {
+			return err
+		}
+
+		rc.App().Backpacker().Insert(s.Route(), jsonData.Key, []byte(jsonData.Value))
 		status := http.StatusOK
 		return helpers.RenderString(w, status, "")
 	}
