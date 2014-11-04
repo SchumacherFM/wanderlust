@@ -18,6 +18,7 @@ package api
 
 import (
 	"github.com/SchumacherFM/wanderlust/helpers"
+	"github.com/SchumacherFM/wanderlust/rucksack"
 	"net/http"
 	"time"
 )
@@ -36,16 +37,16 @@ type (
 	}
 
 	PicnicAppIf interface {
-		GetSessionManager() SessionManagerIf
+		SessionManager() SessionManagerIf
 		Execute() error
-		GetListenAddress() string
+		Backpacker() rucksack.Backpacker
 	}
 
 	RequestContextIf interface {
-		GetApp() PicnicAppIf
+		App() PicnicAppIf
 		GetParamString(string) string
 		GetParamInt64(string) int64
-		GetUser() UserSessionIf
+		User() UserSessionIf
 	}
 
 	// UserSessionIf is special interface only used when requesting the session in a handler

@@ -61,6 +61,7 @@ func (s *sm) SaveHandler() picnicApi.HandlerFunc {
 	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 		// status 200 is ok, and
 		//		status := http.StatusBadRequest
+		// rc.App().Backpacker().Insert()
 		status := http.StatusOK
 		return helpers.RenderString(w, status, "")
 	}

@@ -40,7 +40,7 @@ func (p *PicnicApp) initRoutesAuth(r *mux.Router) error {
 }
 
 func sessionInfoHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) error {
-	return helpers.RenderFFJSON(w, newSessionInfo(rc.GetUser()), http.StatusOK)
+	return helpers.RenderFFJSON(w, newSessionInfo(rc.User()), http.StatusOK)
 }
 
 func loginHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) error {
@@ -61,7 +61,7 @@ func loginHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) e
 	}
 
 	// find user and login ...
-	u := NewUserModel(backpacker, lpd.UserName)
+	u := NewUserModel(rc.App().Backpacker(), lpd.UserName)
 	uFound, uErr := u.FindMe()
 	if nil != uErr {
 		return uErr
@@ -75,7 +75,7 @@ func loginHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) e
 		return errLogin
 	}
 
-	if err := rc.GetApp().GetSessionManager().WriteToken(w, u.GetUserName()); nil != err {
+	if err := rc.App().SessionManager().WriteToken(w, u.GetUserName()); nil != err {
 		return err
 	}
 
@@ -86,7 +86,7 @@ func loginHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) e
 
 func logoutHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 
-	if err := rc.GetApp().GetSessionManager().WriteToken(w, ""); err != nil {
+	if err := rc.App().SessionManager().WriteToken(w, ""); err != nil {
 		return err
 	}
 	// @todo use websocket to send message

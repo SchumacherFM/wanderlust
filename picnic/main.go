@@ -33,8 +33,7 @@ const (
 )
 
 var (
-	backpacker rucksack.Backpacker
-	logger     *log.Logger
+	logger *log.Logger
 )
 
 type PicnicApp struct {
@@ -44,16 +43,17 @@ type PicnicApp struct {
 	certFile      string
 	keyFile       string
 	httpRunning   sync.Once
+	backpacker    rucksack.Backpacker
 }
 
 // la = listen address, pd = pemDir, lo = logger
 func NewPicnicApp(la, pd string, lo *log.Logger, db rucksack.Backpacker) (*PicnicApp, error) {
 	var err error
-	backpacker = db
 	logger = lo
 	pa := &PicnicApp{
 		ListenAddress: la,
 		PemDir:        pd,
+		backpacker:    db,
 	}
 	pa.certFile, pa.keyFile, err = pa.generatePems()
 	if nil != err {
@@ -63,15 +63,19 @@ func NewPicnicApp(la, pd string, lo *log.Logger, db rucksack.Backpacker) (*Picni
 	if nil != err {
 		return nil, err
 	}
-	err = initUsers(backpacker)
+	err = initUsers(pa.backpacker)
 	if nil != err {
 		return nil, err
 	}
 	return pa, nil
 }
 
-func (p *PicnicApp) GetSessionManager() SessionManagerIf {
+func (p *PicnicApp) SessionManager() SessionManagerIf {
 	return p.session
+}
+
+func (p *PicnicApp) Backpacker() rucksack.Backpacker {
+	return p.backpacker
 }
 
 func (p *PicnicApp) getServer() *http.Server {

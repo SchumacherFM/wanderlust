@@ -45,7 +45,7 @@ func newRequestContext(app PicnicAppIf, r *http.Request, u UserSessionIf) *reque
 	return ctx
 }
 
-func (rc *requestContext) GetApp() PicnicAppIf {
+func (rc *requestContext) App() PicnicAppIf {
 	return rc.app
 }
 
@@ -66,7 +66,7 @@ func (rc *requestContext) GetParamInt64(name string) int64 {
 	return 0
 }
 
-func (rc *requestContext) GetUser() UserSessionIf {
+func (rc *requestContext) User() UserSessionIf {
 	return rc.user
 }
 
