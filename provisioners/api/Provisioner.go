@@ -20,8 +20,7 @@ package api
 
 import (
 	"github.com/SchumacherFM/wanderlust/helpers"
-	. "github.com/SchumacherFM/wanderlust/picnic/api"
-	"github.com/SchumacherFM/wanderlust/rucksack"
+	picnicApi "github.com/SchumacherFM/wanderlust/picnic/api"
 	"net/http"
 )
 
@@ -33,17 +32,17 @@ const (
 type (
 	// this methods will be used to query the provisioner instance and set values
 	ProvisionerApi interface {
-		// GetRoutes returns the endpoint of the route
+		// Route returns the endpoint of the route and is also abused as the database name
 		Route() string
 		// FormHandler returns a JSON object with a key called data which contains a key/value object
 		// key is the form field name/id and value the value
-		FormHandler() HandlerFunc
+		FormHandler() picnicApi.HandlerFunc
 		// SaveHandler saves the POSTed data from the input fields into the rucksack
-		SaveHandler() HandlerFunc
+		SaveHandler() picnicApi.HandlerFunc
 		// DeleteHandler removes data from the rucksack and clears everything out
-		DeleteHandler() HandlerFunc
+		//		DeleteHandler() HandlerFunc
 
-		// maybe more methods to add ...
+		IsValid(p *PostData) error
 	}
 
 	// Implements encoding/json.Marshaler interface
@@ -62,6 +61,10 @@ type (
 		Key   string `json:"key"`
 		Value string `json:"value"`
 	}
+
+	formData struct {
+		Data []string `json:"data"`
+	}
 )
 
 func NewProvisioner(n, i string, a ProvisionerApi) *Provisioner {
@@ -73,11 +76,46 @@ func NewProvisioner(n, i string, a ProvisionerApi) *Provisioner {
 	}
 }
 
-func SavePostData(r *http.Request, bp rucksack.Backpacker, dbName string) error {
-	p := &PostData{}
-	err := helpers.DecodeJSON(r, p)
-	if nil != err {
-		return err
+// FormGenerate prepares the JSON object for AngularJS to fill the input fields of partial
+// with its values. The input field names are hardcoded in the html partial as we won't to avoid
+// dynamic rendered forms ...
+func FormGenerate(dbName string, config []string) picnicApi.HandlerFunc {
+	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+		var jsonData = make([]string, 2*len(config))
+		var i = 0
+		for _, c := range config {
+			jsonData[i] = c
+			cVal, _ := rc.Backpacker().FindOne(dbName, c)
+			jsonData[i+1] = string(cVal)
+			i = i + 2
+		}
+		fd := &formData{
+			Data: jsonData,
+		}
+		return helpers.RenderJSON(w, fd, 200)
 	}
-	return bp.Insert(dbName, p.Key, []byte(p.Value))
+}
+
+func FormSave(p ProvisionerApi) picnicApi.HandlerFunc {
+	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+		status := http.StatusOK
+
+		pd := &PostData{}
+		err := helpers.DecodeJSON(r, pd)
+		if nil != err {
+			return err
+		}
+
+		if errV := p.IsValid(pd); nil != errV {
+			// hmmmm @todo
+			return errV
+		}
+
+		err = rc.Backpacker().Insert(p.Route(), pd.Key, []byte(pd.Value))
+		pd = nil
+		if nil != err {
+			status = http.StatusBadRequest
+		}
+		return helpers.RenderString(w, status, "")
+	}
 }

@@ -17,16 +17,14 @@
 package textarea
 
 import (
-	"github.com/SchumacherFM/wanderlust/helpers"
 	picnicApi "github.com/SchumacherFM/wanderlust/picnic/api"
 	. "github.com/SchumacherFM/wanderlust/provisioners/api"
-	"net/http"
 )
 
 func GetProvisioner() *Provisioner {
 	t := &ta{
 		myRoute: "textarea",
-		Data:    &storage{},
+		config:  []string{"TextArea"}, // used in the html input field names
 	}
 	p := NewProvisioner("Textarea", "fa-file-text-o", t)
 	return p
@@ -35,10 +33,7 @@ func GetProvisioner() *Provisioner {
 type (
 	ta struct {
 		myRoute string
-		Data    *storage `json:"data"`
-	}
-	storage struct {
-		TextAreaData string
+		config  []string
 	}
 )
 
@@ -47,26 +42,35 @@ func (t *ta) Route() string {
 }
 
 func (t *ta) FormHandler() picnicApi.HandlerFunc {
-	rs := helpers.RandomString(10)
-	t.Data.TextAreaData = `http://wwww.` + rs + `.com/page1.html
-http://wwww.demosite.com/page2.html
-http://wwww.demosite.com/page3.html`
+	return FormGenerate(t.Route(), t.config)
+}
 
-	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
-		return helpers.RenderJSON(w, t, 200)
-	}
+// use this instead of the the SaveHandler()
+func (t *ta) IsValid(p *PostData) error {
+	// @todo
+	return nil
 }
 
 // https://restful-api-design.readthedocs.org/en/latest/methods.html#standard-methods
 func (t *ta) SaveHandler() picnicApi.HandlerFunc {
-	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
-		status := http.StatusOK
-		return helpers.RenderString(w, status, "")
-	}
+	return FormSave(t)
 }
 
-func (t *ta) DeleteHandler() picnicApi.HandlerFunc {
-	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
-		return helpers.RenderString(w, 200, "[\"Deleted Data\"]")
-	}
-}
+//func (t *ta) FormHandler() picnicApi.HandlerFunc {
+//	rs := helpers.RandomString(10)
+//	t.Data.TextAreaData = `http://wwww.` + rs + `.com/page1.html
+//http://wwww.demosite.com/page2.html
+//http://wwww.demosite.com/page3.html`
+//
+//	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+//		return helpers.RenderJSON(w, t, 200)
+//	}
+//}
+//
+//// https://restful-api-design.readthedocs.org/en/latest/methods.html#standard-methods
+//func (t *ta) SaveHandler() picnicApi.HandlerFunc {
+//	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+//		status := http.StatusOK
+//		return helpers.RenderString(w, status, "")
+//	}
+//}

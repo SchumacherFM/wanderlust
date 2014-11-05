@@ -22455,7 +22455,7 @@ var ngControllerDirective = [function() {
 
 // ngCsp is not implemented as a proper directive any more, because we need it be processed while we
 // bootstrap the system (before $parse is instantiated), for this reason we just have
-// the csp.IsActive() fn that looks for ng-csp attribute anywhere in the current doc
+// the csp.isActive() fn that looks for ng-csp attribute anywhere in the current doc
 
 /**
  * @ngdoc directive

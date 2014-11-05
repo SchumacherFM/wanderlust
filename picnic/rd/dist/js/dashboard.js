@@ -37,6 +37,11 @@ angular
       gravatarServiceProvider.secure = true;
     }]);
 
+if (!Array.isArray) {
+  Array.isArray = function(arg) {
+    return Object.prototype.toString.call(arg) === '[object Array]';
+  };
+}
 /**
  * ErrorInterceptor will be applied in the routes.js file
  */
@@ -786,16 +791,22 @@ angular
           var $that = this;
           ProvisionerResource.get({prov: $that._type}).$promise.then(
             function success(response) {
-              if (!response.data) {
+              if (!response.data || !Array.isArray(response.data)) {
                 Alert.warning("Error in retrieving provisioner success data. See console.log for more info.");
                 return console.error('Provisioner success error', response);
               }
-              angular.forEach(response.data, function (value, inputFieldName) {
-                if (!this[inputFieldName]) {
-                  this[inputFieldName] = value;
-                  this.$watch(inputFieldName, $that._debounceUpdate(inputFieldName));
-                }
-              }, $that._scope);
+
+              // iterating over the slice from GoLang
+              var inputName='', inputValue='', i =0,dl = response.data.length;
+              for(i=0;i<dl;i=i+2){
+                  inputName = response.data[i];
+                  inputValue = response.data[i+1];
+                  if (!$that._scope[inputName]) {
+                    $that._scope[inputName] = inputValue;
+                    $that._scope.$watch(inputName, $that._debounceUpdate(inputName));
+                  }
+              }
+
             },
             function err(data) {
               Alert.warning("Error in retrieving provisioner data. See console.log for more info.");
