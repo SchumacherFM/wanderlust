@@ -39,13 +39,11 @@ type (
 		Data    *storage `json:"data"`
 	}
 
+	// define storage keys for global use and move that into api package
+	// so then no any handler func will be needed !?
 	storage struct {
-		SiteMapUrl string
-	}
-
-	// @todo urgent temp implementation. needs to be more global.
-	postData struct {
-		Key, Prov, Value string
+		SiteMapUrl1 string // that field name is the same as the html input field name in a partial
+		SiteMapUrl2 string
 	}
 )
 
@@ -57,30 +55,35 @@ func (s *sm) FormHandler() picnicApi.HandlerFunc {
 
 	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 
-		// @todo also that App().Backpacker() is way tooooooo long
-		url, err := rc.Backpacker().FindOne(s.Route(), "SiteMapUrl")
+		url, err := rc.Backpacker().FindOne(s.Route(), "SiteMapUrl1")
 		if nil != err && rucksack.ErrBreadNotFound != err {
 			return err
 		}
-		s.Data.SiteMapUrl = string(url)
+		s.Data.SiteMapUrl1 = string(url)
+
+		url2, err := rc.Backpacker().FindOne(s.Route(), "SiteMapUrl2")
+		if nil != err && rucksack.ErrBreadNotFound != err {
+			return err
+		}
+		s.Data.SiteMapUrl2 = string(url2)
+
 		return helpers.RenderJSON(w, s, 200)
 	}
 }
 
+// use this instead of the the SaveHandler()
+//func (s *sm) IsValid(p *PostData) bool {
+//
+//}
+
 // https://restful-api-design.readthedocs.org/en/latest/methods.html#standard-methods
 func (s *sm) SaveHandler() picnicApi.HandlerFunc {
 	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
-		// status 200 is ok, and
-		//		status := http.StatusBadRequest
-
-		jsonData := &postData{}
-		err := helpers.DecodeJSON(r, jsonData)
-		if nil != err {
-			return err
-		}
-
-		rc.Backpacker().Insert(s.Route(), jsonData.Key, []byte(jsonData.Value))
 		status := http.StatusOK
+		err := SavePostData(r, rc.Backpacker(), s.Route())
+		if nil != err {
+			status = http.StatusBadRequest
+		}
 		return helpers.RenderString(w, status, "")
 	}
 }

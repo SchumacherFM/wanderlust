@@ -19,7 +19,10 @@
 package api
 
 import (
+	"github.com/SchumacherFM/wanderlust/helpers"
 	. "github.com/SchumacherFM/wanderlust/picnic/api"
+	"github.com/SchumacherFM/wanderlust/rucksack"
+	"net/http"
 )
 
 const (
@@ -54,6 +57,11 @@ type (
 		// internal handler
 		Api ProvisionerApi
 	}
+
+	PostData struct {
+		Key   string `json:"key"`
+		Value string `json:"value"`
+	}
 )
 
 func NewProvisioner(n, i string, a ProvisionerApi) *Provisioner {
@@ -63,4 +71,13 @@ func NewProvisioner(n, i string, a ProvisionerApi) *Provisioner {
 		Icon: i,
 		Api:  a,
 	}
+}
+
+func SavePostData(r *http.Request, bp rucksack.Backpacker, dbName string) error {
+	p := &PostData{}
+	err := helpers.DecodeJSON(r, p)
+	if nil != err {
+		return err
+	}
+	return bp.Insert(dbName, p.Key, []byte(p.Value))
 }
