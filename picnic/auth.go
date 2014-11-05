@@ -74,7 +74,7 @@ func checkAuthLevel(l authLevel, u UserSessionIf) error {
 
 // lazily fetches the current session user
 // check also JWT
-func (p *PicnicApp) authenticate(r *http.Request, l authLevel) (UserSessionIf, error) {
+func (p *PicnicApp) authenticate(r *http.Request, l authLevel) (*userModel, error) {
 
 	if l == AUTH_LEVEL_IGNORE {
 		return nil, nil
@@ -84,10 +84,11 @@ func (p *PicnicApp) authenticate(r *http.Request, l authLevel) (UserSessionIf, e
 	if err != nil {
 		return nil, err
 	}
+
 	u := NewUserModel(p.backpacker, uid)
 	if "" == uid {
 		logger.Debug("p.authenticate: userID from token is empty")
-		return nil, checkAuthLevel(l, nil)
+		return u, checkAuthLevel(l, nil)
 	}
 	var f bool
 	f, err = u.FindMe()

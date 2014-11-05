@@ -58,7 +58,7 @@ func (s *sm) FormHandler() picnicApi.HandlerFunc {
 	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 
 		// @todo also that App().Backpacker() is way tooooooo long
-		url, err := rc.App().Backpacker().FindOne(s.Route(), "SiteMapUrl")
+		url, err := rc.Backpacker().FindOne(s.Route(), "SiteMapUrl")
 		if nil != err && rucksack.ErrBreadNotFound != err {
 			return err
 		}
@@ -79,7 +79,7 @@ func (s *sm) SaveHandler() picnicApi.HandlerFunc {
 			return err
 		}
 
-		rc.App().Backpacker().Insert(s.Route(), jsonData.Key, []byte(jsonData.Value))
+		rc.Backpacker().Insert(s.Route(), jsonData.Key, []byte(jsonData.Value))
 		status := http.StatusOK
 		return helpers.RenderString(w, status, "")
 	}

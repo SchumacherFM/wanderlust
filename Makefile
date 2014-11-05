@@ -55,3 +55,10 @@ goinstall:
 
 format:
 	${GOFMT} -w ${GOFILES}
+
+test:
+	go test -v ./helpers/
+	go test -v ./picnic/middleware/
+	go test -v ./picnic/
+	go test -v ./provisioners/api/
+	go test -v ./rucksack/

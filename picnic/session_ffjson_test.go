@@ -22,6 +22,8 @@ func (tu *testUser) SetAuthenticated(a bool) error             { return nil }
 func (tu *testUser) SetSessionExpiresIn(t time.Duration) error { return nil }
 func (tu *testUser) GetSessionExpiresIn() int                  { return 0 }
 func (tu *testUser) CheckPassword(p string) bool               { return true }
+func (tu *testUser) MarshalJSON() ([]byte, error)              { return nil, nil }
+func (tu *testUser) MarshalJSONBuf(buf *bytes.Buffer) error    { return nil }
 
 var expected = []byte(`{"email":"root@localhost.dev","isAdmin":true,"loggedIn":true,"name":"Joanna Gopher","userName":"gopher"}`)
 

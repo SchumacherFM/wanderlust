@@ -61,7 +61,7 @@ func loginHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) e
 	}
 
 	// find user and login ...
-	u := NewUserModel(rc.App().Backpacker(), lpd.UserName)
+	u := NewUserModel(rc.Backpacker(), lpd.UserName)
 	uFound, uErr := u.FindMe()
 	if nil != uErr {
 		return uErr
@@ -75,7 +75,7 @@ func loginHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) e
 		return errLogin
 	}
 
-	if err := rc.App().SessionManager().WriteToken(w, u.GetUserName()); nil != err {
+	if err := rc.SessionManager().WriteToken(w, u.GetUserName()); nil != err {
 		return err
 	}
 
@@ -86,7 +86,7 @@ func loginHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) e
 
 func logoutHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 
-	if err := rc.App().SessionManager().WriteToken(w, ""); err != nil {
+	if err := rc.SessionManager().WriteToken(w, ""); err != nil {
 		return err
 	}
 	// @todo use websocket to send message

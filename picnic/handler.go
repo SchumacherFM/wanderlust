@@ -41,7 +41,7 @@ func (p *PicnicApp) handler(h picnicApi.HandlerFunc, level authLevel) http.Handl
 			if err != nil {
 				return err
 			}
-			return h(newRequestContext(p, r, user), w, r)
+			return h(newRequestContext(p.session, r, user, p.backpacker), w, r)
 		}
 		p.handleError(w, r, doAuthentication())
 	}

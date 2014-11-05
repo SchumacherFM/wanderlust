@@ -19,6 +19,7 @@ package picnic
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
 	. "github.com/SchumacherFM/wanderlust/picnic/api"
+	"github.com/SchumacherFM/wanderlust/rucksack"
 	"net/http"
 	"strconv"
 )
@@ -28,25 +29,37 @@ type (
 	// request-specific requestContext
 	// contains the app config so we have access to all the objects we need
 	requestContext struct {
-		app  PicnicAppIf
+		sm   SessionManagerIf
 		vars map[string]string
 		user UserSessionIf
+		bp   rucksack.Backpacker
 	}
 )
 
+//SessionManager() SessionManagerIf
+//GetParamString(string) string
+//GetParamInt64(string) int64
+//User() UserSessionIf
+//Backpacker() rucksack.Backpacker
+
 // invoked in (p *PicnicApp) handler()
 // per request on context
-func newRequestContext(app PicnicAppIf, r *http.Request, u UserSessionIf) *requestContext {
+func newRequestContext(s SessionManagerIf, r *http.Request, u UserSessionIf, b rucksack.Backpacker) *requestContext {
 	ctx := &requestContext{
-		app:  app,
+		sm:   s,
 		vars: mux.Vars(r),
 		user: u,
+		bp:   b,
 	}
 	return ctx
 }
 
-func (rc *requestContext) App() PicnicAppIf {
-	return rc.app
+func (rc *requestContext) SessionManager() SessionManagerIf {
+	return rc.sm
+}
+
+func (rc *requestContext) Backpacker() rucksack.Backpacker {
+	return rc.bp
 }
 
 func (rc *requestContext) GetParamString(name string) string {

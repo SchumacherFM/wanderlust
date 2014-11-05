@@ -70,14 +70,6 @@ func NewPicnicApp(la, pd string, lo *log.Logger, db rucksack.Backpacker) (*Picni
 	return pa, nil
 }
 
-func (p *PicnicApp) SessionManager() SessionManagerIf {
-	return p.session
-}
-
-func (p *PicnicApp) Backpacker() rucksack.Backpacker {
-	return p.backpacker
-}
-
 func (p *PicnicApp) getServer() *http.Server {
 	s := &http.Server{
 		Addr:      p.GetListenAddress(),

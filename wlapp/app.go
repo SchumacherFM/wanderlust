@@ -86,7 +86,7 @@ func BootRucksack() {
 // starts the HTTP server for the picnic web interface and runs it in a goroutine
 func BootPicnic() {
 
-	picnicApp, err := picnic.NewPicnicApp(
+	app, err := picnic.NewPicnicApp(
 		CliContext.String("picnic-listen-address"),
 		CliContext.String("picnic-pem-dir"),
 		logger,
@@ -97,13 +97,13 @@ func BootPicnic() {
 		logger.Check(err)
 	}
 
-	if "" != picnicApp.GetListenAddress() { // don't start if empty
+	if "" != app.GetListenAddress() { // don't start if empty
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			logger.Check(picnicApp.Execute())
+			logger.Check(app.Execute())
 		}()
-		url := "https://" + picnicApp.GetListenAddress()
+		url := "https://" + app.GetListenAddress()
 		logger.Notice("Picnic Running %s", url)
 		if true == CliContext.Bool("browser") {
 			_, err := exec.Command("which", "open").Output()

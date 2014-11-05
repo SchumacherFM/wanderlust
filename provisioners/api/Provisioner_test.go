@@ -28,7 +28,17 @@ type testPapi struct {
 func (this *testPapi) Route() string {
 	return "TestRoute"
 }
-func (this *testPapi) RouteHandler() picnicApi.HandlerFunc {
+func (this *testPapi) FormHandler() picnicApi.HandlerFunc {
+	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+		return nil
+	}
+}
+func (this *testPapi) SaveHandler() picnicApi.HandlerFunc {
+	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+		return nil
+	}
+}
+func (this *testPapi) DeleteHandler() picnicApi.HandlerFunc {
 	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 		return nil
 	}

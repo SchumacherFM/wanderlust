@@ -37,16 +37,16 @@ type (
 	}
 
 	PicnicAppIf interface {
-		SessionManager() SessionManagerIf
+		GetListenAddress() string
 		Execute() error
-		Backpacker() rucksack.Backpacker
 	}
 
 	RequestContextIf interface {
-		App() PicnicAppIf
+		SessionManager() SessionManagerIf
 		GetParamString(string) string
 		GetParamInt64(string) int64
 		User() UserSessionIf
+		Backpacker() rucksack.Backpacker
 	}
 
 	// UserSessionIf is special interface only used when requesting the session in a handler
@@ -62,6 +62,7 @@ type (
 		SetSessionExpiresIn(time.Duration) error
 		GetSessionExpiresIn() int
 		CheckPassword(string) bool
+		helpers.FfjsonIf
 	}
 
 	UserGetterIf interface {
