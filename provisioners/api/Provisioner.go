@@ -15,6 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // this package acts also as an external api to create custom provisioners
+// and also to avoid import cycles
 package api
 
 import (
@@ -23,7 +24,7 @@ import (
 
 const (
 	// no slashes for this PrePath in the route
-	URL_PRE_ROUTE string = "provisioners"
+	UrlRoutePrefix string = "provisioners"
 )
 
 type (
@@ -58,7 +59,7 @@ type (
 func NewProvisioner(n, i string, a ProvisionerApi) *Provisioner {
 	return &Provisioner{
 		Name: n,
-		Url:  "/" + URL_PRE_ROUTE + "/" + a.Route(),
+		Url:  "/" + UrlRoutePrefix + "/" + a.Route(),
 		Icon: i,
 		Api:  a,
 	}

@@ -47,7 +47,7 @@ func (this *testPapi) DeleteHandler() picnicApi.HandlerFunc {
 func TestNewProvisioner(t *testing.T) {
 	papi := &testPapi{}
 	p := NewProvisioner("TestProv", "TestIcon", papi)
-	if e := "/" + URL_PRE_ROUTE + "/TestRoute"; p.Url != e {
+	if e := "/" + UrlRoutePrefix + "/TestRoute"; p.Url != e {
 		t.Errorf("\nActual\t\t%s\nExpected\t%s\n", p.Url, e)
 	}
 }

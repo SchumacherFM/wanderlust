@@ -43,5 +43,5 @@ func GetAvailable() (*Provisioners, error) {
 }
 
 func GetRoutePathPrefix() string {
-	return URL_PRE_ROUTE
+	return UrlRoutePrefix
 }
