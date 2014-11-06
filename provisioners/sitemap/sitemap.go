@@ -17,8 +17,10 @@
 package sitemap
 
 import (
+	"errors"
 	picnicApi "github.com/SchumacherFM/wanderlust/picnic/api"
 	. "github.com/SchumacherFM/wanderlust/provisioners/api"
+	"strings"
 )
 
 func GetProvisioner() *Provisioner {
@@ -37,6 +39,10 @@ type (
 	}
 )
 
+var (
+	ErrValidate = errors.New("Failed to validate the value")
+)
+
 func (s *sm) Route() string {
 	return s.myRoute
 }
@@ -47,7 +53,20 @@ func (s *sm) FormHandler() picnicApi.HandlerFunc {
 
 // use this instead of the the SaveHandler()
 func (s *sm) IsValid(p *PostData) error {
-	// @todo
+
+	if "" == p.Value {
+		return ErrValidate
+	}
+
+	val := strings.ToLower(p.Value)
+
+	if false == strings.HasPrefix(val, "http") {
+		return ErrValidate
+	}
+
+	if false == strings.HasSuffix(val, "/sitemap.xml") {
+		return ErrValidate
+	}
 	return nil
 }
 
