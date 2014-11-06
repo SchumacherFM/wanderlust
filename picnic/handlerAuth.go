@@ -22,7 +22,7 @@ package picnic
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
 	"github.com/SchumacherFM/wanderlust/helpers"
-	. "github.com/SchumacherFM/wanderlust/picnic/api"
+	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"net/http"
 )
 
@@ -39,13 +39,13 @@ func (p *PicnicApp) initRoutesAuth(r *mux.Router) error {
 	return nil
 }
 
-func sessionInfoHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+func sessionInfoHandler(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 	return helpers.RenderFFJSON(w, newSessionInfo(rc.User()), http.StatusOK)
 }
 
-func loginHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+func loginHandler(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 
-	var errLogin = httpError{
+	var errLogin = picnicApi.HttpError{
 		Status:      http.StatusBadRequest,
 		Description: "Invalid username or password",
 	}
@@ -84,7 +84,7 @@ func loginHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) e
 	return helpers.RenderFFJSON(w, newSessionInfo(u), http.StatusOK)
 }
 
-func logoutHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+func logoutHandler(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 
 	if err := rc.SessionManager().WriteToken(w, ""); err != nil {
 		return err

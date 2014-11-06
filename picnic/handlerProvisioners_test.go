@@ -18,7 +18,7 @@ package picnic
 
 import (
 	"bytes"
-	. "github.com/SchumacherFM/wanderlust/picnic/api"
+	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"github.com/SchumacherFM/wanderlust/provisioners"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 	"net/http"
@@ -29,11 +29,11 @@ import (
 type testRequestContext struct {
 }
 
-func (rc *testRequestContext) SessionManager() SessionManagerIf { return nil }
-func (rc *testRequestContext) Backpacker() rucksack.Backpacker  { return nil }
-func (rc *testRequestContext) GetParamString(s string) string   { return s }
-func (rc *testRequestContext) GetParamInt64(s string) int64     { return 0 }
-func (rc *testRequestContext) User() UserSessionIf {
+func (rc *testRequestContext) SessionManager() picnicApi.SessionManagerIf { return nil }
+func (rc *testRequestContext) Backpacker() rucksack.Backpacker            { return nil }
+func (rc *testRequestContext) GetParamString(s string) string             { return s }
+func (rc *testRequestContext) GetParamInt64(s string) int64               { return 0 }
+func (rc *testRequestContext) User() picnicApi.UserSessionIf {
 	um := NewUserModel(nil, "testUser")
 	return um
 }

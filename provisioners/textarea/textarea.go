@@ -17,8 +17,10 @@
 package textarea
 
 import (
-	picnicApi "github.com/SchumacherFM/wanderlust/picnic/api"
+	"errors"
+	"github.com/SchumacherFM/wanderlust/picnicApi"
 	. "github.com/SchumacherFM/wanderlust/provisioners/api"
+	"strings"
 )
 
 func GetProvisioner() *Provisioner {
@@ -37,6 +39,11 @@ type (
 	}
 )
 
+var (
+	ErrValidate    = errors.New("Failed to validate the value")
+	ErrTooManyURLs = errors.New("Too many URLs detected! Maximum is 20.")
+)
+
 func (t *ta) Route() string {
 	return t.myRoute
 }
@@ -45,32 +52,32 @@ func (t *ta) FormHandler() picnicApi.HandlerFunc {
 	return FormGenerate(t.Route(), t.config)
 }
 
-// use this instead of the the SaveHandler()
 func (t *ta) IsValid(p *PostData) error {
-	// @todo
+	if "" == p.Value {
+		return nil
+	}
+
+	valueSlice := strings.Split(strings.TrimSpace(p.Value), "\n")
+	if len(valueSlice) > 20 {
+		return ErrTooManyURLs
+	}
+
+	for _, v := range valueSlice {
+		vl := strings.ToLower(v)
+
+		if false == strings.HasPrefix(vl, "http") {
+			return ErrValidate
+		}
+	}
+
 	return nil
+}
+
+func valueModifier(pd *PostData) []byte {
+	return []byte(strings.TrimSpace(pd.Value))
 }
 
 // https://restful-api-design.readthedocs.org/en/latest/methods.html#standard-methods
 func (t *ta) SaveHandler() picnicApi.HandlerFunc {
-	return FormSave(t)
+	return FormSave(t, valueModifier)
 }
-
-//func (t *ta) FormHandler() picnicApi.HandlerFunc {
-//	rs := helpers.RandomString(10)
-//	t.Data.TextAreaData = `http://wwww.` + rs + `.com/page1.html
-//http://wwww.demosite.com/page2.html
-//http://wwww.demosite.com/page3.html`
-//
-//	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
-//		return helpers.RenderJSON(w, t, 200)
-//	}
-//}
-//
-//// https://restful-api-design.readthedocs.org/en/latest/methods.html#standard-methods
-//func (t *ta) SaveHandler() picnicApi.HandlerFunc {
-//	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
-//		status := http.StatusOK
-//		return helpers.RenderString(w, status, "")
-//	}
-//}

@@ -19,7 +19,7 @@ package picnic
 import (
 	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/helpers"
-	. "github.com/SchumacherFM/wanderlust/picnic/api"
+	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 	"net/http"
 	"sync"
@@ -39,7 +39,7 @@ var (
 type PicnicApp struct {
 	ListenAddress string
 	PemDir        string
-	session       SessionManagerIf
+	session       picnicApi.SessionManagerIf
 	certFile      string
 	keyFile       string
 	httpRunning   sync.Once

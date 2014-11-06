@@ -18,7 +18,7 @@ package sitemap
 
 import (
 	"errors"
-	picnicApi "github.com/SchumacherFM/wanderlust/picnic/api"
+	"github.com/SchumacherFM/wanderlust/picnicApi"
 	. "github.com/SchumacherFM/wanderlust/provisioners/api"
 	"strings"
 )
@@ -54,11 +54,13 @@ func (s *sm) FormHandler() picnicApi.HandlerFunc {
 // use this instead of the the SaveHandler()
 func (s *sm) IsValid(p *PostData) error {
 
+	return ErrValidate
+
 	if "" == p.Value {
-		return ErrValidate
+		return nil
 	}
 
-	val := strings.ToLower(p.Value)
+	val := strings.ToLower(strings.TrimSpace(p.Value))
 
 	if false == strings.HasPrefix(val, "http") {
 		return ErrValidate
@@ -70,7 +72,11 @@ func (s *sm) IsValid(p *PostData) error {
 	return nil
 }
 
+func valueModifier(pd *PostData) []byte {
+	return []byte(strings.TrimSpace(pd.Value))
+}
+
 // https://restful-api-design.readthedocs.org/en/latest/methods.html#standard-methods
 func (s *sm) SaveHandler() picnicApi.HandlerFunc {
-	return FormSave(s)
+	return FormSave(s, valueModifier)
 }

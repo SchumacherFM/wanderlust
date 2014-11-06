@@ -17,7 +17,7 @@
 package picnic
 
 import (
-	. "github.com/SchumacherFM/wanderlust/picnic/api"
+	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"net/http"
 )
 
@@ -31,13 +31,13 @@ const (
 	AUTH_LEVEL_ADMIN                           // admin required, 401 if no user, 403 if not admin
 )
 
-func checkAuthLevel(l authLevel, u UserSessionIf) error {
+func checkAuthLevel(l authLevel, u picnicApi.UserSessionIf) error {
 	var (
-		errLoginRequired = httpError{
+		errLoginRequired = picnicApi.HttpError{
 			Status:      http.StatusUnauthorized,
 			Description: "You must be logged in!",
 		}
-		errWaitingForLogin = httpError{
+		errWaitingForLogin = picnicApi.HttpError{
 			Status:      http.StatusPreconditionFailed,
 			Description: "Waiting for login ...",
 		}
@@ -63,7 +63,7 @@ func checkAuthLevel(l authLevel, u UserSessionIf) error {
 			return errLoginRequired
 		}
 		if false == u.IsAdministrator() {
-			return httpError{
+			return picnicApi.HttpError{
 				Status:      http.StatusForbidden,
 				Description: "You must be an admin!",
 			}

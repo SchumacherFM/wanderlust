@@ -14,32 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package picnic
+package picnicApi
 
-import (
-	"github.com/SchumacherFM/wanderlust/picnicApi"
-)
+import "net/http"
 
-// Basic user session info
-type SessionInfo struct {
-	UserName string
-	Name     string
-	Email    string
-	IsAdmin  bool
-	LoggedIn bool
+type HttpError struct {
+	Status      int
+	Description string
 }
 
-// newSessionInfo() is used in handlers login, logout, getSessionInfo and signup
-func newSessionInfo(u picnicApi.UserSessionIf) *SessionInfo {
-	if nil == u || false == u.IsValidForSession() {
-		return &SessionInfo{}
+func (h HttpError) Error() string {
+	if h.Description == "" {
+		return http.StatusText(h.Status)
 	}
-
-	return &SessionInfo{
-		UserName: u.GetUserName(),
-		Name:     u.GetName(),
-		Email:    u.GetEmail(),
-		IsAdmin:  u.IsAdministrator(),
-		LoggedIn: true,
-	}
+	return h.Description
 }

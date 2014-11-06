@@ -18,7 +18,7 @@ package picnic
 
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
-	. "github.com/SchumacherFM/wanderlust/picnic/api"
+	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 	"net/http"
 	"strconv"
@@ -29,9 +29,9 @@ type (
 	// request-specific requestContext
 	// contains the app config so we have access to all the objects we need
 	requestContext struct {
-		sm   SessionManagerIf
+		sm   picnicApi.SessionManagerIf
 		vars map[string]string
-		user UserSessionIf
+		user picnicApi.UserSessionIf
 		bp   rucksack.Backpacker
 	}
 )
@@ -44,7 +44,7 @@ type (
 
 // invoked in (p *PicnicApp) handler()
 // per request on context
-func newRequestContext(s SessionManagerIf, r *http.Request, u UserSessionIf, b rucksack.Backpacker) *requestContext {
+func newRequestContext(s picnicApi.SessionManagerIf, r *http.Request, u picnicApi.UserSessionIf, b rucksack.Backpacker) *requestContext {
 	ctx := &requestContext{
 		sm:   s,
 		vars: mux.Vars(r),
@@ -54,7 +54,7 @@ func newRequestContext(s SessionManagerIf, r *http.Request, u UserSessionIf, b r
 	return ctx
 }
 
-func (rc *requestContext) SessionManager() SessionManagerIf {
+func (rc *requestContext) SessionManager() picnicApi.SessionManagerIf {
 	return rc.sm
 }
 
@@ -79,7 +79,7 @@ func (rc *requestContext) GetParamInt64(name string) int64 {
 	return 0
 }
 
-func (rc *requestContext) User() UserSessionIf {
+func (rc *requestContext) User() picnicApi.UserSessionIf {
 	return rc.user
 }
 

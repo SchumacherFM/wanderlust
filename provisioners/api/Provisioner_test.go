@@ -38,10 +38,8 @@ func (this *testPapi) SaveHandler() picnicApi.HandlerFunc {
 		return nil
 	}
 }
-func (this *testPapi) DeleteHandler() picnicApi.HandlerFunc {
-	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
-		return nil
-	}
+func (this *testPapi) IsValid(p *PostData) error {
+	return nil
 }
 
 func TestNewProvisioner(t *testing.T) {

@@ -19,7 +19,7 @@ package picnic
 import (
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
 	"github.com/SchumacherFM/wanderlust/helpers"
-	. "github.com/SchumacherFM/wanderlust/picnic/api"
+	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"github.com/SchumacherFM/wanderlust/provisioners"
 	"net/http"
 )
@@ -40,10 +40,10 @@ func (p *PicnicApp) initRoutesProvisioners(r *mux.Router) error {
 	return nil
 }
 
-func availableProvisionersHandler(rc RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+func availableProvisionersHandler(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 	p, err := provisioners.GetAvailable()
 	if nil != err {
-		return httpError{
+		return picnicApi.HttpError{
 			Status:      http.StatusNotFound,
 			Description: "",
 		}

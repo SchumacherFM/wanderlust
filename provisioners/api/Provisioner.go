@@ -20,7 +20,7 @@ package api
 
 import (
 	"github.com/SchumacherFM/wanderlust/helpers"
-	picnicApi "github.com/SchumacherFM/wanderlust/picnic/api"
+	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"net/http"
 )
 
@@ -62,6 +62,9 @@ type (
 		Value string `json:"value"`
 	}
 
+	// modifier func which returns the value for saving in the rucksack
+	ValueCallBack func(pd *PostData) []byte
+
 	formData struct {
 		Data []string `json:"data"`
 	}
@@ -96,22 +99,29 @@ func FormGenerate(dbName string, config []string) picnicApi.HandlerFunc {
 	}
 }
 
-func FormSave(p ProvisionerApi) picnicApi.HandlerFunc {
+func FormSave(p ProvisionerApi, cb ValueCallBack) picnicApi.HandlerFunc {
 	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
 		status := http.StatusOK
 
 		pd := &PostData{}
 		err := helpers.DecodeJSON(r, pd)
 		if nil != err {
-			return err
+			he := &picnicApi.HttpError{
+				Status:      http.StatusBadRequest,
+				Description: err.Error(),
+			}
+			return he
 		}
 
 		if errV := p.IsValid(pd); nil != errV {
-			// hmmmm @todo
-			return errV
+			he := &picnicApi.HttpError{
+				Status:      http.StatusExpectationFailed,
+				Description: errV.Error(),
+			}
+			return he
 		}
 
-		err = rc.Backpacker().Insert(p.Route(), pd.Key, []byte(pd.Value))
+		err = rc.Backpacker().Insert(p.Route(), pd.Key, cb(pd))
 		pd = nil
 		if nil != err {
 			status = http.StatusBadRequest

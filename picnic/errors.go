@@ -19,20 +19,9 @@ package picnic
 import (
 	"fmt"
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
+	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"net/http"
 )
-
-type httpError struct {
-	Status      int
-	Description string
-}
-
-func (h httpError) Error() string {
-	if h.Description == "" {
-		return http.StatusText(h.Status)
-	}
-	return h.Description
-}
 
 // final method in the handler chain
 func (p *PicnicApp) handleError(w http.ResponseWriter, r *http.Request, err error) {
@@ -40,7 +29,11 @@ func (p *PicnicApp) handleError(w http.ResponseWriter, r *http.Request, err erro
 		return
 	}
 
-	if err, ok := err.(httpError); ok {
+	if err, ok := err.(*picnicApi.HttpError); ok {
+		http.Error(w, err.Error(), err.Status)
+		return
+	}
+	if err, ok := err.(picnicApi.HttpError); ok {
 		http.Error(w, err.Error(), err.Status)
 		return
 	}

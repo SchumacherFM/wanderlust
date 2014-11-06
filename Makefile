@@ -57,8 +57,10 @@ format:
 	${GOFMT} -w ${GOFILES}
 
 test:
-	go test -v ./helpers/
-	go test -v ./picnic/middleware/
-	go test -v ./picnic/
-	go test -v ./provisioners/api/
-	go test -v ./rucksack/
+	go test -v --bench=. ./helpers/
+	go test -v --bench=. ./picnic/middleware/
+	go test -v --bench=. ./picnic/
+	go test -v --bench=. ./provisioners/api/
+	go test -v --bench=. ./rucksack/
+	go test -v --bench=. ./provisioners/sitemap/
+	go test -v --bench=. ./provisioners/textarea/

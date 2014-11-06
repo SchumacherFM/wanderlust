@@ -25,8 +25,8 @@ import (
 	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/negroni"
 	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
 	"github.com/SchumacherFM/wanderlust/helpers"
-	picnicApi "github.com/SchumacherFM/wanderlust/picnic/api"
 	"github.com/SchumacherFM/wanderlust/picnic/middleware"
+	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"net/http"
 )
 

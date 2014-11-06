@@ -14,10 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package sitemap
+package textarea
 
 import (
 	"github.com/SchumacherFM/wanderlust/provisioners/api"
+	"strings"
 	"testing"
 )
 
@@ -31,22 +32,28 @@ func TestIsValid(t *testing.T) {
 		t.Errorf("%#v is valid 31!", pd)
 	}
 
-	pd.Value = " http://www.golang.org/sitemap.xml"
+	pd.Value = " http://www.golang.org/tour"
 	err = p.Api.IsValid(pd) // must succeed
 	if nil != err {
 		t.Errorf("%#v is not valid 37!", pd)
 	}
 
-	pd.Value = "http://www.golang.org/siteap.xml"
+	pd.Value = "htp://www.golang.org/siteap.xml"
 	err = p.Api.IsValid(pd) // must fail
 	if nil == err {
 		t.Errorf("%#v is not valid 43!", pd)
 	}
 
-	pd.Value = "hTtp://www.golang.org/siteMap.xml"
+	pd.Value = "hTtp://www.golang.org/siteMap.xml\nhttps://www.google.com/search?q=golang\n"
 	err = p.Api.IsValid(pd) // must succeed
 	if nil != err {
 		t.Errorf("%#v must be valid 49!", pd)
+	}
+
+	pd.Value = strings.Repeat("hTtp://www.golang.org/siteMap.xml\n", 21)
+	err = p.Api.IsValid(pd) // must fail
+	if nil == err {
+		t.Errorf("%#v must invalid 57!", pd)
 	}
 
 }
