@@ -748,28 +748,26 @@ angular
           return this;
         },
         _timeout: null,
+        _timeoutSave: null,
         _saveUpdates: function (inputFieldName) {
           var $that = this;
           return function () {
-            //console.log($that._scope.provForm);
             if ($that._scope.provForm.$valid) {
-              Alert.info("Saved " + inputFieldName);
-              //console.log("Saving updates to item #", $that._scope[inputFieldName]);
               ProvisionerResource.save({
                 prov: $that._type,
                 key: inputFieldName,
                 value: $that._scope[inputFieldName]
-              }, function (data) {
-                console.log('savesuccess', data);
+              }, function () {
+                $that._scope[inputFieldName + 'Saved'] = true;
+                // remove the green tick that it has successful saved
+                if ($that._timeoutSave) {
+                  $timeout.cancel($that._timeoutSave);
+                }
+                $that._timeoutSave = $timeout(function removeGreenTick() {
+                  $that._scope[inputFieldName + 'Saved'] = false;
+                }, 2300);
+
               });
-              //  .$promise.then(
-              //  function saveSuccess(data) {
-              //    console.log('savesuccess', data);
-              //  },
-              //  function saveError(data) {
-              //    console.log('saveerrror', data);
-              //  }
-              //);
             }
             // invalid input data will be indicated via form input error class
             //Alert.warning("Data is not valid for: " + inputFieldName);
@@ -803,6 +801,7 @@ angular
                 inputValue = response.data[i + 1];
                 if (!$that._scope[inputName]) {
                   $that._scope[inputName] = inputValue;
+                  $that._scope[inputName + 'Saved'] = false;
                   $that._scope.$watch(inputName, $that._debounceUpdate(inputName));
                 }
               }

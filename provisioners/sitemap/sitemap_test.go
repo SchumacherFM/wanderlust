@@ -24,31 +24,26 @@ import (
 func TestIsValid(t *testing.T) {
 	p := GetProvisioner()
 
+	expected := map[string]error{
+		"": nil,
+		" http://www.golang.org/sitemap.xml":                                   nil,
+		"http://www.amazon.de/sitemap-manual-index.xml":                        nil,
+		"http://www.amazon.de/sitemaps.f9053414d236e84.SitemapIndex_1.xml.gz":  nil,
+		"htstp://www.amazon.de/sitemaps.f3051414d236e84.SitemapIndex_2.xml.gz": ErrValidate,
+		"http://www.amazon.de/sitemaps.f30v3414d236e84.SitemapIndex_3.html":    ErrValidate,
+		"http://www.amazon.de/sitemaps.f30g3414d236e84.SitemapIndex_4.html.gz": ErrValidate,
+		"http://www.amazon.de/sitemaps.f30g3414d236e84.SitemapIndex_4xml.gz":   ErrValidate,
+	}
+
 	pd := &provisionerApi.PostData{}
+	for url, eErr := range expected {
+		pd.Value = url
+		actual := p.Api.IsValid(pd)
+		if eErr != actual {
+			t.Errorf("\nExpected: %#v\nActual:\t%#v\nURL: %s\n", eErr, actual, url)
+		}
 
-	err := p.Api.IsValid(pd) // must succeed
-	if nil != err {
-		t.Errorf("%#v is valid 31!", pd)
 	}
-
-	pd.Value = " http://www.golang.org/sitemap.xml"
-	err = p.Api.IsValid(pd) // must succeed
-	if nil != err {
-		t.Errorf("%#v is not valid 37!", pd)
-	}
-
-	pd.Value = "http://www.golang.org/siteap.xml"
-	err = p.Api.IsValid(pd) // must fail
-	if nil == err {
-		t.Errorf("%#v is not valid 43!", pd)
-	}
-
-	pd.Value = "hTtp://www.golang.org/siteMap.xml"
-	err = p.Api.IsValid(pd) // must succeed
-	if nil != err {
-		t.Errorf("%#v must be valid 49!", pd)
-	}
-
 }
 
 // MBA Mid 2012 1.8 GHz Intel Core i5

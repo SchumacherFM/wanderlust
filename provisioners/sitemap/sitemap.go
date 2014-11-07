@@ -34,13 +34,15 @@ func GetProvisioner() *provisionerApi.Config {
 
 type (
 	sm struct {
+		// myRoute is the public name for the resource access
 		myRoute string
-		config  []string
+		// config contains all the input field names which are use in the HTML partials
+		config []string
 	}
 )
 
 var (
-	ErrValidate = errors.New("Failed to validate the value")
+	ErrValidate = errors.New("Invalid sitemap URL")
 )
 
 func (s *sm) Route() string {
@@ -64,7 +66,7 @@ func (s *sm) IsValid(p *provisionerApi.PostData) error {
 		return ErrValidate
 	}
 
-	if false == strings.HasSuffix(val, "/sitemap.xml") {
+	if false == strings.HasSuffix(val, ".xml") && false == strings.HasSuffix(val, ".xml.gz") {
 		return ErrValidate
 	}
 	return nil

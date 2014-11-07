@@ -26,7 +26,7 @@ import (
 func GetProvisioner() *provisionerApi.Config {
 	t := &ta{
 		myRoute: "textarea",
-		config:  []string{"TextArea"}, // used in the html input field names
+		config:  []string{"TextAreaData"},
 	}
 	p := provisionerApi.NewProvisioner("Textarea", "fa-file-text-o", t)
 	return p
@@ -34,8 +34,10 @@ func GetProvisioner() *provisionerApi.Config {
 
 type (
 	ta struct {
+		// myRoute is the public name for the resource access
 		myRoute string
-		config  []string
+		// config contains all the input field names which are use in the HTML partials
+		config []string
 	}
 )
 

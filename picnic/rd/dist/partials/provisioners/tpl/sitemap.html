@@ -1,42 +1,34 @@
 <div class="row">
   <div class="col-lg-12">
-    <form name="provForm" class="form-horizontal" role="form">
 
-      <div class="form-group"
-           data-ng-class="{'has-error':provForm.SiteMapUrl1.$error.pattern}">
-        <label class="col-sm-2 control-label" for="data-input-field1">1. URL to sitemap.xml</label>
+    <p>Only the first 20 URLs in each sitemap.xml will be parsed and added to the queue.</p>
 
-        <div class="col-sm-10">
-          <input name="SiteMapUrl1" class="form-control"
-                 data-ng-model="SiteMapUrl1"
-                 data-ng-pattern="/^http.+\.xml$/i"
-                 id="data-input-field1"
-                 placeholder="http://my-server.com/sitemap.xml">
+    <form name="provForm" role="form">
 
-          <p data-ng-show="provForm.sitemap1.$error.pattern" class="help-block">Please enter a valid sitemap
-            URL.</p>
-
-          <p class="help-block">Only the first 10 URLs will be parsed.</p>
-        </div>
+      <div class="form-group has-feedback" data-ng-class="{'has-error':provForm.SiteMapUrl1.$error.pattern,'has-success':SiteMapUrl1Saved}">
+        <label class="control-label" for="data-input-field1">First URL to sitemap.xml</label>
+        <input name="SiteMapUrl1" class="form-control"
+               data-ng-model="SiteMapUrl1"
+               data-ng-pattern="/^http.+\.xml(\.gz)?$/i"
+               id="data-input-field1"
+               placeholder="http://my-server.com/sitemap.xml">
+        <span class="glyphicon glyphicon-ok form-control-feedback" data-ng-show="SiteMapUrl1Saved"></span>
+        <span data-ng-show="provForm.SiteMapUrl1.$error.pattern" class="help-block">Please enter a valid sitemap
+                URL.</span>
       </div>
 
-      <div class="form-group"
-           data-ng-class="{'has-error':provForm.SiteMapUrl2.$error.pattern}">
-        <label class="col-sm-2 control-label" for="data-input-field2">2. URL to sitemap.xml</label>
-
-        <div class="col-sm-10">
-          <input name="SiteMapUrl2" class="form-control"
-                 data-ng-model="SiteMapUrl2"
-                 data-ng-pattern="/^http.+\.xml$/i"
-                 id="data-input-field2"
-                 placeholder="http://my-server.com/sitemap.xml">
-
-          <p data-ng-show="provForm.sitemap1.$error.pattern" class="help-block">Please enter a valid sitemap
-            URL.</p>
-
-          <p class="help-block">Only the first 10 URLs will be parsed.</p>
-        </div>
+      <div class="form-group has-feedback" data-ng-class="{'has-error':provForm.SiteMapUrl2.$error.pattern,'has-success':SiteMapUrl2Saved}">
+        <label class="control-label" for="data-input-field2">Second URL to sitemap.xml</label>
+        <input name="SiteMapUrl2" class="form-control"
+               data-ng-model="SiteMapUrl2"
+               data-ng-pattern="/^http.+\.xml$/i"
+               id="data-input-field2"
+               placeholder="http://my-server.com/sitemap.xml">
+        <span class="glyphicon glyphicon-ok form-control-feedback" data-ng-show="SiteMapUrl2Saved"></span>
+        <span data-ng-show="provForm.SiteMapUrl2.$error.pattern" class="help-block">Please enter a valid sitemap
+                URL.</span>
       </div>
+
 
     </form>
   </div>
