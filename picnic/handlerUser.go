@@ -38,7 +38,7 @@ func (p *PicnicApp) initRoutesUsers(r *mux.Router) error {
 	return nil
 }
 
-func userCollectionHandler(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+func userCollectionHandler(rc picnicApi.Context, w http.ResponseWriter, r *http.Request) error {
 	uc := NewUserModelCollection(rc.Backpacker())
 	err := uc.FindAllUsers()
 	if nil != err {

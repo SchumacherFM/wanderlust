@@ -29,14 +29,14 @@ type (
 	// request-specific requestContext
 	// contains the app config so we have access to all the objects we need
 	requestContext struct {
-		sm   picnicApi.SessionManagerIf
+		sm   picnicApi.SessionManager
 		vars map[string]string
 		user picnicApi.UserSessionIf
 		bp   rucksack.Backpacker
 	}
 )
 
-//SessionManager() SessionManagerIf
+//SessionManager() SessionManager
 //GetParamString(string) string
 //GetParamInt64(string) int64
 //User() UserSessionIf
@@ -44,7 +44,7 @@ type (
 
 // invoked in (p *PicnicApp) handler()
 // per request on context
-func newRequestContext(s picnicApi.SessionManagerIf, r *http.Request, u picnicApi.UserSessionIf, b rucksack.Backpacker) *requestContext {
+func newRequestContext(s picnicApi.SessionManager, r *http.Request, u picnicApi.UserSessionIf, b rucksack.Backpacker) *requestContext {
 	ctx := &requestContext{
 		sm:   s,
 		vars: mux.Vars(r),
@@ -54,7 +54,7 @@ func newRequestContext(s picnicApi.SessionManagerIf, r *http.Request, u picnicAp
 	return ctx
 }
 
-func (rc *requestContext) SessionManager() picnicApi.SessionManagerIf {
+func (rc *requestContext) SessionManager() picnicApi.SessionManager {
 	return rc.sm
 }
 

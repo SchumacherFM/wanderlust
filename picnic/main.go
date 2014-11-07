@@ -39,7 +39,7 @@ var (
 type PicnicApp struct {
 	ListenAddress string
 	PemDir        string
-	session       picnicApi.SessionManagerIf
+	session       picnicApi.SessionManager
 	certFile      string
 	keyFile       string
 	httpRunning   sync.Once

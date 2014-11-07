@@ -54,8 +54,6 @@ func (s *sm) FormHandler() picnicApi.HandlerFunc {
 // use this instead of the the SaveHandler()
 func (s *sm) IsValid(p *PostData) error {
 
-	return ErrValidate
-
 	if "" == p.Value {
 		return nil
 	}

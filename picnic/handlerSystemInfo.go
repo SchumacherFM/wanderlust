@@ -37,7 +37,7 @@ func (p *PicnicApp) initRoutesSystemInfo(r *mux.Router) error {
 	return nil
 }
 
-func systemInfoHandler(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+func systemInfoHandler(rc picnicApi.Context, w http.ResponseWriter, r *http.Request) error {
 	d := newSystemInfo()
 	d.SessionExpires = rc.User().GetSessionExpiresIn()
 	return helpers.RenderFFJSON(w, d, http.StatusOK)

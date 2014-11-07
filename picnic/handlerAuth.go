@@ -39,11 +39,11 @@ func (p *PicnicApp) initRoutesAuth(r *mux.Router) error {
 	return nil
 }
 
-func sessionInfoHandler(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+func sessionInfoHandler(rc picnicApi.Context, w http.ResponseWriter, r *http.Request) error {
 	return helpers.RenderFFJSON(w, newSessionInfo(rc.User()), http.StatusOK)
 }
 
-func loginHandler(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+func loginHandler(rc picnicApi.Context, w http.ResponseWriter, r *http.Request) error {
 
 	var errLogin = picnicApi.HttpError{
 		Status:      http.StatusBadRequest,
@@ -84,7 +84,7 @@ func loginHandler(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.
 	return helpers.RenderFFJSON(w, newSessionInfo(u), http.StatusOK)
 }
 
-func logoutHandler(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+func logoutHandler(rc picnicApi.Context, w http.ResponseWriter, r *http.Request) error {
 
 	if err := rc.SessionManager().WriteToken(w, ""); err != nil {
 		return err

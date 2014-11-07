@@ -17,7 +17,7 @@
 package api
 
 import (
-	picnicApi "github.com/SchumacherFM/wanderlust/picnic/api"
+	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"net/http"
 	"testing"
 )
@@ -29,12 +29,12 @@ func (this *testPapi) Route() string {
 	return "TestRoute"
 }
 func (this *testPapi) FormHandler() picnicApi.HandlerFunc {
-	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+	return func(rc picnicApi.Context, w http.ResponseWriter, r *http.Request) error {
 		return nil
 	}
 }
 func (this *testPapi) SaveHandler() picnicApi.HandlerFunc {
-	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+	return func(rc picnicApi.Context, w http.ResponseWriter, r *http.Request) error {
 		return nil
 	}
 }

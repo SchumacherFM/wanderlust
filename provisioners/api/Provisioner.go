@@ -83,12 +83,12 @@ func NewProvisioner(n, i string, a ProvisionerApi) *Provisioner {
 // with its values. The input field names are hardcoded in the html partial as we won't to avoid
 // dynamic rendered forms ...
 func FormGenerate(dbName string, config []string) picnicApi.HandlerFunc {
-	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+	return func(c picnicApi.Context, w http.ResponseWriter, r *http.Request) error {
 		var jsonData = make([]string, 2*len(config))
 		var i = 0
-		for _, c := range config {
-			jsonData[i] = c
-			cVal, _ := rc.Backpacker().FindOne(dbName, c)
+		for _, cfg := range config {
+			jsonData[i] = cfg
+			cVal, _ := c.Backpacker().FindOne(dbName, cfg)
 			jsonData[i+1] = string(cVal)
 			i = i + 2
 		}
@@ -100,7 +100,7 @@ func FormGenerate(dbName string, config []string) picnicApi.HandlerFunc {
 }
 
 func FormSave(p ProvisionerApi, cb ValueCallBack) picnicApi.HandlerFunc {
-	return func(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+	return func(c picnicApi.Context, w http.ResponseWriter, r *http.Request) error {
 		status := http.StatusOK
 
 		pd := &PostData{}
@@ -121,7 +121,7 @@ func FormSave(p ProvisionerApi, cb ValueCallBack) picnicApi.HandlerFunc {
 			return he
 		}
 
-		err = rc.Backpacker().Insert(p.Route(), pd.Key, cb(pd))
+		err = c.Backpacker().Insert(p.Route(), pd.Key, cb(pd))
 		pd = nil
 		if nil != err {
 			status = http.StatusBadRequest

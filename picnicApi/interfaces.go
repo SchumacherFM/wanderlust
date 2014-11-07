@@ -29,9 +29,9 @@ import (
 
 type (
 	// our custom handler
-	HandlerFunc func(rc RequestContextIf, w http.ResponseWriter, r *http.Request) error
+	HandlerFunc func(c Context, w http.ResponseWriter, r *http.Request) error
 
-	SessionManagerIf interface {
+	SessionManager interface {
 		ReadToken(*http.Request) (string, time.Duration, error)
 		WriteToken(http.ResponseWriter, string) error
 	}
@@ -41,8 +41,8 @@ type (
 		Execute() error
 	}
 
-	RequestContextIf interface {
-		SessionManager() SessionManagerIf
+	Context interface {
+		SessionManager() SessionManager
 		GetParamString(string) string
 		GetParamInt64(string) int64
 		User() UserSessionIf

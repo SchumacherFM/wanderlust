@@ -64,3 +64,9 @@ test:
 	go test -v --bench=. ./rucksack/
 	go test -v --bench=. ./provisioners/sitemap/
 	go test -v --bench=. ./provisioners/textarea/
+
+testAll:
+	go test -v ./...
+
+vet:
+	go vet ./...

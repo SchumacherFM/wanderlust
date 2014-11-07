@@ -55,20 +55,20 @@ func (p *PicnicApp) getHandler() *negroni.Negroni {
 	p.initRoutesSystemInfo(r)
 	p.initRoutesProvisioners(r)
 
-	// @todo
-	brotzeitApi := r.PathPrefix("/brotzeit/").Subrouter()
-	brotzeitApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
-	brotzeitApi.HandleFunc("/stop", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
-	brotzeitApi.HandleFunc("/purge", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET") // purges all collected URLs
-	brotzeitApi.HandleFunc("/concurrency", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("PUT")
-	brotzeitApi.HandleFunc("/collections", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET") // retrieves running processes
-
-	// @todo
-	wandererApi := r.PathPrefix("/wanderer/").Subrouter()
-	wandererApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
-	wandererApi.HandleFunc("/stop", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
-	wandererApi.HandleFunc("/concurrency", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("PUT")
-	wandererApi.HandleFunc("/current", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
+	//	// @todo
+	//	brotzeitApi := r.PathPrefix("/brotzeit/").Subrouter()
+	//	brotzeitApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
+	//	brotzeitApi.HandleFunc("/stop", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
+	//	brotzeitApi.HandleFunc("/purge", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET") // purges all collected URLs
+	//	brotzeitApi.HandleFunc("/concurrency", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("PUT")
+	//	brotzeitApi.HandleFunc("/collections", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET") // retrieves running processes
+	//
+	//	// @todo
+	//	wandererApi := r.PathPrefix("/wanderer/").Subrouter()
+	//	wandererApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
+	//	wandererApi.HandleFunc("/stop", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
+	//	wandererApi.HandleFunc("/concurrency", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("PUT")
+	//	wandererApi.HandleFunc("/current", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
 
 	dr := r.PathPrefix("/dashboard/").Subrouter()
 
@@ -93,6 +93,6 @@ func handlerFavicon(w http.ResponseWriter, r *http.Request) {
 	w.Write(gzrice.MustFindBox("rd/dist/").MustBytes("img/favicon.ico"))
 }
 
-func noopHandler(rc picnicApi.RequestContextIf, w http.ResponseWriter, r *http.Request) error {
+func noopHandler(rc picnicApi.Context, w http.ResponseWriter, r *http.Request) error {
 	return helpers.RenderString(w, 200, fmt.Sprintf("Found route \n%#v\n %#v\n", r, rc))
 }
