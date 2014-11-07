@@ -18,13 +18,13 @@ package provisioners
 
 import (
 	"errors"
-	. "github.com/SchumacherFM/wanderlust/provisioners/api"
+	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	"github.com/SchumacherFM/wanderlust/provisioners/sitemap"
 	"github.com/SchumacherFM/wanderlust/provisioners/textarea"
 )
 
 var (
-	provisionerCollection = NewProvisioners()
+	provisionerCollection = provisionerApi.NewProvisioners()
 	ErrCollectionEmpty    = errors.New("Provisioner Collection is empty")
 )
 
@@ -34,14 +34,14 @@ func init() {
 	AddProvisioner(textarea.GetProvisioner())
 }
 
-func AddProvisioner(p *Provisioner) {
+func AddProvisioner(p *provisionerApi.Config) {
 	provisionerCollection.Add(p)
 }
 
-func GetAvailable() (*Provisioners, error) {
+func GetAvailable() (*provisionerApi.Provisioners, error) {
 	return provisionerCollection, nil
 }
 
 func GetRoutePathPrefix() string {
-	return UrlRoutePrefix
+	return provisionerApi.UrlRoutePrefix
 }

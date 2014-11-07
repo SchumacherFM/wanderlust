@@ -60,7 +60,7 @@ test:
 	go test -v --bench=. ./helpers/
 	go test -v --bench=. ./picnic/middleware/
 	go test -v --bench=. ./picnic/
-	go test -v --bench=. ./provisioners/api/
+	go test -v --bench=. ./provisionerApi/
 	go test -v --bench=. ./rucksack/
 	go test -v --bench=. ./provisioners/sitemap/
 	go test -v --bench=. ./provisioners/textarea/

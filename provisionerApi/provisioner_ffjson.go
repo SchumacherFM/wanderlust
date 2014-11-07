@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package api
+package provisionerApi
 
 import (
 	"bytes"
@@ -22,7 +22,7 @@ import (
 )
 
 // MarshalJSON implements encoding/json.Marshaler interface
-func (mj *Provisioner) MarshalJSON() ([]byte, error) {
+func (mj *Config) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	buf.Grow(1024)
 	err := mj.MarshalJSONBuf(&buf)
@@ -32,7 +32,7 @@ func (mj *Provisioner) MarshalJSON() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func (mj *Provisioner) MarshalJSONBuf(buf *bytes.Buffer) error {
+func (mj *Config) MarshalJSONBuf(buf *bytes.Buffer) error {
 	var err error
 	var obj []byte
 	var first bool = true
@@ -46,21 +46,21 @@ func (mj *Provisioner) MarshalJSONBuf(buf *bytes.Buffer) error {
 		buf.WriteString(`,`)
 	}
 	buf.WriteString(`"Icon":`)
-	helpers.Ffjson_WriteJsonString(buf, mj.Icon)
+	helpers.Ffjson_WriteJsonString(buf, mj.icon)
 	if first == true {
 		first = false
 	} else {
 		buf.WriteString(`,`)
 	}
 	buf.WriteString(`"Name":`)
-	helpers.Ffjson_WriteJsonString(buf, mj.Name)
+	helpers.Ffjson_WriteJsonString(buf, mj.name)
 	if first == true {
 		first = false
 	} else {
 		buf.WriteString(`,`)
 	}
 	buf.WriteString(`"Url":`)
-	helpers.Ffjson_WriteJsonString(buf, mj.Url)
+	helpers.Ffjson_WriteJsonString(buf, mj.url)
 	buf.WriteString(`}`)
 	return nil
 }

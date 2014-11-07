@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-// this package acts also as an external api to create custom provisioners
+// provisionerApi acts also as an external Api to create custom provisioners
 // and also to avoid import cycles
-package api
+package provisionerApi
 
 import (
 	"github.com/SchumacherFM/wanderlust/helpers"
@@ -46,13 +46,13 @@ type (
 	}
 
 	// Implements encoding/json.Marshaler interface
-	Provisioner struct {
+	Config struct {
 		// This name appears in the frontend
-		Name string
+		name string
 		// REST path
-		Url string
+		url string
 		// can be a fa-* icon or path to an image
-		Icon string
+		icon string
 		// internal handler
 		Api ProvisionerApi
 	}
@@ -62,25 +62,27 @@ type (
 		Value string `json:"value"`
 	}
 
-	// modifier func which returns the value for saving in the rucksack
+	// modifier func which returns the value for saving in the rucksack.Backpacker
 	ValueCallBack func(pd *PostData) []byte
 
+	// internal struct for returning JSON with its data slice
 	formData struct {
 		Data []string `json:"data"`
 	}
 )
 
-func NewProvisioner(n, i string, a ProvisionerApi) *Provisioner {
-	return &Provisioner{
-		Name: n,
-		Url:  "/" + UrlRoutePrefix + "/" + a.Route(),
-		Icon: i,
+// NewProvisioner returns a new Config with the API of them
+func NewProvisioner(n, i string, a ProvisionerApi) *Config {
+	return &Config{
+		name: n,
+		url:  "/" + UrlRoutePrefix + "/" + a.Route(),
+		icon: i,
 		Api:  a,
 	}
 }
 
-// FormGenerate prepares the JSON object for AngularJS to fill the input fields of partial
-// with its values. The input field names are hardcoded in the html partial as we won't to avoid
+// FormGenerate prepares the JSON object for AngularJS to fill the input fields of the HTML partials
+// with its values. The input field names are hardcoded in the HTML partial as we would like to avoid
 // dynamic rendered forms ...
 func FormGenerate(dbName string, config []string) picnicApi.HandlerFunc {
 	return func(c picnicApi.Context, w http.ResponseWriter, r *http.Request) error {
@@ -99,6 +101,8 @@ func FormGenerate(dbName string, config []string) picnicApi.HandlerFunc {
 	}
 }
 
+// FormSave saves the key/value pair in the rucksack.Backpacker. Does also some validation provided by the
+// Config API
 func FormSave(p ProvisionerApi, cb ValueCallBack) picnicApi.HandlerFunc {
 	return func(c picnicApi.Context, w http.ResponseWriter, r *http.Request) error {
 		status := http.StatusOK

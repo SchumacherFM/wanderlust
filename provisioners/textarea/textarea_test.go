@@ -17,7 +17,7 @@
 package textarea
 
 import (
-	"github.com/SchumacherFM/wanderlust/provisioners/api"
+	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	"strings"
 	"testing"
 )
@@ -25,7 +25,7 @@ import (
 func TestIsValid(t *testing.T) {
 	p := GetProvisioner()
 
-	pd := &api.PostData{}
+	pd := &provisionerApi.PostData{}
 
 	err := p.Api.IsValid(pd) // must succeed
 	if nil != err {
@@ -62,7 +62,7 @@ func TestIsValid(t *testing.T) {
 // BenchmarkIsValid	 2.000.000	      1008 ns/op
 func BenchmarkIsValid(b *testing.B) {
 	p := GetProvisioner()
-	pd := &api.PostData{}
+	pd := &provisionerApi.PostData{}
 	pd.Value = "hTtp://www.golang.org/siteMap.xml"
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {

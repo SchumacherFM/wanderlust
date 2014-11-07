@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package api
+package provisionerApi
 
 import (
 	"github.com/SchumacherFM/wanderlust/picnicApi"
@@ -45,7 +45,7 @@ func (this *testPapi) IsValid(p *PostData) error {
 func TestNewProvisioner(t *testing.T) {
 	papi := &testPapi{}
 	p := NewProvisioner("TestProv", "TestIcon", papi)
-	if e := "/" + UrlRoutePrefix + "/TestRoute"; p.Url != e {
-		t.Errorf("\nActual\t\t%s\nExpected\t%s\n", p.Url, e)
+	if e := "/" + UrlRoutePrefix + "/TestRoute"; p.url != e {
+		t.Errorf("\nActual\t\t%s\nExpected\t%s\n", p.url, e)
 	}
 }

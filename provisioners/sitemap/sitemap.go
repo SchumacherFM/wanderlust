@@ -19,16 +19,16 @@ package sitemap
 import (
 	"errors"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
-	. "github.com/SchumacherFM/wanderlust/provisioners/api"
+	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	"strings"
 )
 
-func GetProvisioner() *Provisioner {
+func GetProvisioner() *provisionerApi.Config {
 	sitemap := &sm{
 		myRoute: "sitemap",
 		config:  []string{"SiteMapUrl1", "SiteMapUrl2"}, // used in the html input field names
 	}
-	p := NewProvisioner("Sitemap", "fa-sitemap", sitemap)
+	p := provisionerApi.NewProvisioner("Sitemap", "fa-sitemap", sitemap)
 	return p
 }
 
@@ -48,11 +48,11 @@ func (s *sm) Route() string {
 }
 
 func (s *sm) FormHandler() picnicApi.HandlerFunc {
-	return FormGenerate(s.Route(), s.config)
+	return provisionerApi.FormGenerate(s.Route(), s.config)
 }
 
 // use this instead of the the SaveHandler()
-func (s *sm) IsValid(p *PostData) error {
+func (s *sm) IsValid(p *provisionerApi.PostData) error {
 
 	if "" == p.Value {
 		return nil
@@ -70,11 +70,11 @@ func (s *sm) IsValid(p *PostData) error {
 	return nil
 }
 
-func valueModifier(pd *PostData) []byte {
+func valueModifier(pd *provisionerApi.PostData) []byte {
 	return []byte(strings.TrimSpace(pd.Value))
 }
 
 // https://restful-api-design.readthedocs.org/en/latest/methods.html#standard-methods
 func (s *sm) SaveHandler() picnicApi.HandlerFunc {
-	return FormSave(s, valueModifier)
+	return provisionerApi.FormSave(s, valueModifier)
 }

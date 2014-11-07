@@ -14,30 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package api
+package provisionerApi
 
 import (
-	"bytes"
+	"testing"
 )
 
-type (
-	Provisioners struct {
-		Collection []*Provisioner
-	}
-
-	ProvisionersJsonIf interface {
-		MarshalJSON() ([]byte, error)
-		MarshalJSONBuf(buf *bytes.Buffer) error
-	}
-)
-
-func (p *Provisioners) Add(prov *Provisioner) {
-	p.Collection = append(p.Collection, prov)
-}
-func (p *Provisioners) Length() int {
-	return len(p.Collection)
+func setUp() *Provisioners {
+	p := &Config{}
+	ps := &Provisioners{}
+	ps.Add(p)
+	return ps
 }
 
-func NewProvisioners() *Provisioners {
-	return &Provisioners{}
+func TestProvisionersAdd(t *testing.T) {
+
+	ps := setUp()
+	if 1 != len(ps.Collection) {
+		t.Errorf("Expected 1 got %d", len(ps.Collection))
+	}
+}
+
+func TestProvisionersLength(t *testing.T) {
+	ps := setUp()
+	if 1 != ps.Length() {
+		t.Errorf("Expected 1 got %d", len(ps.Collection))
+	}
 }

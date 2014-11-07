@@ -19,16 +19,16 @@ package textarea
 import (
 	"errors"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
-	. "github.com/SchumacherFM/wanderlust/provisioners/api"
+	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	"strings"
 )
 
-func GetProvisioner() *Provisioner {
+func GetProvisioner() *provisionerApi.Config {
 	t := &ta{
 		myRoute: "textarea",
 		config:  []string{"TextArea"}, // used in the html input field names
 	}
-	p := NewProvisioner("Textarea", "fa-file-text-o", t)
+	p := provisionerApi.NewProvisioner("Textarea", "fa-file-text-o", t)
 	return p
 }
 
@@ -49,10 +49,10 @@ func (t *ta) Route() string {
 }
 
 func (t *ta) FormHandler() picnicApi.HandlerFunc {
-	return FormGenerate(t.Route(), t.config)
+	return provisionerApi.FormGenerate(t.Route(), t.config)
 }
 
-func (t *ta) IsValid(p *PostData) error {
+func (t *ta) IsValid(p *provisionerApi.PostData) error {
 	if "" == p.Value {
 		return nil
 	}
@@ -73,11 +73,11 @@ func (t *ta) IsValid(p *PostData) error {
 	return nil
 }
 
-func valueModifier(pd *PostData) []byte {
+func valueModifier(pd *provisionerApi.PostData) []byte {
 	return []byte(strings.TrimSpace(pd.Value))
 }
 
 // https://restful-api-design.readthedocs.org/en/latest/methods.html#standard-methods
 func (t *ta) SaveHandler() picnicApi.HandlerFunc {
-	return FormSave(t, valueModifier)
+	return provisionerApi.FormSave(t, valueModifier)
 }
