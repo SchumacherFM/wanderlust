@@ -77,14 +77,14 @@ angular
               }
 
               // iterating over the slice from GoLang
-              var inputName='', inputValue='', i =0,dl = response.data.length;
-              for(i=0;i<dl;i=i+2){
-                  inputName = response.data[i];
-                  inputValue = response.data[i+1];
-                  if (!$that._scope[inputName]) {
-                    $that._scope[inputName] = inputValue;
-                    $that._scope.$watch(inputName, $that._debounceUpdate(inputName));
-                  }
+              var inputName = '', inputValue = '', i = 0, dl = response.data.length;
+              for (i = 0; i < dl; i = i + 2) {
+                inputName = response.data[i];
+                inputValue = response.data[i + 1];
+                if (!$that._scope[inputName]) {
+                  $that._scope[inputName] = inputValue;
+                  $that._scope.$watch(inputName, $that._debounceUpdate(inputName));
+                }
               }
 
             },
