@@ -154,7 +154,7 @@ func TestParseSiteMapIndex(t *testing.T) {
 		if nil != err {
 			t.Error(err)
 		}
-		if nil != sc && false == s.isSiteMapIndex {
+		if nil != sc && len(sc) > 0 && false == s.isSiteMapIndex {
 			t.Errorf("Should be not a siteMapIndex\n%#v\n%#v", sc, s)
 		}
 		if true == s.isSiteMapIndex && s.loc != len(sc) {
@@ -169,7 +169,8 @@ func TestParseSiteMapIndex(t *testing.T) {
 }
 
 // MBA Mid 2012 1.8 GHz Intel Core i5
-// BenchmarkParseSiteMapIndex	   10000	    172082 ns/op
+// BenchmarkParseSiteMapIndex	   10.000	    172.082 ns/op with 30 maxUrls
+// BenchmarkParseSiteMapIndex	    2.000	    754.539 ns/op with 50.000 maxUrls
 func BenchmarkParseSiteMapIndex(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		si := helpers.NewReadCloser(sitemapCollection[2].data)
@@ -200,8 +201,16 @@ func TestParseSiteMap(t *testing.T) {
 	}
 }
 
-func TestIsValidUrl(t *testing.T) {
+// MBA Mid 2012 1.8 GHz Intel Core i5
+// BenchmarkParseSiteMap	    2.000	   1.118.398 ns/op with 50.000 maxUrls
+func BenchmarkParseSiteMap(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		si := helpers.NewReadCloser(sitemapCollection[3].data)
+		parseSiteMap(si)
+	}
+}
 
+func TestIsValidUrl(t *testing.T) {
 	expected := map[string]bool{
 		"http://golang.org":  true,
 		"https://golang.org": true,

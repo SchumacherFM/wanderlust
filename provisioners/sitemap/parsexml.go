@@ -19,7 +19,6 @@ package sitemap
 import (
 	"encoding/xml"
 	"io"
-	"io/ioutil"
 	"strings"
 )
 
@@ -27,10 +26,6 @@ const (
 	// http://en.wikipedia.org/wiki/Sitemaps
 	maxUrlsPerSitemap int = 50000
 )
-
-type SitemapIndex struct {
-	Sitemap []UrlNode `xml:"sitemap"`
-}
 
 // UrlNode is used in the xml decode tokenizer
 type UrlNode struct {
@@ -49,29 +44,60 @@ type XhtmlLink struct {
 
 // r is equal to res, err := http.Get(url)
 func parseSiteMapIndex(r io.ReadCloser) ([]string, error) {
+
 	maxUrls := make([]string, maxUrlsPerSitemap)
-	data, err := ioutil.ReadAll(r)
+	urlCount := 0
+	totalErr := 0
+
+	decoder := xml.NewDecoder(r)
 	defer r.Close()
 
-	if nil != err {
-		return nil, err
-	}
+	var inElement string
 
-	si := &SitemapIndex{}
-	xml.Unmarshal(data, si)
-	data = nil
-
-	if 0 == len(si.Sitemap) {
-		return nil, nil
-	}
-	urlCount := 0
-	for k, un := range si.Sitemap {
-		if nil == isValidSitemapUrl(un.Loc) {
-			maxUrls[k] = un.Loc
-			urlCount++
+	for {
+		// Read tokens from the XML document in a stream.
+		t, dtErr := decoder.Token()
+		if t == nil {
+			break
 		}
-		if urlCount >= maxUrlsPerSitemap {
-			return maxUrls, nil
+		if nil != dtErr {
+			return nil, dtErr
+		}
+
+		// Inspect the type of the token just read.
+		switch se := t.(type) {
+		case xml.StartElement:
+			// If we just read a StartElement token
+			inElement = se.Name.Local
+			// ...and its name is "url"
+			if inElement == "sitemap" {
+				var un UrlNode
+				// decode a whole chunk of following XML into the
+				// variable un which is a UrlNode (see above); decErr will be ignored ...
+				decErr := decoder.DecodeElement(&un, &se)
+				if nil != decErr {
+					totalErr++
+				}
+				if true == isValidSitemapUrl(un.Loc) {
+					maxUrls[urlCount] = un.Loc
+					urlCount++
+				}
+				if urlCount >= maxUrlsPerSitemap {
+					return maxUrls, nil
+				}
+				if nil != un.XhtmlLink && len(un.XhtmlLink) > 0 {
+					for _, xHref := range un.XhtmlLink {
+						if true == isValidUrl(un.Loc) {
+							maxUrls[urlCount] = xHref.Href
+							urlCount++
+						}
+						if urlCount >= maxUrlsPerSitemap {
+							return maxUrls, nil
+						}
+					}
+				}
+			}
+		default:
 		}
 	}
 
@@ -80,6 +106,7 @@ func parseSiteMapIndex(r io.ReadCloser) ([]string, error) {
 	copy(urls, maxUrls[:urlCount])
 	maxUrls = nil
 	return urls, nil
+
 }
 
 // Use a sitemap to indicate alternate language pages

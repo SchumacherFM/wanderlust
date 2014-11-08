@@ -55,25 +55,25 @@ func (s *sm) FormHandler() picnicApi.HandlerFunc {
 
 // IsValid checks if the Value of PostData is valid sitemap URL
 func (s *sm) IsValid(p *provisionerApi.PostData) error {
-	return isValidSitemapUrl(p.Value)
-}
-
-// isValid checks if the Value of PostData is valid sitemap URL
-func isValidSitemapUrl(v string) error {
-	if "" == v {
-		return nil
-	}
-
-	val := strings.ToLower(v)
-
-	if false == strings.HasPrefix(val, "http") {
-		return ErrValidate
-	}
-
-	if false == strings.HasSuffix(val, ".xml") && false == strings.HasSuffix(val, ".xml.gz") {
+	if false == isValidSitemapUrl(p.Value) {
 		return ErrValidate
 	}
 	return nil
+}
+
+// isValid checks if the Value of PostData is valid sitemap URL
+func isValidSitemapUrl(v string) bool {
+	if "" == v {
+		return true
+	}
+	val := strings.ToLower(v)
+	if false == strings.HasPrefix(val, "http") {
+		return false
+	}
+	if false == strings.HasSuffix(val, ".xml") && false == strings.HasSuffix(val, ".xml.gz") {
+		return false
+	}
+	return true
 }
 
 func valueModifier(pd *provisionerApi.PostData) []byte {
