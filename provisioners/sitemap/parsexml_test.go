@@ -22,49 +22,75 @@ import (
 	"testing"
 )
 
-var siteMapIndexCollection = []string{
-	`<?xml version="1.0" encoding="UTF-8"?>
+type smc struct {
+	isSiteMapIndex bool
+	isSiteMap      bool
+	loc            int
+	data           string
+}
+
+var sitemapCollection = []smc{
+	smc{
+		isSiteMapIndex: true,
+		isSiteMap:      false,
+		loc:            0,
+		data: `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>`,
-	`<?xml version="1.0" encoding="UTF-8"?>
+	},
+	smc{
+		isSiteMapIndex: false,
+		isSiteMap:      false,
+		loc:            0,
+		data: `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-	`,
-	`<?xml version="1.0" encoding="UTF-8"?>
+`,
+	},
+	smc{
+		isSiteMapIndex: true,
+		isSiteMap:      false,
+		loc:            11,
+		data: `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-	<sitemap>
-			<loc>http://www.golang.com/de-de/sitemap.xml</loc>
-	</sitemap>
-	<sitemap>
-			<loc>http://www.golang.com/de-fr/sitemap.xml</loc>
-	</sitemap>
-	<sitemap>
-			<loc>http://www.golang.com/de-en/sitemap.xml</loc>
-	</sitemap>
-	<sitemap>
-			<loc>http://www.golang.com/de-it/sitemap.xml</loc>
-	</sitemap>
-	<sitemap>
-			<loc>http://www.golang.com/ch-de/sitemap.xml</loc>
-	</sitemap>
-	<sitemap>
-			<loc>http://www.golang.com/ch-fr/sitemap.xml</loc>
-	</sitemap>
-	<sitemap>
-			<loc>http://www.golang.com/ch-en/sitemap.xml</loc>
-	</sitemap>
-	<sitemap>
-			<loc>http://www.golang.com/ch-it/sitemap.xml</loc>
-	</sitemap>
-	<sitemap>
-			<loc>http://www.golang.com/it-de/sitemap.xml</loc>
-	</sitemap>
-	<sitemap>
-			<loc>http://www.golang.com/it-it/sitemap.xml</loc>
-	</sitemap>
-	<sitemap>
-			<loc>http://www.golang.com/fr-fr/sitemap.xml</loc>
-	</sitemap>
+<sitemap>
+		<loc>http://www.golang.com/de-de/sitemap.xml</loc>
+</sitemap>
+<sitemap>
+		<loc>http://www.golang.com/de-fr/sitemap.xml</loc>
+</sitemap>
+<sitemap>
+		<loc>http://www.golang.com/de-en/sitemap.xml</loc>
+</sitemap>
+<sitemap>
+		<loc>http://www.golang.com/de-it/sitemap.xml</loc>
+</sitemap>
+<sitemap>
+		<loc>http://www.golang.com/ch-de/sitemap.xml</loc>
+</sitemap>
+<sitemap>
+		<loc>http://www.golang.com/ch-fr/sitemap.xml</loc>
+</sitemap>
+<sitemap>
+		<loc>http://www.golang.com/ch-en/sitemap.xml</loc>
+</sitemap>
+<sitemap>
+		<loc>http://www.golang.com/ch-it/sitemap.xml</loc>
+</sitemap>
+<sitemap>
+		<loc>http://www.golang.com/it-de/sitemap.xml</loc>
+</sitemap>
+<sitemap>
+		<loc>http://www.golang.com/it-it/sitemap.xml</loc>
+</sitemap>
+<sitemap>
+		<loc>http://www.golang.com/fr-fr/sitemap.xml</loc>
+</sitemap>
 </sitemapindex>`,
-	`<?xml version="1.0" encoding="UTF-8"?>
+	},
+	smc{
+		isSiteMapIndex: false,
+		isSiteMap:      true,
+		loc:            36,
+		data: `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 	<url>
 			<loc>http://www.golang.com/de-de/damen</loc>
@@ -100,20 +126,39 @@ var siteMapIndexCollection = []string{
 			<changefreq>weekly</changefreq>
 			<priority>0.5</priority>
 	</url>
-</urlset>
-	`,
+    <url>
+        <loc>http://www.wltest.com/ch-it/elastic-02138</loc>
+        <xhtml:link rel="alternate" hreflang="de" href="http://www.wltest.com/de-de/elastic-02138"/>
+        <xhtml:link rel="alternate" hreflang="de-ch" href="http://www.wltest.com/ch-de/elastic-02138"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="http://www.wltest.com/fr-fr/elastic-02138"/>
+        <xhtml:link rel="alternate" hreflang="it" href="http://www.wltest.com/it-it/elastic-02138"/>
+        <xhtml:link rel="alternate" hreflang="de" href="http://www.wltest.com/it-de/elastic-02138"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="http://www.wltest.com/de-fr/elastic-02138"/>
+        <xhtml:link rel="alternate" hreflang="fr-ch" href="http://www.wltest.com/ch-fr/elastic-02138"/>
+        <xhtml:link rel="alternate" hreflang="it" href="http://www.wltest.com/de-it/elastic-02138"/>
+        <xhtml:link rel="alternate" hreflang="it-ch" href="http://www.wltest.com/ch-it/elastic-02138"/>
+        <xhtml:link rel="alternate" hreflang="en" href="http://www.wltest.com/de-en/elastic-02138"/>
+        <xhtml:link rel="alternate" hreflang="en-ch" href="http://www.wltest.com/ch-en/elastic-02138"/>
+        <lastmod>2014-11-08</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+</urlset>`,
+	},
 }
 
 func TestParseSiteMapIndex(t *testing.T) {
-
-	for _, sitemapIndex := range siteMapIndexCollection {
-		si := helpers.NewReadCloser(sitemapIndex)
+	for _, s := range sitemapCollection {
+		si := helpers.NewReadCloser(s.data)
 		sc, err := parseSiteMapIndex(si)
 		if nil != err {
 			t.Error(err)
 		}
-		if 11 != len(sc) {
-			t.Errorf("\nExpected: 11\nActual: %d", len(sc))
+		if nil != sc && false == s.isSiteMapIndex {
+			t.Errorf("Should be not a siteMapIndex\n%#v\n%#v", sc, s)
+		}
+		if true == s.isSiteMapIndex && s.loc != len(sc) {
+			t.Errorf("\nExpected: %d\nActual: %d", s.loc, len(sc))
 		}
 		for _, sv := range sc {
 			if false == strings.Contains(sv, ".xml") {
@@ -124,10 +169,51 @@ func TestParseSiteMapIndex(t *testing.T) {
 }
 
 // MBA Mid 2012 1.8 GHz Intel Core i5
-// BenchmarkParseSiteMapIndex	   10000	    189198 ns/op
-//func BenchmarkParseSiteMapIndex(b *testing.B) {
-//	for n := 0; n < b.N; n++ {
-//		si := helpers.NewReadCloser(mockSitemapIndex)
-//		parseSiteMapIndex(si)
-//	}
-//}
+// BenchmarkParseSiteMapIndex	   10000	    172082 ns/op
+func BenchmarkParseSiteMapIndex(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		si := helpers.NewReadCloser(sitemapCollection[2].data)
+		parseSiteMapIndex(si)
+	}
+}
+
+func TestParseSiteMap(t *testing.T) {
+
+	for _, s := range sitemapCollection {
+		si := helpers.NewReadCloser(s.data)
+		sm, err := parseSiteMap(si)
+		if nil != err {
+			t.Error(err)
+		}
+
+		if 0 == len(sm) && true == s.isSiteMap {
+			t.Errorf("Should be not a siteMap\n%#v\n%#v\n", sm, s)
+		}
+		if true == s.isSiteMap && s.loc != len(sm) {
+			t.Errorf("\nExpected: %d\nActual: %d", s.loc, len(sm))
+		}
+		for _, sLoc := range sm {
+			if false == isValidUrl(sLoc) {
+				t.Errorf("Invalid URL %s", sLoc)
+			}
+		}
+	}
+}
+
+func TestIsValidUrl(t *testing.T) {
+
+	expected := map[string]bool{
+		"http://golang.org":  true,
+		"https://golang.org": true,
+		"htps://golang.org":  false,
+		"ftp://golang.org":   false,
+		"onion://golang.org": false,
+		"http:/golang.org":   false,
+	}
+
+	for url, res := range expected {
+		if act := isValidUrl(url); res != act {
+			t.Errorf("Expected: %t got %t for %s ", res, act, url)
+		}
+	}
+}

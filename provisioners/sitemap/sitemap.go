@@ -55,11 +55,11 @@ func (s *sm) FormHandler() picnicApi.HandlerFunc {
 
 // IsValid checks if the Value of PostData is valid sitemap URL
 func (s *sm) IsValid(p *provisionerApi.PostData) error {
-	return isValid(p.Value)
+	return isValidSitemapUrl(p.Value)
 }
 
 // isValid checks if the Value of PostData is valid sitemap URL
-func isValid(v string) error {
+func isValidSitemapUrl(v string) error {
 	if "" == v {
 		return nil
 	}
