@@ -76,6 +76,10 @@ func isValidSitemapUrl(v string) bool {
 	return true
 }
 
+func isValidUrl(url string) bool {
+	return strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://")
+}
+
 func valueModifier(pd *provisionerApi.PostData) []byte {
 	return []byte(strings.TrimSpace(pd.Value))
 }

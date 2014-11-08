@@ -19,7 +19,6 @@ package sitemap
 import (
 	"encoding/xml"
 	"io"
-	"strings"
 )
 
 const (
@@ -44,75 +43,18 @@ type XhtmlLink struct {
 
 // r is equal to res, err := http.Get(url)
 func parseSiteMapIndex(r io.ReadCloser) ([]string, error) {
-
-	maxUrls := make([]string, maxUrlsPerSitemap)
-	urlCount := 0
-	totalErr := 0
-
-	decoder := xml.NewDecoder(r)
-	defer r.Close()
-
-	var inElement string
-
-	for {
-		// Read tokens from the XML document in a stream.
-		t, dtErr := decoder.Token()
-		if t == nil {
-			break
-		}
-		if nil != dtErr {
-			return nil, dtErr
-		}
-
-		// Inspect the type of the token just read.
-		switch se := t.(type) {
-		case xml.StartElement:
-			// If we just read a StartElement token
-			inElement = se.Name.Local
-			// ...and its name is "url"
-			if inElement == "sitemap" {
-				var un UrlNode
-				// decode a whole chunk of following XML into the
-				// variable un which is a UrlNode (see above); decErr will be ignored ...
-				decErr := decoder.DecodeElement(&un, &se)
-				if nil != decErr {
-					totalErr++
-				}
-				if true == isValidSitemapUrl(un.Loc) {
-					maxUrls[urlCount] = un.Loc
-					urlCount++
-				}
-				if urlCount >= maxUrlsPerSitemap {
-					return maxUrls, nil
-				}
-				if nil != un.XhtmlLink && len(un.XhtmlLink) > 0 {
-					for _, xHref := range un.XhtmlLink {
-						if true == isValidUrl(un.Loc) {
-							maxUrls[urlCount] = xHref.Href
-							urlCount++
-						}
-						if urlCount >= maxUrlsPerSitemap {
-							return maxUrls, nil
-						}
-					}
-				}
-			}
-		default:
-		}
-	}
-
-	// shrink the previous created slice and free memory for maxUrls
-	urls := make([]string, urlCount)
-	copy(urls, maxUrls[:urlCount])
-	maxUrls = nil
-	return urls, nil
-
+	return privateParser(r, "sitemap", isValidSitemapUrl)
 }
 
 // Use a sitemap to indicate alternate language pages
 // https://support.google.com/webmasters/answer/2620865?hl=en
-
 func parseSiteMap(r io.ReadCloser) ([]string, error) {
+	return privateParser(r, "url", isValidUrl)
+}
+
+// privateParser parses sitemapindex and sitemap XML files. The file size does not matter as this
+// parser can parse TB huge files with using only ~5MB of memory
+func privateParser(r io.ReadCloser, startElement string, urlValidator func(string) bool) ([]string, error) {
 	maxUrls := make([]string, maxUrlsPerSitemap)
 	urlCount := 0
 	totalErr := 0
@@ -138,7 +80,7 @@ func parseSiteMap(r io.ReadCloser) ([]string, error) {
 			// If we just read a StartElement token
 			inElement = se.Name.Local
 			// ...and its name is "url"
-			if inElement == "url" {
+			if inElement == startElement {
 				var un UrlNode
 				// decode a whole chunk of following XML into the
 				// variable un which is a UrlNode (see above); decErr will be ignored ...
@@ -146,13 +88,14 @@ func parseSiteMap(r io.ReadCloser) ([]string, error) {
 				if nil != decErr {
 					totalErr++
 				}
-				if true == isValidUrl(un.Loc) {
+				if true == urlValidator(un.Loc) {
 					maxUrls[urlCount] = un.Loc
 					urlCount++
 				}
 				if urlCount >= maxUrlsPerSitemap {
 					return maxUrls, nil
 				}
+				// the following if block is only for valid endpoints
 				if nil != un.XhtmlLink && len(un.XhtmlLink) > 0 {
 					for _, xHref := range un.XhtmlLink {
 						if true == isValidUrl(un.Loc) {
@@ -174,8 +117,4 @@ func parseSiteMap(r io.ReadCloser) ([]string, error) {
 	copy(urls, maxUrls[:urlCount])
 	maxUrls = nil
 	return urls, nil
-}
-
-func isValidUrl(url string) bool {
-	return strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://")
 }
