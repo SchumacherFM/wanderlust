@@ -39,10 +39,12 @@ type (
 		FormHandler() picnicApi.HandlerFunc
 		// SaveHandler saves the POSTed data from the input fields into the rucksack
 		SaveHandler() picnicApi.HandlerFunc
-		// DeleteHandler removes data from the rucksack and clears everything out
-		//		DeleteHandler() HandlerFunc
-
+		// IsValid validates the post data and returns different errors which will pop up on the front end
 		IsValid(p *PostData) error
+		// Urls() returns a slice of n URLs. It can take either nano seconds to grab all URLs or an infinite amount
+		// of time until e.g. all sitemap.xml has been downloaded and parsed
+		// This func will be used in the provisioners package
+		// Urls(configData []string) []string
 	}
 
 	// Implements encoding/json.Marshaler interface

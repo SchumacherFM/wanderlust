@@ -83,3 +83,8 @@ func valueModifier(pd *provisionerApi.PostData) []byte {
 func (t *ta) SaveHandler() picnicApi.HandlerFunc {
 	return provisionerApi.FormSave(t, valueModifier)
 }
+
+//func (t *ta) Urls(configData []string) []string {
+//
+//	return nil
+//}

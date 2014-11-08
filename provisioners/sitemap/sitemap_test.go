@@ -26,7 +26,7 @@ func TestIsValid(t *testing.T) {
 
 	expected := map[string]error{
 		"": nil,
-		" http://www.golang.org/sitemap.xml":                                   nil,
+		"http://www.golang.org/sitemap.xml":                                    nil,
 		"http://www.amazon.de/sitemap-manual-index.xml":                        nil,
 		"http://www.amazon.de/sitemaps.f9053414d236e84.SitemapIndex_1.xml.gz":  nil,
 		"htstp://www.amazon.de/sitemaps.f3051414d236e84.SitemapIndex_2.xml.gz": ErrValidate,

@@ -53,14 +53,18 @@ func (s *sm) FormHandler() picnicApi.HandlerFunc {
 	return provisionerApi.FormGenerate(s.Route(), s.config)
 }
 
-// use this instead of the the SaveHandler()
+// IsValid checks if the Value of PostData is valid sitemap URL
 func (s *sm) IsValid(p *provisionerApi.PostData) error {
+	return isValid(p.Value)
+}
 
-	if "" == p.Value {
+// isValid checks if the Value of PostData is valid sitemap URL
+func isValid(v string) error {
+	if "" == v {
 		return nil
 	}
 
-	val := strings.ToLower(strings.TrimSpace(p.Value))
+	val := strings.ToLower(v)
 
 	if false == strings.HasPrefix(val, "http") {
 		return ErrValidate
