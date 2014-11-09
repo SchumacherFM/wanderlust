@@ -42,23 +42,15 @@ type XhtmlLink struct {
 }
 
 // r is equal to res, err := http.Get(url)
-func parseSiteMapIndex(r io.ReadCloser) ([]string, error) {
-	return privateParser(r, "sitemap", isValidSitemapUrl)
-}
-
+// parseSiteMap parses sitemapindex and sitemap XML files. The file size does not matter as this
+// parser can parse TB huge files with using only ~5MB of memory
 // Use a sitemap to indicate alternate language pages
 // https://support.google.com/webmasters/answer/2620865?hl=en
-func parseSiteMap(r io.ReadCloser) ([]string, error) {
-	return privateParser(r, "url", isValidUrl)
-}
-
-// privateParser parses sitemapindex and sitemap XML files. The file size does not matter as this
-// parser can parse TB huge files with using only ~5MB of memory
-func privateParser(r io.ReadCloser, startElement string, urlValidator func(string) bool) ([]string, error) {
+func parseSiteMap(r io.ReadCloser) ([]string, bool, error) {
 	maxUrls := make([]string, maxUrlsPerSitemap)
 	urlCount := 0
 	totalErr := 0
-
+	isSiteMapIndex := false
 	decoder := xml.NewDecoder(r)
 	defer r.Close()
 
@@ -71,7 +63,7 @@ func privateParser(r io.ReadCloser, startElement string, urlValidator func(strin
 			break
 		}
 		if nil != dtErr {
-			return nil, dtErr
+			return nil, isSiteMapIndex, dtErr
 		}
 
 		// Inspect the type of the token just read.
@@ -80,7 +72,7 @@ func privateParser(r io.ReadCloser, startElement string, urlValidator func(strin
 			// If we just read a StartElement token
 			inElement = se.Name.Local
 			// ...and its name is "url"
-			if inElement == startElement {
+			if inElement == "sitemap" || inElement == "url" {
 				var un UrlNode
 				// decode a whole chunk of following XML into the
 				// variable un which is a UrlNode (see above); decErr will be ignored ...
@@ -88,12 +80,16 @@ func privateParser(r io.ReadCloser, startElement string, urlValidator func(strin
 				if nil != decErr {
 					totalErr++
 				}
-				if true == urlValidator(un.Loc) {
+				isSiteMapUrl := isValidSitemapUrl(un.Loc)
+				if true == isSiteMapUrl && false == isSiteMapIndex {
+					isSiteMapIndex = true
+				}
+				if true == isSiteMapUrl || true == isValidUrl(un.Loc) {
 					maxUrls[urlCount] = un.Loc
 					urlCount++
 				}
 				if urlCount >= maxUrlsPerSitemap {
-					return maxUrls, nil
+					return maxUrls, isSiteMapIndex, nil
 				}
 				// the following if block is only for valid endpoints
 				if nil != un.XhtmlLink && len(un.XhtmlLink) > 0 {
@@ -103,7 +99,7 @@ func privateParser(r io.ReadCloser, startElement string, urlValidator func(strin
 							urlCount++
 						}
 						if urlCount >= maxUrlsPerSitemap {
-							return maxUrls, nil
+							return maxUrls, isSiteMapIndex, nil
 						}
 					}
 				}
@@ -116,5 +112,5 @@ func privateParser(r io.ReadCloser, startElement string, urlValidator func(strin
 	urls := make([]string, urlCount)
 	copy(urls, maxUrls[:urlCount])
 	maxUrls = nil
-	return urls, nil
+	return urls, isSiteMapIndex, nil
 }

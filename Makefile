@@ -70,3 +70,6 @@ testAll:
 
 vet:
 	go vet ./...
+
+run:
+	go run main.go run --rf=./build/test.db --ppd=./build/
