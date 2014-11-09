@@ -18,6 +18,10 @@ package sitemap
 
 import (
 	"github.com/SchumacherFM/wanderlust/helpers"
+	"os"
+	"os/exec"
+	"path"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -168,6 +172,39 @@ func TestParseSiteMapIndex(t *testing.T) {
 			}
 		}
 	}
+}
+
+func TestParseSiteMapIndexAmazon(t *testing.T) {
+
+	_, filename, _, _ := runtime.Caller(0) // 0 should point to this file
+	workingDir := path.Join(path.Dir(filename))
+	// probably not the finest way to unpack it ...
+	fnz := workingDir + "/test/sitemaps.f3053414d236e84.SitemapIndex_0.xml.gz"
+	fn := workingDir + "/test/sitemaps.f3053414d236e84.SitemapIndex_0.xml"
+	cmd := exec.Command("/usr/bin/gzip", "--decompress", fnz)
+	zipCmd := exec.Command("/usr/bin/gzip", fn)
+	defer func() {
+		zipCmd.Start()
+		zipCmd.Wait()
+	}()
+	if _, err := cmd.Output(); nil != err {
+		t.Log(err)
+	}
+	var fMode os.FileMode = 400
+	file, err := os.OpenFile(fn, os.O_RDONLY, fMode)
+	if nil != err {
+		t.Error(err)
+	}
+	sc, err := parseSiteMapIndex(file)
+	if 5636 != len(sc) {
+		t.Errorf("Unknown length of Amazon sitemapindex file %d; should be 5636", len(sc))
+	}
+	for _, sLoc := range sc {
+		if false == isValidSitemapUrl(sLoc) {
+			t.Error("Not a sitemap URL", sLoc)
+		}
+	}
+
 }
 
 // MBA Mid 2012 1.8 GHz Intel Core i5
