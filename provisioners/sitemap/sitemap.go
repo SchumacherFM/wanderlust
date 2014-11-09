@@ -20,15 +20,16 @@ import (
 	"errors"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"github.com/SchumacherFM/wanderlust/provisionerApi"
+	"github.com/SchumacherFM/wanderlust/rucksack"
 	"strings"
 )
 
 func GetProvisioner() *provisionerApi.Config {
-	sitemap := &sm{
+	s := &sm{
 		myRoute: "sitemap",
 		config:  []string{"SiteMapUrl1", "SiteMapUrl2"}, // used in the html input field names
 	}
-	p := provisionerApi.NewProvisioner("Sitemap", "fa-sitemap", sitemap)
+	p := provisionerApi.NewProvisioner("Sitemap", "fa-sitemap", s)
 	return p
 }
 
@@ -58,6 +59,26 @@ func (s *sm) IsValid(p *provisionerApi.PostData) error {
 	if false == isValidSitemapUrl(p.Value) {
 		return ErrValidate
 	}
+	return nil
+}
+
+// ConfigComplete implements the brotzeit.Fetcher interface to check if all config values
+// have been successfully entered by the user. if so brotzeit can start automatically fetching URLs
+func (s *sm) ConfigComplete(bp rucksack.Backpacker) (bool, error) {
+	sm1, err := bp.FindOne(s.Route(), "SiteMapUrl1")
+	if nil != err {
+		return false, err
+	}
+	sm2, err := bp.FindOne(s.Route(), "SiteMapUrl2")
+	if nil != err {
+		return false, err
+	}
+	return (len(sm1) > 5 && true == isValidSitemapUrl(string(sm1))) ||
+		(len(sm2) > 5 && true == isValidSitemapUrl(string(sm2))), nil
+}
+
+// FetchUrls implements the brotzeit.Fetcher interface
+func (s *sm) FetchUrls(bp rucksack.Backpacker) []string {
 	return nil
 }
 

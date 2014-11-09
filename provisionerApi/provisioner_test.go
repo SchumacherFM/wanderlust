@@ -18,6 +18,7 @@ package provisionerApi
 
 import (
 	"github.com/SchumacherFM/wanderlust/picnicApi"
+	"github.com/SchumacherFM/wanderlust/rucksack"
 	"net/http"
 	"testing"
 )
@@ -39,6 +40,14 @@ func (this *testPapi) SaveHandler() picnicApi.HandlerFunc {
 	}
 }
 func (this *testPapi) IsValid(p *PostData) error {
+	return nil
+}
+
+func (this *testPapi) ConfigComplete(bp rucksack.Backpacker) (bool, error) {
+	return false, nil
+}
+
+func (this *testPapi) FetchUrls(bp rucksack.Backpacker) []string {
 	return nil
 }
 

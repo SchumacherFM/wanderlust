@@ -21,6 +21,7 @@ package provisionerApi
 import (
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
+	"github.com/SchumacherFM/wanderlust/rucksack"
 	"net/http"
 )
 
@@ -41,10 +42,16 @@ type (
 		SaveHandler() picnicApi.HandlerFunc
 		// IsValid validates the post data and returns different errors which will pop up on the front end
 		IsValid(p *PostData) error
-		// Urls() returns a slice of n URLs. It can take either nano seconds to grab all URLs or an infinite amount
-		// of time until e.g. all sitemap.xml has been downloaded and parsed
-		// This func will be used in the provisioners package
-		// Urls(configData []string) []string
+
+		// ConfigComplete checks if all config values
+		// have been successfully entered by the user. if so brotzeit can start automatically fetching URLs
+		ConfigComplete(rucksack.Backpacker) (bool, error)
+
+		// FetchUrls process can take quite a long time or nanoseconds
+		FetchUrls(rucksack.Backpacker) []string
+
+		// idea: maybe for output
+		// ProgressInfo() string
 	}
 
 	// Implements encoding/json.Marshaler interface

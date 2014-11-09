@@ -18,6 +18,7 @@ package sitemap
 
 import (
 	"github.com/SchumacherFM/wanderlust/provisionerApi"
+	. "github.com/SchumacherFM/wanderlust/rucksack/rsTestHelper"
 	"testing"
 )
 
@@ -56,4 +57,30 @@ func BenchmarkIsValid(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		p.Api.IsValid(pd) // must succeed
 	}
+}
+
+func TestConfigComplete(t *testing.T) {
+	p := GetProvisioner()
+	db := &DbMock{
+		FindOneData: []byte(`http://www.golang.org/sitemap.xml`),
+	}
+	ok, err := p.Api.ConfigComplete(db)
+	if false == ok {
+		t.Error("Config must be complete!")
+	}
+	if nil != err {
+		t.Error(err)
+	}
+	db.FindOneData = []byte(``)
+	ok, err = p.Api.ConfigComplete(db)
+	if true == ok {
+		t.Error("Config is not complete!")
+	}
+	if nil != err {
+		t.Error(err)
+	}
+}
+
+func TestFetchUrls(t *testing.T) {
+	t.Skip("@todo")
 }

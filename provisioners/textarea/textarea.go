@@ -20,6 +20,7 @@ import (
 	"errors"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"github.com/SchumacherFM/wanderlust/provisionerApi"
+	"github.com/SchumacherFM/wanderlust/rucksack"
 	"strings"
 )
 
@@ -75,6 +76,21 @@ func (t *ta) IsValid(p *provisionerApi.PostData) error {
 	return nil
 }
 
+// ConfigComplete implements the brotzeit.Fetcher interface to check if all config values
+// have been successfully entered by the user. if so brotzeit can start automatically fetching URLs
+func (t *ta) ConfigComplete(bp rucksack.Backpacker) (bool, error) {
+	tad, err := bp.FindOne(t.Route(), "TextAreaData")
+	if nil != err {
+		return false, err
+	}
+	return len(tad) > 5, nil
+}
+
+// FetchUrls implements the brotzeit.Fetcher interface
+func (s *ta) FetchUrls(bp rucksack.Backpacker) []string {
+	return nil
+}
+
 func valueModifier(pd *provisionerApi.PostData) []byte {
 	return []byte(strings.TrimSpace(pd.Value))
 }
@@ -83,8 +99,3 @@ func valueModifier(pd *provisionerApi.PostData) []byte {
 func (t *ta) SaveHandler() picnicApi.HandlerFunc {
 	return provisionerApi.FormSave(t, valueModifier)
 }
-
-//func (t *ta) Urls(configData []string) []string {
-//
-//	return nil
-//}

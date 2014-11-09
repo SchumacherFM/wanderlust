@@ -14,24 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package brotzeit
+package rsTestHelper
 
-import (
-	"github.com/SchumacherFM/wanderlust/provisioners"
+type (
+	DbMock struct {
+		FindOneData []byte
+		FindAllData [][]byte
+	}
 )
 
-func BootMe() error {
-
-	// job/worker
-
-	pc, err := provisioners.GetAvailable()
-	if nil != err {
-		return err
-	}
-	for _, prov := range pc.Collection {
-
-		go prov.Api.ProduceUrls()
-
-	}
-	return nil
-}
+func (db *DbMock) Writer()                             {}
+func (db *DbMock) Close() error                        { return nil }
+func (db *DbMock) FindOne(b, k string) ([]byte, error) { return db.FindOneData, nil }
+func (db *DbMock) FindAll(bn string) ([][]byte, error) { return db.FindAllData, nil }
+func (db *DbMock) Insert(b, k string, d []byte) error  { return nil }
