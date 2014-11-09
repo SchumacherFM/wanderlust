@@ -46,6 +46,7 @@ type XhtmlLink struct {
 // parser can parse TB huge files with using only ~5MB of memory
 // Use a sitemap to indicate alternate language pages
 // https://support.google.com/webmasters/answer/2620865?hl=en
+// returns urlSlice, isSiteMapIndex, Error
 func parseSiteMap(r io.ReadCloser) ([]string, bool, error) {
 	maxUrls := make([]string, maxUrlsPerSitemap)
 	urlCount := 0
@@ -72,7 +73,7 @@ func parseSiteMap(r io.ReadCloser) ([]string, bool, error) {
 			// If we just read a StartElement token
 			inElement = se.Name.Local
 			// ...and its name is "url"
-			if inElement == "sitemap" || inElement == "url" {
+			if "sitemap" == inElement || "url" == inElement {
 				var un UrlNode
 				// decode a whole chunk of following XML into the
 				// variable un which is a UrlNode (see above); decErr will be ignored ...

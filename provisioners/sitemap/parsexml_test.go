@@ -37,7 +37,7 @@ type smc struct {
 
 var sitemapCollection = []smc{
 	smc{
-		isSiteMapIndex: true,
+		isSiteMapIndex: false,
 		isSiteMap:      false,
 		loc:            0,
 		data: `<?xml version="1.0" encoding="UTF-8"?>
@@ -156,19 +156,22 @@ var sitemapCollection = []smc{
 func TestParseSiteMapIndex(t *testing.T) {
 	for _, s := range sitemapCollection {
 		si := helpers.NewReadCloser(s.data)
-		sc, err := parseSiteMapIndex(si)
+		sc, isSiteMapIndex, err := parseSiteMap(si)
+
 		if nil != err {
 			t.Error(err)
 		}
-		if nil != sc && len(sc) > 0 && false == s.isSiteMapIndex {
-			t.Errorf("Should be not a siteMapIndex\n%#v\n%#v", sc, s)
+		if isSiteMapIndex != s.isSiteMapIndex {
+			t.Errorf("Should be a siteMapIndex\n%#v\n%#v", sc, s)
 		}
-		if true == s.isSiteMapIndex && s.loc != len(sc) {
-			t.Errorf("\nExpected: %d\nActual: %d", s.loc, len(sc))
-		}
-		for _, sv := range sc {
-			if false == strings.Contains(sv, ".xml") {
-				t.Error("Not a sitemap.xml", sv)
+		if true == isSiteMapIndex {
+			if s.loc != len(sc) {
+				t.Errorf("\nExpected: %d\nActual: %d", s.loc, len(sc))
+			}
+			for _, sv := range sc {
+				if false == strings.Contains(sv, ".xml") {
+					t.Error("Not a sitemap.xml", sv)
+				}
 			}
 		}
 	}
@@ -195,7 +198,10 @@ func TestParseSiteMapIndexAmazon(t *testing.T) {
 	if nil != err {
 		t.Error(err)
 	}
-	sc, err := parseSiteMapIndex(file)
+	sc, isSiteMapIndex, err := parseSiteMap(file)
+	if false == isSiteMapIndex {
+		t.Fatalf("Expecting a sitemapindex: %s", file)
+	}
 	if 5636 != len(sc) {
 		t.Errorf("Unknown length of Amazon sitemapindex file %d; should be 5636", len(sc))
 	}
@@ -204,7 +210,6 @@ func TestParseSiteMapIndexAmazon(t *testing.T) {
 			t.Error("Not a sitemap URL", sLoc)
 		}
 	}
-
 }
 
 // MBA Mid 2012 1.8 GHz Intel Core i5
@@ -213,7 +218,7 @@ func TestParseSiteMapIndexAmazon(t *testing.T) {
 func BenchmarkParseSiteMapIndex(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		si := helpers.NewReadCloser(sitemapCollection[2].data)
-		parseSiteMapIndex(si)
+		parseSiteMap(si)
 	}
 }
 
@@ -221,7 +226,7 @@ func TestParseSiteMap(t *testing.T) {
 
 	for _, s := range sitemapCollection {
 		si := helpers.NewReadCloser(s.data)
-		sm, err := parseSiteMap(si)
+		sm, isSitemap, err := parseSiteMap(si)
 		if nil != err {
 			t.Error(err)
 		}
@@ -229,12 +234,14 @@ func TestParseSiteMap(t *testing.T) {
 		if 0 == len(sm) && true == s.isSiteMap {
 			t.Errorf("Should be not a siteMap\n%#v\n%#v\n", sm, s)
 		}
-		if true == s.isSiteMap && s.loc != len(sm) {
+		if isSitemap == s.isSiteMap && s.loc != len(sm) {
 			t.Errorf("\nExpected: %d\nActual: %d", s.loc, len(sm))
 		}
-		for _, sLoc := range sm {
-			if false == isValidUrl(sLoc) {
-				t.Errorf("Invalid URL %s", sLoc)
+		if true == isSitemap {
+			for _, sLoc := range sm {
+				if false == isValidUrl(sLoc) {
+					t.Errorf("Invalid URL %s", sLoc)
+				}
 			}
 		}
 	}
