@@ -48,6 +48,7 @@ var (
 )
 
 // PrepareSave removes duplicated lines and too much white space. creates a unique URL set
+// @todo extract URLs from pasted text and ignore invalid characters. nice and convenient.
 func (t *ta) PrepareSave(p *provisionerApi.PostData) ([]byte, error) {
 	if "" == p.Value {
 		return nil, nil
