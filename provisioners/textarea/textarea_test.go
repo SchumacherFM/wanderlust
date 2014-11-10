@@ -28,6 +28,38 @@ func TestPrepareSave(t *testing.T) {
 	var ret []byte
 	pd := &provisionerApi.PostData{}
 
+	type eData struct {
+		in  string
+		out string
+		err error
+	}
+
+	var ed = make([]eData, 7)
+	ed[0].in = ""
+	ed[0].out = ""
+	ed[0].err = nil
+	ed[1].in = " http://www.golang.org/tour "
+	ed[1].out = "http://www.golang.org/tour"
+	ed[1].err = nil
+	ed[2].in = "htp://www.golang.org/siteap.xml"
+	ed[2].out = "htp://www.golang.org/siteap.xml"
+	ed[2].err = nil
+	ed[3].in = "hTtp://www.golang.org/siteMap.xml \nhttps://www.google.com/search?q=golang\n"
+	ed[3].out = "hTtp://www.golang.org/siteMap.xml\nhttps://www.google.com/search?q=golang"
+	ed[3].err = nil
+	ed[4].in = strings.Repeat("hTtp://www.golang.org/siteMap.xml\n", 21)
+	ed[4].out = ""
+	ed[4].err = ErrTooManyURLs
+	ed[5].in = "htp://www.golang.org/siteMap.xml \nhttps://www.google.com/search?q=golang\n"
+	ed[5].out = ""
+	ed[5].err = ErrValidate
+	ed[6].in = "http://www.golang.org/siteMap.xml \n\n\nhttps://www.google.com/search?q=golang\n\n\nhttp://localhost"
+	ed[6].out = "http://www.golang.org/siteMap.xml\nhttps://www.google.com/search?q=golang\nhttp://localhost"
+	ed[6].err = nil
+	ed[7].in = strings.Repeat("hTtp://www.golang.org/siteMap.xml\n", 18)
+	ed[7].out = "hTtp://www.golang.org/siteMap.xml"
+	ed[7].err = ErrTooManyURLs
+
 	_, err := p.Api.PrepareSave(pd) // must succeed
 	if nil != err {
 		t.Errorf("%#v is valid 31!", pd)
@@ -49,6 +81,12 @@ func TestPrepareSave(t *testing.T) {
 	}
 
 	pd.Value = "hTtp://www.golang.org/siteMap.xml\nhttps://www.google.com/search?q=golang\n"
+	_, err = p.Api.PrepareSave(pd) // must succeed
+	if nil != err {
+		t.Errorf("%#v must be valid 49!", pd)
+	}
+
+	pd.Value = "hTtp://www.golang.org/siteMap.xml\n\nhttps://www.google.com/search?q=golang\t\n\n"
 	_, err = p.Api.PrepareSave(pd) // must succeed
 	if nil != err {
 		t.Errorf("%#v must be valid 49!", pd)
