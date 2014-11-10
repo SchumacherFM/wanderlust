@@ -17,6 +17,7 @@
 package textarea
 
 import (
+	"bytes"
 	"errors"
 	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	"github.com/SchumacherFM/wanderlust/rucksack"
@@ -46,6 +47,7 @@ var (
 	ErrTooManyURLs = errors.New("Too many URLs detected! Maximum is 20.")
 )
 
+// PrepareSave removes duplicated lines and too much white space. creates a unique URL set
 func (t *ta) PrepareSave(p *provisionerApi.PostData) ([]byte, error) {
 	if "" == p.Value {
 		return nil, nil
@@ -55,16 +57,32 @@ func (t *ta) PrepareSave(p *provisionerApi.PostData) ([]byte, error) {
 	if len(valueSlice) > 20 {
 		return nil, ErrTooManyURLs
 	}
-
+	var ret bytes.Buffer
+	defer ret.Reset() // free memory
+	unique := make(map[string]bool)
+	defer func() { unique = nil }() // free memory
 	for _, v := range valueSlice {
+		v = strings.TrimSpace(v)
 		vl := strings.ToLower(v)
+
+		if "" == vl {
+			continue
+		}
 
 		if false == strings.HasPrefix(vl, "http") {
 			return nil, ErrValidate
 		}
+
+		if _, isSet := unique[v]; false == isSet {
+			ret.WriteString(strings.TrimSpace(v) + "\n")
+			unique[v] = true
+		}
+	}
+	if ret.Len() > 1 {
+		ret.Truncate(ret.Len() - 1) // remove last \n
 	}
 
-	return []byte(strings.TrimSpace(p.Value)), nil
+	return ret.Bytes(), nil
 }
 
 // ConfigComplete implements the brotzeit.Fetcher interface to check if all config values
