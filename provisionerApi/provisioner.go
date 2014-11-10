@@ -19,10 +19,7 @@
 package provisionerApi
 
 import (
-	"github.com/SchumacherFM/wanderlust/helpers"
-	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"github.com/SchumacherFM/wanderlust/rucksack"
-	"net/http"
 )
 
 const (
@@ -31,17 +28,19 @@ const (
 )
 
 type (
-	// this methods will be used to query the provisioner instance and set values
-	ProvisionerApi interface {
+	// https://restful-api-design.readthedocs.org/en/latest/methods.html#standard-methods
+
+	// ColdCuts methods will be used to query the provisioner instance, set values
+	ColdCuts interface {
 		// Route returns the endpoint of the route and is also abused as the database name
 		Route() string
 		// FormHandler returns a JSON object with a key called data which contains a key/value object
 		// key is the form field name/id and value the value
-		FormHandler() picnicApi.HandlerFunc
-		// SaveHandler saves the POSTed data from the input fields into the rucksack
-		SaveHandler() picnicApi.HandlerFunc
-		// IsValid validates the post data and returns different errors which will pop up on the front end
-		IsValid(p *PostData) error
+		Config() []string
+
+		// PrepareSave prepares the POSTed data from the input fields for the saving the rucksack and also checks if
+		// the entered data is valid
+		PrepareSave(pd *PostData) ([]byte, error)
 
 		// ConfigComplete checks if all config values
 		// have been successfully entered by the user. if so brotzeit can start automatically fetching URLs
@@ -54,7 +53,7 @@ type (
 		// ProgressInfo() string
 	}
 
-	// Implements encoding/json.Marshaler interface
+	// Implements encoding/json.Marshaler interface is mainly used for the route
 	Config struct {
 		// This name appears in the frontend
 		name string
@@ -63,7 +62,7 @@ type (
 		// can be a fa-* icon or path to an image
 		icon string
 		// internal handler
-		Api ProvisionerApi
+		Api ColdCuts
 	}
 
 	PostData struct {
@@ -71,17 +70,17 @@ type (
 		Value string `json:"value"`
 	}
 
-	// modifier func which returns the value for saving in the rucksack.Backpacker
-	ValueCallBack func(pd *PostData) []byte
-
-	// internal struct for returning JSON with its data slice
-	formData struct {
-		Data []string `json:"data"`
+	// Base struct is for embedding/composition in other provisioner structs aka Parent Class ;-)
+	Base struct {
+		// route is the public name for the resource access
+		TheRoute string
+		// config contains all the input field names which are use in the HTML partials
+		TheConfig []string
 	}
 )
 
 // NewProvisioner returns a new Config with the API of them
-func NewProvisioner(n, i string, a ProvisionerApi) *Config {
+func NewProvisioner(n, i string, a ColdCuts) *Config {
 	return &Config{
 		name: n,
 		url:  "/" + UrlRoutePrefix + "/" + a.Route(),
@@ -90,55 +89,10 @@ func NewProvisioner(n, i string, a ProvisionerApi) *Config {
 	}
 }
 
-// FormGenerate prepares the JSON object for AngularJS to fill the input fields of the HTML partials
-// with its values. The input field names are hardcoded in the HTML partial as we would like to avoid
-// dynamic rendered forms ...
-func FormGenerate(dbName string, config []string) picnicApi.HandlerFunc {
-	return func(c picnicApi.Context, w http.ResponseWriter, r *http.Request) error {
-		var jsonData = make([]string, 2*len(config))
-		var i = 0
-		for _, cfg := range config {
-			jsonData[i] = cfg
-			cVal, _ := c.Backpacker().FindOne(dbName, cfg)
-			jsonData[i+1] = string(cVal)
-			i = i + 2
-		}
-		fd := &formData{
-			Data: jsonData,
-		}
-		return helpers.RenderJSON(w, fd, 200)
-	}
+func (b *Base) Route() string {
+	return b.TheRoute
 }
 
-// FormSave saves the key/value pair in the rucksack.Backpacker. Does also some validation provided by the
-// Config API
-func FormSave(p ProvisionerApi, cb ValueCallBack) picnicApi.HandlerFunc {
-	return func(c picnicApi.Context, w http.ResponseWriter, r *http.Request) error {
-		status := http.StatusOK
-
-		pd := &PostData{}
-		err := helpers.DecodeJSON(r, pd)
-		if nil != err {
-			he := &picnicApi.HttpError{
-				Status:      http.StatusBadRequest,
-				Description: err.Error(),
-			}
-			return he
-		}
-
-		if errV := p.IsValid(pd); nil != errV {
-			he := &picnicApi.HttpError{
-				Status:      http.StatusExpectationFailed,
-				Description: errV.Error(),
-			}
-			return he
-		}
-
-		err = c.Backpacker().Insert(p.Route(), pd.Key, cb(pd))
-		pd = nil
-		if nil != err {
-			status = http.StatusBadRequest
-		}
-		return helpers.RenderString(w, status, "")
-	}
+func (b *Base) Config() []string {
+	return b.TheConfig
 }

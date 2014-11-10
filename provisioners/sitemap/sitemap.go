@@ -18,7 +18,6 @@ package sitemap
 
 import (
 	"errors"
-	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 	"strings"
@@ -26,8 +25,10 @@ import (
 
 func GetProvisioner() *provisionerApi.Config {
 	s := &sm{
-		myRoute: "sitemap",
-		config:  []string{"SiteMapUrl1", "SiteMapUrl2"}, // used in the html input field names
+		Base: provisionerApi.Base{
+			TheRoute:  "sitemap",
+			TheConfig: []string{"SiteMapUrl1", "SiteMapUrl2"}, // used in the html input field names
+		},
 	}
 	p := provisionerApi.NewProvisioner("Sitemap", "fa-sitemap", s)
 	return p
@@ -35,32 +36,14 @@ func GetProvisioner() *provisionerApi.Config {
 
 type (
 	sm struct {
-		// myRoute is the public name for the resource access
-		myRoute string
-		// config contains all the input field names which are use in the HTML partials
-		config []string
+		provisionerApi.Base
+		// other fields ...
 	}
 )
 
 var (
 	ErrValidate = errors.New("Invalid sitemap URL")
 )
-
-func (s *sm) Route() string {
-	return s.myRoute
-}
-
-func (s *sm) FormHandler() picnicApi.HandlerFunc {
-	return provisionerApi.FormGenerate(s.Route(), s.config)
-}
-
-// IsValid checks if the Value of PostData is valid sitemap URL
-func (s *sm) IsValid(p *provisionerApi.PostData) error {
-	if false == isValidSitemapUrl(p.Value) {
-		return ErrValidate
-	}
-	return nil
-}
 
 // ConfigComplete implements the brotzeit.Fetcher interface to check if all config values
 // have been successfully entered by the user. if so brotzeit can start automatically fetching URLs
@@ -75,6 +58,13 @@ func (s *sm) ConfigComplete(bp rucksack.Backpacker) (bool, error) {
 	}
 	return (len(sm1) > 5 && true == isValidSitemapUrl(string(sm1))) ||
 		(len(sm2) > 5 && true == isValidSitemapUrl(string(sm2))), nil
+}
+
+func (s *sm) PrepareSave(pd *provisionerApi.PostData) ([]byte, error) {
+	if false == isValidSitemapUrl(pd.Value) {
+		return nil, ErrValidate
+	}
+	return []byte(strings.TrimSpace(pd.Value)), nil
 }
 
 // FetchUrls implements the brotzeit.Fetcher interface
@@ -99,13 +89,4 @@ func isValidSitemapUrl(v string) bool {
 
 func isValidUrl(url string) bool {
 	return strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://")
-}
-
-func valueModifier(pd *provisionerApi.PostData) []byte {
-	return []byte(strings.TrimSpace(pd.Value))
-}
-
-// https://restful-api-design.readthedocs.org/en/latest/methods.html#standard-methods
-func (s *sm) SaveHandler() picnicApi.HandlerFunc {
-	return provisionerApi.FormSave(s, valueModifier)
 }

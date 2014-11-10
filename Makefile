@@ -57,13 +57,13 @@ format:
 	${GOFMT} -w ${GOFILES}
 
 test:
-	go test -v --bench=. ./helpers/
-	go test -v --bench=. ./picnic/middleware/
-	go test -v --bench=. ./picnic/
-	go test -v --bench=. ./provisionerApi/
-	go test -v --bench=. ./rucksack/
-	go test -v --bench=. ./provisioners/sitemap/
-	go test -v --bench=. ./provisioners/textarea/
+	go test -v --bench=. -test.benchmem ./helpers/
+	go test -v --bench=. -test.benchmem ./picnic/middleware/
+	go test -v --bench=. -test.benchmem ./picnic/
+	go test -v --bench=. -test.benchmem ./provisionerApi/
+	go test -v --bench=. -test.benchmem ./rucksack/
+	go test -v --bench=. -test.benchmem ./provisioners/sitemap/
+	go test -v --bench=. -test.benchmem ./provisioners/textarea/
 
 testAll:
 	go test -v ./...

@@ -17,39 +17,21 @@
 package provisionerApi
 
 import (
-	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"github.com/SchumacherFM/wanderlust/rucksack"
-	"net/http"
 	"testing"
 )
 
 type testPapi struct {
 }
 
-func (this *testPapi) Route() string {
-	return "TestRoute"
-}
-func (this *testPapi) FormHandler() picnicApi.HandlerFunc {
-	return func(rc picnicApi.Context, w http.ResponseWriter, r *http.Request) error {
-		return nil
-	}
-}
-func (this *testPapi) SaveHandler() picnicApi.HandlerFunc {
-	return func(rc picnicApi.Context, w http.ResponseWriter, r *http.Request) error {
-		return nil
-	}
-}
-func (this *testPapi) IsValid(p *PostData) error {
-	return nil
-}
+func (this *testPapi) Route() string    { return "TestRoute" }
+func (this *testPapi) Config() []string { return nil }
 
-func (this *testPapi) ConfigComplete(bp rucksack.Backpacker) (bool, error) {
-	return false, nil
-}
+func (this *testPapi) PrepareSave(pd *PostData) ([]byte, error) { return nil, nil }
 
-func (this *testPapi) FetchUrls(bp rucksack.Backpacker) []string {
-	return nil
-}
+func (this *testPapi) ConfigComplete(bp rucksack.Backpacker) (bool, error) { return false, nil }
+
+func (this *testPapi) FetchUrls(bp rucksack.Backpacker) []string { return nil }
 
 func TestNewProvisioner(t *testing.T) {
 	papi := &testPapi{}

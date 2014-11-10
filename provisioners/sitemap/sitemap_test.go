@@ -22,7 +22,7 @@ import (
 	"testing"
 )
 
-func TestIsValid(t *testing.T) {
+func TestPrepareSave(t *testing.T) {
 	p := GetProvisioner()
 
 	expected := map[string]error{
@@ -39,23 +39,25 @@ func TestIsValid(t *testing.T) {
 	pd := &provisionerApi.PostData{}
 	for url, eErr := range expected {
 		pd.Value = url
-		actual := p.Api.IsValid(pd)
-		if eErr != actual {
-			t.Errorf("\nExpected: %#v\nActual:\t%#v\nURL: %s\n", eErr, actual, url)
+		actualData, actualErr := p.Api.PrepareSave(pd)
+		if eErr != actualErr {
+			t.Errorf("\nExpected: %#v\nActual:\t%#v\nURL: %s\n", eErr, actualErr, url)
 		}
-
+		if url != string(actualData) && nil == actualErr {
+			t.Errorf("\nExpected: %s\nActual:\t%s\n", url, actualData)
+		}
 	}
 }
 
 // MBA Mid 2012 1.8 GHz Intel Core i5
-// BenchmarkIsValid	 2.000.000	      1008 ns/op
-func BenchmarkIsValid(b *testing.B) {
+// BenchmarkPrepareSave	 1.000.000	      1270 ns/op
+func BenchmarkPrepareSave(b *testing.B) {
 	p := GetProvisioner()
 	pd := &provisionerApi.PostData{}
 	pd.Value = "hTtp://www.golang.org/siteMap.xml"
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		p.Api.IsValid(pd) // must succeed
+		p.Api.PrepareSave(pd) // must succeed
 	}
 }
 

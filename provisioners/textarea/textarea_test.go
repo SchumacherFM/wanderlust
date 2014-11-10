@@ -23,36 +23,39 @@ import (
 	"testing"
 )
 
-func TestIsValid(t *testing.T) {
+func TestPrepareSave(t *testing.T) {
 	p := GetProvisioner()
-
+	var ret []byte
 	pd := &provisionerApi.PostData{}
 
-	err := p.Api.IsValid(pd) // must succeed
+	_, err := p.Api.PrepareSave(pd) // must succeed
 	if nil != err {
 		t.Errorf("%#v is valid 31!", pd)
 	}
 
 	pd.Value = " http://www.golang.org/tour"
-	err = p.Api.IsValid(pd) // must succeed
+	ret, err = p.Api.PrepareSave(pd) // must succeed
 	if nil != err {
 		t.Errorf("%#v is not valid 37!", pd)
 	}
+	if "http://www.golang.org/tour" != string(ret) {
+		t.Errorf("Expected: http://www.golang.org/tour Got: %s", ret)
+	}
 
 	pd.Value = "htp://www.golang.org/siteap.xml"
-	err = p.Api.IsValid(pd) // must fail
+	_, err = p.Api.PrepareSave(pd) // must fail
 	if nil == err {
 		t.Errorf("%#v is not valid 43!", pd)
 	}
 
 	pd.Value = "hTtp://www.golang.org/siteMap.xml\nhttps://www.google.com/search?q=golang\n"
-	err = p.Api.IsValid(pd) // must succeed
+	_, err = p.Api.PrepareSave(pd) // must succeed
 	if nil != err {
 		t.Errorf("%#v must be valid 49!", pd)
 	}
 
 	pd.Value = strings.Repeat("hTtp://www.golang.org/siteMap.xml\n", 21)
-	err = p.Api.IsValid(pd) // must fail
+	_, err = p.Api.PrepareSave(pd) // must fail
 	if nil == err {
 		t.Errorf("%#v must invalid 57!", pd)
 	}
@@ -60,14 +63,14 @@ func TestIsValid(t *testing.T) {
 }
 
 // MBA Mid 2012 1.8 GHz Intel Core i5
-// BenchmarkIsValid	 2.000.000	      1008 ns/op
-func BenchmarkIsValid(b *testing.B) {
+// BenchmarkPrepareSave	 1.000.000	      1520 ns/op
+func BenchmarkPrepareSave(b *testing.B) {
 	p := GetProvisioner()
 	pd := &provisionerApi.PostData{}
 	pd.Value = "hTtp://www.golang.org/siteMap.xml"
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		p.Api.IsValid(pd) // must succeed
+		p.Api.PrepareSave(pd) // must succeed
 	}
 }
 

@@ -18,7 +18,6 @@ package textarea
 
 import (
 	"errors"
-	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 	"strings"
@@ -26,8 +25,10 @@ import (
 
 func GetProvisioner() *provisionerApi.Config {
 	t := &ta{
-		myRoute: "textarea",
-		config:  []string{"TextAreaData"},
+		Base: provisionerApi.Base{
+			TheRoute:  "textarea",
+			TheConfig: []string{"TextAreaData"}, // used in the html input field names
+		},
 	}
 	p := provisionerApi.NewProvisioner("Textarea", "fa-file-text-o", t)
 	return p
@@ -35,10 +36,8 @@ func GetProvisioner() *provisionerApi.Config {
 
 type (
 	ta struct {
-		// myRoute is the public name for the resource access
-		myRoute string
-		// config contains all the input field names which are use in the HTML partials
-		config []string
+		provisionerApi.Base
+		// other fields ...
 	}
 )
 
@@ -47,33 +46,25 @@ var (
 	ErrTooManyURLs = errors.New("Too many URLs detected! Maximum is 20.")
 )
 
-func (t *ta) Route() string {
-	return t.myRoute
-}
-
-func (t *ta) FormHandler() picnicApi.HandlerFunc {
-	return provisionerApi.FormGenerate(t.Route(), t.config)
-}
-
-func (t *ta) IsValid(p *provisionerApi.PostData) error {
+func (t *ta) PrepareSave(p *provisionerApi.PostData) ([]byte, error) {
 	if "" == p.Value {
-		return nil
+		return nil, nil
 	}
 
 	valueSlice := strings.Split(strings.TrimSpace(p.Value), "\n")
 	if len(valueSlice) > 20 {
-		return ErrTooManyURLs
+		return nil, ErrTooManyURLs
 	}
 
 	for _, v := range valueSlice {
 		vl := strings.ToLower(v)
 
 		if false == strings.HasPrefix(vl, "http") {
-			return ErrValidate
+			return nil, ErrValidate
 		}
 	}
 
-	return nil
+	return []byte(strings.TrimSpace(p.Value)), nil
 }
 
 // ConfigComplete implements the brotzeit.Fetcher interface to check if all config values
@@ -89,13 +80,4 @@ func (t *ta) ConfigComplete(bp rucksack.Backpacker) (bool, error) {
 // FetchUrls implements the brotzeit.Fetcher interface
 func (s *ta) FetchUrls(bp rucksack.Backpacker) []string {
 	return nil
-}
-
-func valueModifier(pd *provisionerApi.PostData) []byte {
-	return []byte(strings.TrimSpace(pd.Value))
-}
-
-// https://restful-api-design.readthedocs.org/en/latest/methods.html#standard-methods
-func (t *ta) SaveHandler() picnicApi.HandlerFunc {
-	return provisionerApi.FormSave(t, valueModifier)
 }
