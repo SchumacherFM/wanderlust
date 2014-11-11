@@ -1,39 +1,88 @@
 <div class="row">
-    <div class="col-lg-6">
-        <div class="widget">
-            <div class="widget-header">
-                <i class="fa fa-plus"></i> Brotzeit - The URL Cache
-                <div class="btn-group pull-right">
-                    <button class="btn btn-sm btn-warning">Purge All</button>
-                    <button class="btn btn-sm btn-info">Rebuild All</button>
-                </div>
-                <div class="clearfix"></div>
-            </div>
-            <div class="widget-body medium no-padding">
-                <div class="table-responsive">
-                    <table class="table">
-                        <tbody>
-                        <tr>
-                            <td>Sitemap</td>
-                            <td>URLs: 121.125</td>
-                            <td><button class="btn btn-sm btn-info">Automatic</button></td>
-                            <td><button class="btn btn-sm btn-warning">Purge</button></td>
-                            <td><button class="btn btn-sm btn-info">Rebuild</button></td>
-                            <td><span class="text-success"><i class="fa fa-check"></i></span></td>
-                        </tr>
-                        <tr>
-                            <td>Textarea</td>
-                            <td>URLs: 25</td>
-                            <td><button class="btn btn-sm btn-info">Automatic</button></td>
-                            <td><button class="btn btn-sm btn-warning">Purge</button></td>
-                            <td><button class="btn btn-sm btn-info">Rebuild</button></td>
-                            <td><span class="text-danger"><i class="fa fa-times"></i></span></td>
-                        </tr>
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+  <div class="col-lg-6">
+    <div class="widget">
+      <div class="widget-header">
+        <i class="fa fa-glass"></i> Brotzeit - The URL Cache
+        <div class="btn-group pull-right">
+          <button class="btn btn-sm btn-warning"><i class="fa fa-bomb"></i> Purge All</button>
+          <button class="btn btn-sm btn-info"><i class="fa fa-refresh"></i> Rebuild All</button>
         </div>
+        <div class="clearfix"></div>
+      </div>
+      <div class="widget-body medium no-padding">
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+            <tr>
+              <td><i class="fa fa-sitemap"></i> Sitemap</td>
+              <td>URLs: 121.125</td>
+              <td>
+                <button class="btn btn-xs btn-success" ng-click="open()"><i class="fa fa-clock-o"></i> Automatic</button>
+              </td>
+              <td>
+                <button class="btn btn-xs btn-warning"><i class="fa fa-bomb"></i> Purge</button>
+              </td>
+              <td>
+                <button class="btn btn-xs btn-info"><i class="fa fa-refresh"></i> Rebuild</button>
+              </td>
+              <td><span class="text-success"><i class="fa fa-check"></i></span></td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-file-text-o"></i> Textarea</td>
+              <td>URLs: 25</td>
+              <td>
+                <button class="btn btn-xs btn-info" disabled="disabled"><i class="fa fa-clock-o"></i> Automatic</button>
+              </td>
+              <td>
+                <button class="btn btn-xs btn-warning"><i class="fa fa-bomb"></i> Purge</button>
+              </td>
+              <td>
+                <button class="btn btn-xs btn-info"><i class="fa fa-refresh"></i> Rebuild</button>
+              </td>
+              <td><span class="text-danger"><i class="fa fa-times"></i></span></td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-file-text-o"></i> G'Analytics</td>
+              <td>URLs: 25</td>
+              <td>
+                <button class="btn btn-xs btn-info"><i class="fa fa-clock-o"></i> Automatic</button>
+              </td>
+              <td>
+                <button class="btn btn-xs btn-warning"><i class="fa fa-bomb"></i> Purge</button>
+              </td>
+              <td>
+                <button class="btn btn-xs btn-info"><i class="fa fa-refresh"></i> Rebuild</button>
+              </td>
+              <td><span class="text-danger"><i class="fa fa-times"></i></span></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
+    <ul class="list-group" style="border:1px solid pink;">
+      <li class="list-group-item">Success/Green: Automatic active</li>
+      <li class="list-group-item">Info/Disabled: Automatic not available</li>
+      <li class="list-group-item">Info: Automatic not set up</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
 </div>
