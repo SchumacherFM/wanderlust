@@ -47,24 +47,25 @@
 
   <!-- build:js js/dashboard.js -->
   <script type="text/javascript" src="app/app.js"></script>
-  <script type="text/javascript" src="app/core/CoreFactory.js"></script>
-  <script type="text/javascript" src="app/core/CoreRoutes.js"></script>
-  <script type="text/javascript" src="app/core/CoreServices.js"></script>
+  <script type="text/javascript" src="app/core/coreFactory.js"></script>
+  <script type="text/javascript" src="app/core/coreRoutes.js"></script>
+  <script type="text/javascript" src="app/core/coreServices.js"></script>
   <script type="text/javascript" src="app/directives/check.js"></script>
   <script type="text/javascript" src="app/directives/loading.js"></script>
   <script type="text/javascript" src="app/directives/widget.js"></script>
   <script type="text/javascript" src="app/directives/widget-header.js"></script>
   <script type="text/javascript" src="app/directives/widget-body.js"></script>
-  <script type="text/javascript" src="app/master/MasterController.js"></script>
-  <script type="text/javascript" src="app/master/MasterDirective.js"></script>
-  <script type="text/javascript" src="app/dashboard/SystemInfoController.js"></script>
-  <script type="text/javascript" src="app/dashboard/SystemInfoFactory.js"></script>
-  <script type="text/javascript" src="app/dashboard/UserInfoController.js"></script>
-  <script type="text/javascript" src="app/dashboard/UserInfoFactory.js"></script>
-  <script type="text/javascript" src="app/login/LoginController.js"></script>
-  <script type="text/javascript" src="app/provisioners/ProvisionerController.js"></script>
-  <script type="text/javascript" src="app/provisioners/ProvisionerFactory.js"></script>
-  <script type="text/javascript" src="app/marketplace/MarketplaceController.js"></script>
+  <script type="text/javascript" src="app/master/masterController.js"></script>
+  <script type="text/javascript" src="app/master/masterDirective.js"></script>
+  <script type="text/javascript" src="app/dashboard/systemInfoController.js"></script>
+  <script type="text/javascript" src="app/dashboard/systemInfoFactory.js"></script>
+  <script type="text/javascript" src="app/dashboard/userInfoController.js"></script>
+  <script type="text/javascript" src="app/dashboard/userInfoFactory.js"></script>
+  <script type="text/javascript" src="app/login/loginController.js"></script>
+  <script type="text/javascript" src="app/provisioners/provisionerController.js"></script>
+  <script type="text/javascript" src="app/provisioners/provisionerFactory.js"></script>
+  <script type="text/javascript" src="app/marketplace/marketplaceController.js"></script>
+  <script type="text/javascript" src="app/brotzeit/brotzeitController.js"></script>
   <!-- endbuild -->
   <!-- SCRIPTS -->
 
@@ -107,8 +108,8 @@
            data-analytics-category="navigation">Dashboard <span class="menu-icon fa fa-tachometer"></span></a>
       </li>
       <li class="sidebar-list">
-        <a href="#/tables" data-analytics-on="click" data-analytics-event="tables"
-           data-analytics-category="navigation">Tables <span class="menu-icon fa fa-table"></span></a>
+        <a href="#/brotzeit" data-analytics-on="click" data-analytics-event="brotzeit"
+           data-analytics-category="navigation">Brotzeit <span class="menu-icon fa fa-glass"></span></a>
       </li>
       <li class="sidebar-title separator"><span>PROVISIONERS</span></li>
       <rd-nav-li data-ng-repeat="prov in provisioners" p="prov"></rd-nav-li>

@@ -29,11 +29,12 @@ angular.module('Wanderlust')
             ncyBreadcrumbLabel: 'Login'
           }
         })
-        .state('tables', {
-          url: '/tables',
-          templateUrl: 'partials/core/tpl/tables.html',
+        .state('brotzeit', {
+          url: '/brotzeit',
+          templateUrl: 'partials/brotzeit/tpl/bz.html',
+          controller: 'BrotzeitController',
           data: {
-            ncyBreadcrumbLabel: 'Yet another demo table page'
+            ncyBreadcrumbLabel: 'Brotzeit - The URL Cache'
           }
         })
         .state('shop', {

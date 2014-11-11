@@ -1,6 +1,6 @@
 (function(){ 
 /**
- * @license AngularJS v1.3.2
+ * @license AngularJS v1.3.0
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -36,7 +36,7 @@ function lookupDottedPath(obj, path) {
 function shallowClearAndCopy(src, dst) {
   dst = dst || {};
 
-  angular.forEach(dst, function(value, key) {
+  angular.forEach(dst, function(value, key){
     delete dst[key];
   });
 
@@ -85,7 +85,7 @@ function shallowClearAndCopy(src, dst) {
  * this:
  *
  * ```js
-     app.config(['$resourceProvider', function($resourceProvider) {
+     app.config(['$resourceProvider', function ($resourceProvider) {
        // Don't strip trailing slashes from calculated URLs
        $resourceProvider.defaults.stripTrailingSlashes = false;
      }]);
@@ -351,7 +351,7 @@ function shallowClearAndCopy(src, dst) {
  * ```
  */
 angular.module('ngResource', ['ng']).
-  provider('$resource', function() {
+  provider('$resource', function () {
     var provider = this;
 
     this.defaults = {
@@ -368,7 +368,7 @@ angular.module('ngResource', ['ng']).
       }
     };
 
-    this.$get = ['$http', '$q', function($http, $q) {
+    this.$get = ['$http', '$q', function ($http, $q) {
 
       var noop = angular.noop,
         forEach = angular.forEach,
@@ -422,14 +422,14 @@ angular.module('ngResource', ['ng']).
       }
 
       Route.prototype = {
-        setUrlParams: function(config, params, actionUrl) {
+        setUrlParams: function (config, params, actionUrl) {
           var self = this,
             url = actionUrl || self.template,
             val,
             encodedVal;
 
           var urlParams = self.urlParams = {};
-          forEach(url.split(/\W/), function(param) {
+          forEach(url.split(/\W/), function (param) {
             if (param === 'hasOwnProperty') {
               throw $resourceMinErr('badname', "hasOwnProperty is not a valid parameter name.");
             }
@@ -441,15 +441,15 @@ angular.module('ngResource', ['ng']).
           url = url.replace(/\\:/g, ':');
 
           params = params || {};
-          forEach(self.urlParams, function(_, urlParam) {
+          forEach(self.urlParams, function (_, urlParam) {
             val = params.hasOwnProperty(urlParam) ? params[urlParam] : self.defaults[urlParam];
             if (angular.isDefined(val) && val !== null) {
               encodedVal = encodeUriSegment(val);
-              url = url.replace(new RegExp(":" + urlParam + "(\\W|$)", "g"), function(match, p1) {
+              url = url.replace(new RegExp(":" + urlParam + "(\\W|$)", "g"), function (match, p1) {
                 return encodedVal + p1;
               });
             } else {
-              url = url.replace(new RegExp("(\/?):" + urlParam + "(\\W|$)", "g"), function(match,
+              url = url.replace(new RegExp("(\/?):" + urlParam + "(\\W|$)", "g"), function (match,
                   leadingSlashes, tail) {
                 if (tail.charAt(0) == '/') {
                   return tail;
@@ -473,7 +473,7 @@ angular.module('ngResource', ['ng']).
 
 
           // set params - delegate param encoding to $http
-          forEach(params, function(value, key) {
+          forEach(params, function (value, key) {
             if (!self.urlParams[key]) {
               config.params = config.params || {};
               config.params[key] = value;
@@ -491,7 +491,7 @@ angular.module('ngResource', ['ng']).
         function extractParams(data, actionParams) {
           var ids = {};
           actionParams = extend({}, paramDefaults, actionParams);
-          forEach(actionParams, function(value, key) {
+          forEach(actionParams, function (value, key) {
             if (isFunction(value)) { value = value(); }
             ids[key] = value && value.charAt && value.charAt(0) == '@' ?
               lookupDottedPath(data, value.substr(1)) : value;
@@ -507,17 +507,17 @@ angular.module('ngResource', ['ng']).
           shallowClearAndCopy(value || {}, this);
         }
 
-        Resource.prototype.toJSON = function() {
+        Resource.prototype.toJSON = function () {
           var data = extend({}, this);
           delete data.$promise;
           delete data.$resolved;
           return data;
         };
 
-        forEach(actions, function(action, name) {
+        forEach(actions, function (action, name) {
           var hasBody = /^(POST|PUT|PATCH)$/i.test(action.method);
 
-          Resource[name] = function(a1, a2, a3, a4) {
+          Resource[name] = function (a1, a2, a3, a4) {
             var params = {}, data, success, error;
 
             /* jshint -W086 */ /* (purposefully fall through case statements) */
@@ -565,7 +565,7 @@ angular.module('ngResource', ['ng']).
             var responseErrorInterceptor = action.interceptor && action.interceptor.responseError ||
               undefined;
 
-            forEach(action, function(value, key) {
+            forEach(action, function (value, key) {
               if (key != 'params' && key != 'isArray' && key != 'interceptor') {
                 httpConfig[key] = copy(value);
               }
@@ -576,7 +576,7 @@ angular.module('ngResource', ['ng']).
               extend({}, extractParams(data, action.params || {}), params),
               action.url);
 
-            var promise = $http(httpConfig).then(function(response) {
+            var promise = $http(httpConfig).then(function (response) {
               var data = response.data,
                 promise = value.$promise;
 
@@ -592,7 +592,7 @@ angular.module('ngResource', ['ng']).
                 // jshint +W018
                 if (action.isArray) {
                   value.length = 0;
-                  forEach(data, function(item) {
+                  forEach(data, function (item) {
                     if (typeof item === "object") {
                       value.push(new Resource(item));
                     } else {
@@ -613,7 +613,7 @@ angular.module('ngResource', ['ng']).
               response.resource = value;
 
               return response;
-            }, function(response) {
+            }, function (response) {
               value.$resolved = true;
 
               (error || noop)(response);
@@ -622,7 +622,7 @@ angular.module('ngResource', ['ng']).
             });
 
             promise = promise.then(
-              function(response) {
+              function (response) {
                 var value = responseInterceptor(response);
                 (success || noop)(value, response.headers);
                 return value;
@@ -644,7 +644,7 @@ angular.module('ngResource', ['ng']).
           };
 
 
-          Resource.prototype['$' + name] = function(params, success, error) {
+          Resource.prototype['$' + name] = function (params, success, error) {
             if (isFunction(params)) {
               error = success; success = params; params = {};
             }
@@ -653,7 +653,7 @@ angular.module('ngResource', ['ng']).
           };
         });
 
-        Resource.bind = function(additionalParamDefaults) {
+        Resource.bind = function (additionalParamDefaults) {
           return resourceFactory(url, extend({}, paramDefaults, additionalParamDefaults), actions);
         };
 
@@ -669,7 +669,7 @@ angular.module('ngResource', ['ng']).
 
 /**
  * An Angular module that gives you access to the browsers local storage
- * @version v0.1.5 - 2014-11-04
+ * @version v0.1.3 - 2014-10-14
  * @link https://github.com/grevory/angular-local-storage
  * @author grevory <greg@gregpike.ca>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -726,13 +726,11 @@ angularLocalStorage.provider('localStorageService', function() {
   // Setter for the prefix
   this.setPrefix = function(prefix) {
     this.prefix = prefix;
-    return this;
   };
 
    // Setter for the storageType
    this.setStorageType = function(storageType) {
-     this.storageType = storageType;
-     return this;
+       this.storageType = storageType;
    };
 
   // Setter for cookie config
@@ -741,13 +739,11 @@ angularLocalStorage.provider('localStorageService', function() {
       expiry: exp,
       path: path
     };
-    return this;
   };
 
   // Setter for cookie domain
   this.setStorageCookieDomain = function(domain) {
     this.cookie.domain = domain;
-    return this;
   };
 
   // Setter for notification config
@@ -757,7 +753,6 @@ angularLocalStorage.provider('localStorageService', function() {
       setItem: itemSet,
       removeItem: itemRemove
     };
-    return this;
   };
 
   this.$get = ['$rootScope', '$window', '$document', '$parse', function($rootScope, $window, $document, $parse) {
@@ -960,16 +955,16 @@ angularLocalStorage.provider('localStorageService', function() {
     };
 
     // Checks the browser to see if cookies are supported
-    var browserSupportsCookies = (function() {
+    var browserSupportsCookies = function() {
       try {
-        return $window.navigator.cookieEnabled ||
+        return navigator.cookieEnabled ||
           ("cookie" in $document && ($document.cookie.length > 0 ||
           ($document.cookie = "test").indexOf.call($document.cookie, "test") > -1));
       } catch (e) {
           $rootScope.$broadcast('LocalStorageModule.notification.error', e.message);
           return false;
       }
-    }());
+    };
 
     // Directly adds a value to cookies
     // Typically used as a fallback is local storage is not available in the browser
@@ -982,7 +977,7 @@ angularLocalStorage.provider('localStorageService', function() {
         value = toJson(value);
       }
 
-      if (!browserSupportsCookies) {
+      if (!browserSupportsCookies()) {
         $rootScope.$broadcast('LocalStorageModule.notification.error', 'COOKIES_NOT_SUPPORTED');
         return false;
       }
@@ -1018,7 +1013,7 @@ angularLocalStorage.provider('localStorageService', function() {
     // Directly get a value from a cookie
     // Example use: localStorageService.cookie.get('library'); // returns 'angular'
     var getFromCookies = function (key) {
-      if (!browserSupportsCookies) {
+      if (!browserSupportsCookies()) {
         $rootScope.$broadcast('LocalStorageModule.notification.error', 'COOKIES_NOT_SUPPORTED');
         return false;
       }
@@ -1111,7 +1106,6 @@ angularLocalStorage.provider('localStorageService', function() {
       deriveKey: deriveQualifiedKey,
       length: lengthOfLocalStorage,
       cookie: {
-        isSupported: browserSupportsCookies,
         set: addToCookies,
         add: addToCookies, //DEPRECATED
         get: getFromCookies,
@@ -12807,7 +12801,7 @@ angular.module('ui.router.state')
   .filter('includedByState', $IncludedByStateFilter);
 })(window, window.angular);
 
-/*! angular-breadcrumb - v0.3.0
+/*! angular-breadcrumb - v0.2.3
 * https://github.com/ncuillery/angular-breadcrumb
 * Copyright (c) 2014 Nicolas Cuillery; Licensed MIT */
 
@@ -12820,19 +12814,12 @@ function isAOlderThanB(scopeA, scopeB) {
     }
 }
 
-function parseStateRef(ref) {
-    var parsed = ref.replace(/\n/g, " ").match(/^([^(]+?)\s*(\((.*)\))?$/);
-    if (!parsed || parsed.length !== 4) { throw new Error("Invalid state ref '" + ref + "'"); }
-    return { state: parsed[1], paramExpr: parsed[3] || null };
-}
-
 function $Breadcrumb() {
 
     var $$options = {
         prefixStateName: null,
         template: 'bootstrap3',
-        templateUrl: null,
-        includeAbstract : false
+        templateUrl: null
     };
 
     this.setOptions = function(options) {
@@ -12851,52 +12838,45 @@ function $Breadcrumb() {
             }
         });
 
+        // Check if a property in state's data is its own
+        var $$isStateDataProperty = function(state, property) {
+            if(!state.data || !state.data[property]) {
+                return false;
+            }
+
+            var parentState = $$parentState(state);
+            return !(parentState && parentState.data && parentState.data[property] && state.data[property] === parentState.data[property]);
+        };
+
         // Get the parent state
         var $$parentState = function(state) {
             // Check if state has explicit parent OR we try guess parent from its name
             var name = state.parent || (/^(.+)\.[^.]+$/.exec(state.name) || [])[1];
             // If we were able to figure out parent name then get this state
-            return name;
+            return name && $state.get(name);
         };
 
         // Add the state in the chain if not already in and if not abstract
-        var $$addStateInChain = function(chain, stateRef) {
-            var conf,
-                parentParams,
-                ref = parseStateRef(stateRef);
-
+        var $$addStateInChain = function(chain, state) {
             for(var i=0, l=chain.length; i<l; i+=1) {
-                if (chain[i].name === ref.state) {
-                    return;
-                }
+              if (chain[i].name === state.name) {
+                return;
+              }
             }
 
-            conf = $state.get(ref.state);
-            if((!conf.abstract || $$options.includeAbstract) && !(conf.ncyBreadcrumb && conf.ncyBreadcrumb.skip)) {
-                if(ref.paramExpr) {
-                    parentParams = $lastViewScope.$eval(ref.paramExpr);
-                }
-
-                conf.ncyBreadcrumbLink = $state.href(ref.state, parentParams || $stateParams || {});
-                chain.unshift(conf);
+            if(!state.abstract && !$$isStateDataProperty(state, 'ncyBreadcrumbSkip')) {
+                state.ncyBreadcrumbLink = $state.href(state.name, $stateParams || {});
+                chain.unshift(state);
             }
         };
 
         // Get the state for the parent step in the breadcrumb
-        var $$breadcrumbParentState = function(stateRef) {
-            var ref = parseStateRef(stateRef),
-                conf = $state.get(ref.state);
-
-            if(conf.ncyBreadcrumb && conf.ncyBreadcrumb.parent) {
-                // Handle the "parent" property of the breadcrumb, override the parent/child relation of the state
-                var isFunction = typeof conf.ncyBreadcrumb.parent === 'function';
-                var parentStateRef = isFunction ? conf.ncyBreadcrumb.parent($lastViewScope) : conf.ncyBreadcrumb.parent;
-                if(parentStateRef) {
-                    return parentStateRef;
-                }
+        var $$breadcrumbParentState = function(state) {
+            if($$isStateDataProperty(state, 'ncyBreadcrumbParent')) {
+                return $state.get(state.data.ncyBreadcrumbParent);
             }
 
-            return $$parentState(conf);
+            return $$parentState(state);
         };
 
         return {
@@ -12917,28 +12897,25 @@ function $Breadcrumb() {
                 return $$options.templateUrl;
             },
 
-            getStatesChain: function(exitOnFirst) { // Deliberately undocumented param, see getLastStep
+            getStatesChain: function() {
                 var chain = [];
 
                 // From current state to the root
-                for(var stateRef = $state.$current.self.name; stateRef; stateRef=$$breadcrumbParentState(stateRef)) {
-                    $$addStateInChain(chain, stateRef);
-                    if(exitOnFirst && chain.length) {
-                        return chain;
-                    }
+                for(var state = $state.$current.self; state && state.name !== ''; state=$$breadcrumbParentState(state)) {
+                  $$addStateInChain(chain, state);
                 }
 
                 // Prefix state treatment
                 if($$options.prefixStateName) {
-                    $$addStateInChain(chain, $$options.prefixStateName);
+                    var prefixState = $state.get($$options.prefixStateName);
+                    if(!prefixState) {
+                        throw 'Bad configuration : prefixState "' + $$options.prefixStateName + '" unknown';
+                    }
+
+                    $$addStateInChain(chain, prefixState);
                 }
 
                 return chain;
-            },
-
-            getLastStep: function() {
-                var chain = this.getStatesChain(true);
-                return chain.length ? chain[0] : undefined;
             },
 
             $getLastViewScope: function() {
@@ -12948,48 +12925,19 @@ function $Breadcrumb() {
     }];
 }
 
-var getExpression = function(interpolationFunction) {
-    if(interpolationFunction.expressions) {
-        return interpolationFunction.expressions;
-    } else {
-        var expressions = [];
-        angular.forEach(interpolationFunction.parts, function(part) {
-            if(angular.isFunction(part)) {
-                expressions.push(part.exp);
-            }
-        });
-        return expressions;
-    }
-};
-
-var registerWatchers = function(labelWatcherArray, interpolationFunction, viewScope, step) {
-    angular.forEach(getExpression(interpolationFunction), function(expression) {
-        var watcher = viewScope.$watch(expression, function() {
-            step.ncyBreadcrumbLabel = interpolationFunction(viewScope);
-        });
-        labelWatcherArray.push(watcher);
-    });
-
-};
-
-var deregisterWatchers = function(labelWatcherArray) {
-    angular.forEach(labelWatcherArray, function(deregisterWatch) {
-        deregisterWatch();
-    });
-    labelWatcherArray = [];
-};
-
 function BreadcrumbDirective($interpolate, $breadcrumb, $rootScope) {
     this.$$templates = {
         bootstrap2: '<ul class="breadcrumb">' +
-            '<li ng-repeat="step in steps" ng-switch="$last || !!step.abstract" ng-class="{active: $last}">' +
-            '<a ng-switch-when="false" href="{{step.ncyBreadcrumbLink}}">{{step.ncyBreadcrumbLabel}}</a> ' +
-            '<span ng-switch-when="true">{{step.ncyBreadcrumbLabel}}</span>' +
-            '<span class="divider" ng-hide="$last">/</span>' +
+            '<li ng-repeat="step in steps | limitTo:(steps.length-1)">' +
+            '<a href="{{step.ncyBreadcrumbLink}}">{{step.ncyBreadcrumbLabel}}</a> ' +
+            '<span class="divider">/</span>' +
+            '</li>' +
+            '<li ng-repeat="step in steps | limitTo:-1" class="active">' +
+            '<span>{{step.ncyBreadcrumbLabel}}</span>' +
             '</li>' +
             '</ul>',
         bootstrap3: '<ol class="breadcrumb">' +
-            '<li ng-repeat="step in steps" ng-class="{active: $last}" ng-switch="$last || !!step.abstract">' +
+            '<li ng-repeat="step in steps" ng-class="{active: $last}" ng-switch="$last">' +
             '<a ng-switch-when="false" href="{{step.ncyBreadcrumbLink}}">{{step.ncyBreadcrumbLabel}}</a> ' +
             '<span ng-switch-when="true">{{step.ncyBreadcrumbLabel}}</span>' +
             '</li>' +
@@ -13006,16 +12954,47 @@ function BreadcrumbDirective($interpolate, $breadcrumb, $rootScope) {
             post: function postLink(scope) {
                 var labelWatchers = [];
 
+                var getExpression = function(interpolationFunction) {
+                    if(interpolationFunction.expressions) {
+                        return interpolationFunction.expressions;
+                    } else {
+                        var expressions = [];
+                        angular.forEach(interpolationFunction.parts, function(part) {
+                            if(angular.isFunction(part)) {
+                                expressions.push(part.exp);
+                            }
+                        });
+                        return expressions;
+                    }
+                };
+
+                var registerWatchers = function(interpolationFunction, scope, step) {
+                    angular.forEach(getExpression(interpolationFunction), function(expression) {
+                        var watcher = scope.$watch(expression, function() {
+                            step.ncyBreadcrumbLabel = interpolationFunction(scope);
+                        });
+                        labelWatchers.push(watcher);
+                    });
+
+                };
+
+                var deregisterWatchers = function() {
+                    angular.forEach(labelWatchers, function(deregisterWatch) {
+                        deregisterWatch();
+                    });
+                    labelWatchers = [];
+                };
+
                 var renderBreadcrumb = function() {
-                    deregisterWatchers(labelWatchers);
+                    deregisterWatchers();
                     var viewScope = $breadcrumb.$getLastViewScope();
                     scope.steps = $breadcrumb.getStatesChain();
                     angular.forEach(scope.steps, function (step) {
-                        if (step.ncyBreadcrumb && step.ncyBreadcrumb.label) {
-                            var parseLabel = $interpolate(step.ncyBreadcrumb.label);
+                        if (step.data && step.data.ncyBreadcrumbLabel) {
+                            var parseLabel = $interpolate(step.data.ncyBreadcrumbLabel);
                             step.ncyBreadcrumbLabel = parseLabel(viewScope);
                             // Watcher for further viewScope updates
-                            registerWatchers(labelWatchers, parseLabel, viewScope, step);
+                            registerWatchers(parseLabel, viewScope, step);
                         } else {
                             step.ncyBreadcrumbLabel = step.name;
                         }
@@ -13034,60 +13013,9 @@ function BreadcrumbDirective($interpolate, $breadcrumb, $rootScope) {
 }
 BreadcrumbDirective.$inject = ['$interpolate', '$breadcrumb', '$rootScope'];
 
-function BreadcrumbLastDirective($interpolate, $breadcrumb, $rootScope) {
-
-    return {
-        restrict: 'A',
-        scope: {},
-        template: '{{ncyBreadcrumbLabel}}',
-        compile: function(cElement, cAttrs) {
-
-            // Override the default template if ncyBreadcrumbLast has a value
-            var template = cElement.attr(cAttrs.$attr.ncyBreadcrumbLast);
-            if(template) {
-                cElement.html(template);
-            }
-
-            return {
-                post: function postLink(scope) {
-                    var labelWatchers = [];
-
-                    var renderLabel = function() {
-                        deregisterWatchers(labelWatchers);
-                        var viewScope = $breadcrumb.$getLastViewScope();
-                        var lastStep = $breadcrumb.getLastStep();
-                        if(lastStep) {
-                            scope.ncyBreadcrumbLink = lastStep.ncyBreadcrumbLink;
-                            if (lastStep.ncyBreadcrumb && lastStep.ncyBreadcrumb.label) {
-                                var parseLabel = $interpolate(lastStep.ncyBreadcrumb.label);
-                                scope.ncyBreadcrumbLabel = parseLabel(viewScope);
-                                // Watcher for further viewScope updates
-                                // Tricky last arg: the last step is the entire scope of the directive !
-                                registerWatchers(labelWatchers, parseLabel, viewScope, scope);
-                            } else {
-                                scope.ncyBreadcrumbLabel = lastStep.name;
-                            }
-                        }
-                    };
-
-                    $rootScope.$on('$viewContentLoaded', function () {
-                        renderLabel();
-                    });
-
-                    // View(s) may be already loaded while the directive's linking
-                    renderLabel();
-                }
-            };
-
-        }
-    };
-}
-BreadcrumbLastDirective.$inject = ['$interpolate', '$breadcrumb', '$rootScope'];
-
 angular.module('ncy-angular-breadcrumb', ['ui.router.state'])
     .provider('$breadcrumb', $Breadcrumb)
-    .directive('ncyBreadcrumb', BreadcrumbDirective)
-    .directive('ncyBreadcrumbLast', BreadcrumbLastDirective);
+    .directive('ncyBreadcrumb', BreadcrumbDirective);
 })(window, window.angular);
 
 /*
@@ -13602,7 +13530,7 @@ angular.module('angulartics', [])
     eventTracking: {},
     bufferFlushDelay: 1000 // Support only one configuration for buffer flush delay to simplify buffering
   };
-
+  
   // List of known handlers that plugins can register themselves for
   var knownHandlers = [
     'pageTrack',
@@ -13626,7 +13554,7 @@ angular.module('angulartics', [])
       }
     };
   };
-
+  
   // As handlers are installed by plugins, they get pushed into a list and invoked in order.
   var updateHandlers = function(handlerName, fn){
     if(!handlers[handlerName]){
@@ -13664,7 +13592,7 @@ angular.module('angulartics', [])
     virtualPageviews: function (value) { this.settings.pageTracking.autoTrackVirtualPages = value; },
     firstPageview: function (value) { this.settings.pageTracking.autoTrackFirstPage = value; },
     withBase: function (value) { this.settings.pageTracking.basePath = (value) ? angular.element('base').attr('href').slice(0, -1) : ''; },
-    withAutoBase: function (value) { this.settings.pageTracking.autoBasePath = value; },
+    withAutoBase: function (value) { this.settings.pageTracking.autoBasePath = value; },    
   };
 
   // General function to register plugin handlers. Flushes buffers immediately upon registration according to the specified delay.
@@ -13692,15 +13620,15 @@ angular.module('angulartics', [])
     };
     api[handlerName] = updateHandlers(handlerName, bufferedHandler(handlerName));
   };
-
+  
   // Set up register functions for each known handler
   angular.forEach(knownHandlers, installHandlerRegisterFunction);
   return provider;
 })
 
 .run(['$rootScope', '$location', '$window', '$analytics', '$injector', function ($rootScope, $location, $window, $analytics, $injector) {
-
-
+  
+    
   if ($analytics.settings.pageTracking.autoTrackFirstPage) {
     /* Only track the 'first page' if there are no routes or states on the page */
     var noRoutesOrStates = true;
@@ -13716,6 +13644,8 @@ angular.module('angulartics', [])
         noRoutesOrStates = false;
         break;
       }
+    } else {
+      noRoutesOrStates = false;
     }
     if (noRoutesOrStates) {
       if ($analytics.settings.pageTracking.autoBasePath) {
@@ -13750,7 +13680,7 @@ angular.module('angulartics', [])
   }
 }])
 
-.directive('analyticsOn', ['$analytics', function ($analytics) {
+.directive('analyticsOn', ['$analytics', '$timeout', function ($analytics, $timeout) {
   function isCommand(element) {
     return ['a:','button:','button:button','button:submit','input:button','input:submit'].indexOf(
       element.tagName.toLowerCase()+':'+(element.type||'')) >= 0;
@@ -13785,7 +13715,7 @@ angular.module('angulartics', [])
     scope: true,
     link: function ($scope, $element, $attrs) {
       var eventType = $attrs.analyticsOn || inferEventType($element[0]);
-
+      
       $scope.$analytics = {};
 
       angular.forEach($attrs.$attr, function(attr, name) {
@@ -13808,7 +13738,7 @@ angular.module('angulartics', [])
           }
         }
         // Allow components to pass through an expression that gets merged on to the event properties
-        // eg. analytics-properites='myComponentScope.someConfigExpression.$analyticsProperties'
+        // eg. analytics-properites='myComponentScope.someConfigExpression.$analyticsProperties' 
         if($attrs.analyticsProperties){
           angular.extend($scope.$analytics, $scope.$eval($attrs.analyticsProperties));
         }
