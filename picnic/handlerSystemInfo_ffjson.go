@@ -53,6 +53,24 @@ func (mj *SystemInfo) MarshalJSONBuf(buf *bytes.Buffer) error {
 	} else {
 		buf.WriteString(`,`)
 	}
+	buf.WriteString(`"CronJobs":`)
+	if mj.CronJobs != nil {
+		buf.WriteString(`[`)
+		for i, v := range mj.CronJobs {
+			if i != 0 {
+				buf.WriteString(`,`)
+			}
+			helpers.Ffjson_WriteJsonString(buf, v)
+		}
+		buf.WriteString(`]`)
+	} else {
+		buf.WriteString(`null`)
+	}
+	if first == true {
+		first = false
+	} else {
+		buf.WriteString(`,`)
+	}
 	buf.WriteString(`"Goroutines":`)
 	helpers.Ffjson_FormatBits(buf, uint64(mj.Goroutines), 10, mj.Goroutines < 0)
 	if first == true {
@@ -60,15 +78,15 @@ func (mj *SystemInfo) MarshalJSONBuf(buf *bytes.Buffer) error {
 	} else {
 		buf.WriteString(`,`)
 	}
-	buf.WriteString(`"Wanderers":`)
-	helpers.Ffjson_FormatBits(buf, uint64(mj.Wanderers), 10, mj.Wanderers < 0)
+	buf.WriteString(`"SessionExpires":`)
+	helpers.Ffjson_FormatBits(buf, uint64(mj.SessionExpires), 10, mj.SessionExpires < 0)
 	if first == true {
 		first = false
 	} else {
 		buf.WriteString(`,`)
 	}
-	buf.WriteString(`"SessionExpires":`)
-	helpers.Ffjson_FormatBits(buf, uint64(mj.SessionExpires), 10, mj.SessionExpires < 0)
+	buf.WriteString(`"Wanderers":`)
+	helpers.Ffjson_FormatBits(buf, uint64(mj.Wanderers), 10, mj.Wanderers < 0)
 	buf.WriteString(`}`)
 	return nil
 }

@@ -18,9 +18,9 @@ angular
         iconColor: "orange"
       },
       Brotzeit: {
-        "icon": "fa-download",
+        "icon": "fa-glass",
         "title": 0,
-        "comment": "Brotzeit",
+        "comment": "Brotzeit URLs",
         iconColor: "red"
       },
       SessionExpires: {

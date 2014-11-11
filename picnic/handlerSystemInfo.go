@@ -25,10 +25,15 @@ import (
 )
 
 type SystemInfo struct {
-	Goroutines     int
-	Brotzeit       int
-	Wanderers      int
+	Goroutines int
+	// Number of total URLs in the rucksack
+	Brotzeit int
+	// Number of wanderers running
+	Wanderers int
+	// Session expires in
 	SessionExpires int
+	// Which cronjobs are running
+	CronJobs []string
 }
 
 func (p *PicnicApp) initRoutesSystemInfo(r *mux.Router) error {
@@ -49,6 +54,7 @@ func newSystemInfo() *SystemInfo {
 		Brotzeit:       helpers.RandomInt(6),  // @todo
 		Wanderers:      helpers.RandomInt(20), // @todo
 		SessionExpires: 0,
+		CronJobs:       []string{"Sitemap 23m5s", "G'Analytics 33m10s"},
 	}
 	return si
 }
