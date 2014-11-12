@@ -1,0 +1,112 @@
+<div class="modal-header">
+  <button type="button" class="close" data-ng-click="close()"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+  <h4 class="modal-title">Cron Help</h4>
+</div>
+<div class="modal-body">
+<pre>
+*   *   *   *   *   *
+|   |   |   |   |   |day of week(0-6)
+|   |   |   |   |month(1-12)
+|   |   |   |day of month(1-31)
+|   |   |hour(0-23)
+|   |minute(0-59)
+|seconds(0-59)
+           </pre>
+
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+      <tr>
+        <th>Field name</th>
+        <th>Mandatory?</th>
+        <th>Allowed values</th>
+        <th>Allowed special characters</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>Seconds</td>
+        <td>Yes</td>
+        <td>0-59</td>
+        <td> / , -</td>
+      </tr>
+      <tr>
+        <td>Minutes</td>
+        <td>Yes</td>
+        <td>0-59</td>
+        <td> / , -</td>
+      </tr>
+      <tr>
+        <td>Hours</td>
+        <td>Yes</td>
+        <td>0-23</td>
+        <td>/ , -</td>
+      </tr>
+      <tr>
+        <td>Day of month</td>
+        <td>Yes</td>
+        <td>1-31</td>
+        <td>/ , - ?</td>
+      </tr>
+      <tr>
+        <td>Month</td>
+        <td>Yes</td>
+        <td>1-12 or JAN-DEC</td>
+        <td>/ , -</td>
+      </tr>
+      <tr>
+        <td>Day of week</td>
+        <td>Yes</td>
+        <td>0-6 or SUN-SAT</td>
+        <td>/ , - ?</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h4>Predefined schedules</h4>
+
+  <p>You may use one of several pre-defined schedules in place of a cron expression.</p>
+
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+      <tr>
+        <th>Entry</th>
+        <th>Description</th>
+        <th>Equivalent To</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>@yearly (or @annually)</td>
+        <td>Run once a year, midnight, Jan. 1st</td>
+        <td>0 0 0 1 1 *</td>
+      </tr>
+      <tr>
+        <td>@monthly</td>
+        <td>Run once a month, midnight, first of month</td>
+        <td>0 0 0 1 * *</td>
+      </tr>
+      <tr>
+        <td>@weekly</td>
+        <td>Run once a week, midnight on Sunday</td>
+        <td>0 0 0 * * 0</td>
+      </tr>
+      <tr>
+        <td>@daily (or @midnight)</td>
+        <td>Run once a day, midnight</td>
+        <td>0 0 0 * * *</td>
+      </tr>
+      <tr>
+        <td>@hourly</td>
+        <td>Run once an hour, beginning of hour</td>
+        <td>0 0 * * * *</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" data-ng-click="close()">Close</button>
+</div>

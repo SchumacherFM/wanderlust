@@ -1,229 +1,126 @@
 <div class="row">
-<div class="col-lg-6">
+  <div class="col-lg-6">
     <div class="widget">
-        <div class="widget-header">
-            <i class="fa fa-glass"></i> Brotzeit - The URL Cache
-            <div class="btn-group pull-right">
+      <div class="widget-header">
+        <i class="fa fa-glass"></i> Brotzeit - The URL Cache
+        <div class="btn-group pull-right">
+          <button type="button" class="close" data-ng-click="openHelp()"><i class="fa fa-question-circle"></i></button>
 
-
-            </div>
-            <div class="clearfix"></div>
         </div>
-        <div class="widget-body medium no-padding">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th>Provisioner</th>
-                        <th>URL count</th>
-                        <th class="text-center">Cron job</th>
-                        <th class="text-center">
-                            <button class="btn btn-xs btn-warning"
-                                    title="Purge All">
-                                <i class="fa fa-bomb"></i> Purge All
-                            </button>
-                        </th>
-                        <th class="text-center">
-                            <button class="btn btn-xs btn-info"
-                                    title="Refresh All">
-                                <i class="fa fa-refresh"></i> Refresh All
-                            </button>
-                        </th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td><i class="fa fa-sitemap"></i> Sitemap</td>
-                        <td class="text-right"> 121.125</td>
-                        <td class="text-center">
-                            <button class="btn btn-xs btn-success"
-                                    title="Setup cron job"><i
-                                    class="fa fa-clock-o"></i></button>
-                        </td>
-                        <td class="text-center">
-                            <button class="btn btn-xs btn-warning"
-                                    title="Purge"><i class="fa fa-bomb"></i></button>
-                        </td>
-                        <td class="text-center">
-                            <button class="btn btn-xs btn-info"
-                                    title="Refresh"><i class="fa fa-refresh"></i></button>
-                        </td>
-                        <td class="text-center"><span class="text-success"><i class="fa fa-check"></i></span></td>
-                    </tr>
-                    <tr>
-                        <td><i class="fa fa-file-text-o"></i> Textarea</td>
-                        <td>25</td>
-                        <td class="text-center">
-                            <button class="btn btn-xs btn-info"
-                                    disabled="disabled"
-                                    title="Setup cron job"><i class="fa fa-clock-o"></i>
-                            </button>
-                        </td>
-                        <td class="text-center">
-                            <button class="btn btn-xs btn-warning"
-                                    title="Purge"><i class="fa fa-bomb"></i></button>
-                        </td>
-                        <td class="text-center">
-                            <button class="btn btn-xs btn-info"
-                                    title="Refresh"><i class="fa fa-refresh"></i></button>
-                        </td>
-                        <td class="text-center"><span class="text-danger"><i class="fa fa-times"></i></span></td>
-                    </tr>
-                    <tr>
-                        <td><i class="fa fa-file-text-o"></i> G'Analytics</td>
-                        <td>25</td>
-                        <td class="text-center">
-                            <button class="btn btn-xs btn-info"
-                                    title="Setup cron job"><i class="fa fa-clock-o"></i></button>
-                        </td>
-                        <td class="text-center">
-                            <button class="btn btn-xs btn-warning"
-                                    title="Purge"><i class="fa fa-bomb"></i></button>
-                        </td>
-                        <td class="text-center">
-                            <button class="btn btn-xs btn-info"
-                                    title="Refresh"><i class="fa fa-refresh"></i></button>
-                        </td>
-                        <td class="text-center"><span class="text-danger"><i class="fa fa-times"></i></span></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-            <p style="margin: 0 8px;">Brotzeit is needed to load all the URLs from the different provisioners into its
-                database.
-            After Brotzeit has collected all the URLs it can send out the Wanderers to hit the servers.</p>
+        <div class="clearfix"></div>
+      </div>
+      <div class="widget-body medium no-padding">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+            <tr>
+              <th>Provisioner</th>
+              <th>URL count</th>
+              <th class="text-center">Cron job</th>
+              <th class="text-center">
+                <button class="btn btn-xs btn-warning"
+                        title="Purge All">
+                  <i class="fa fa-bomb"></i> Purge All
+                </button>
+              </th>
+              <th class="text-center">
+                <button class="btn btn-xs btn-info"
+                        title="Refresh All">
+                  <i class="fa fa-refresh"></i> Refresh All
+                </button>
+              </th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td><i class="fa fa-sitemap"></i> Sitemap</td>
+              <td class="text-right"> 121.125</td>
+              <td class="text-center">
+                <button class="btn btn-xs btn-success" data-ng-click="showCronForm()"
+                        title="Setup cron job"><i
+                    class="fa fa-clock-o"></i></button>
+              </td>
+              <td class="text-center">
+                <button class="btn btn-xs btn-warning"
+                        title="Purge"><i class="fa fa-bomb"></i></button>
+              </td>
+              <td class="text-center">
+                <button class="btn btn-xs btn-info"
+                        title="Refresh"><i class="fa fa-refresh"></i></button>
+              </td>
+              <td class="text-center"><span class="text-success"><i class="fa fa-check"></i></span></td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-file-text-o"></i> Textarea</td>
+              <td>25</td>
+              <td class="text-center">
+                <button class="btn btn-xs btn-info"
+                        disabled="disabled"
+                        title="Setup cron job"><i class="fa fa-clock-o"></i>
+                </button>
+              </td>
+              <td class="text-center">
+                <button class="btn btn-xs btn-warning"
+                        title="Purge"><i class="fa fa-bomb"></i></button>
+              </td>
+              <td class="text-center">
+                <button class="btn btn-xs btn-info"
+                        title="Refresh"><i class="fa fa-refresh"></i></button>
+              </td>
+              <td class="text-center"><span class="text-danger"><i class="fa fa-times"></i></span></td>
+            </tr>
+            <tr>
+              <td><i class="fa fa-file-text-o"></i> G'Analytics</td>
+              <td>25</td>
+              <td class="text-center">
+                <button class="btn btn-xs btn-info"
+                        title="Setup cron job"><i class="fa fa-clock-o"></i></button>
+              </td>
+              <td class="text-center">
+                <button class="btn btn-xs btn-warning"
+                        title="Purge"><i class="fa fa-bomb"></i></button>
+              </td>
+              <td class="text-center">
+                <button class="btn btn-xs btn-info"
+                        title="Refresh"><i class="fa fa-refresh"></i></button>
+              </td>
+              <td class="text-center"><span class="text-danger"><i class="fa fa-times"></i></span></td>
+            </tr>
+            </tbody>
+          </table>
         </div>
+        <p style="margin: 0 8px;">Brotzeit is needed to load all the URLs from the different provisioners into its
+          database.
+          After Brotzeit has collected all the URLs it can send out the Wanderers to hit the servers.</p>
+      </div>
     </div>
+    <p>Mental Note: </p>
     <ul class="list-group" style="border:1px solid pink;">
-        <li class="list-group-item">Mental Note: Success/Green: Automatic active</li>
-        <li class="list-group-item">Info/Disabled: Automatic not available</li>
-        <li class="list-group-item">Info: Automatic not set up</li>
+      <li class="list-group-item">Success/Green: Automatic active</li>
+      <li class="list-group-item">Info/Disabled: Automatic not available</li>
+      <li class="list-group-item">Info: Automatic not set up</li>
     </ul>
-</div>
+  </div>
 
-<div class="col-lg-6">
-    <div class="widget">
-        <div class="widget-header">
-            <i class="fa fa-sitemap"></i> Cron job for Sitemap
-        </div>
-        <div class="widget-body">
+  <div class="col-lg-6" data-ng-controller="CronJobController" data-ng-show="isShownCronForm">
 
-            <form role="form">
+    <rd-widget>
+      <rd-widget-header title="CronJob Config for {{title}}" icon="{{icon}}">
+        <button type="button" class="close" data-ng-click="hideCronForm()"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+      </rd-widget-header>
+      <rd-widget-body xloading="isLoading">
+        <form name="cronForm" role="form">
 
-                <div class="form-group has-feedback Xhas-success">
-                    <label for="exampleInputEmail1">Cron Expression</label>
-                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="* * * * * *">
-                    <span class="glyphicon glyphicon-ok form-control-feedback"></span>
-                </div>
-            </form>
+          <div class="form-group has-feedback Xhas-success">
+            <label for="exampleInputEmail1">Cron Expression</label>
+            <input type="text" class="form-control" id="exampleInputEmail1" placeholder="* * * * * *">
+            <span class="glyphicon glyphicon-ok form-control-feedback"></span>
+          </div>
+        </form>
 
-            <h4>Cron Help</h4>
-            <pre>
- *   *   *   *   *   *
- |   |   |   |   |   |day of week(0-6)
- |   |   |   |   |month(1-12)
- |   |   |   |day of month(1-31)
- |   |   |hour(0-23)
- |   |minute(0-59)
- |seconds(0-59)
-         </pre>
+      </rd-widget-body>
+    </rd-widget>
 
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th>Field name</th>
-                        <th>Mandatory?</th>
-                        <th>Allowed values</th>
-                        <th>Allowed special characters</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>Seconds</td>
-                        <td>Yes</td>
-                        <td>0-59</td>
-                        <td> / , -</td>
-                    </tr>
-                    <tr>
-                        <td>Minutes</td>
-                        <td>Yes</td>
-                        <td>0-59</td>
-                        <td> / , -</td>
-                    </tr>
-                    <tr>
-                        <td>Hours</td>
-                        <td>Yes</td>
-                        <td>0-23</td>
-                        <td>/ , -</td>
-                    </tr>
-                    <tr>
-                        <td>Day of month</td>
-                        <td>Yes</td>
-                        <td>1-31</td>
-                        <td>/ , - ?</td>
-                    </tr>
-                    <tr>
-                        <td>Month</td>
-                        <td>Yes</td>
-                        <td>1-12 or JAN-DEC</td>
-                        <td>/ , -</td>
-                    </tr>
-                    <tr>
-                        <td>Day of week</td>
-                        <td>Yes</td>
-                        <td>0-6 or SUN-SAT</td>
-                        <td>/ , - ?</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <h4>Predefined schedules</h4>
-
-            <p>You may use one of several pre-defined schedules in place of a cron expression.</p>
-
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th>Entry</th>
-                        <th>Description</th>
-                        <th>Equivalent To</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>@yearly (or @annually)</td>
-                        <td>Run once a year, midnight, Jan. 1st</td>
-                        <td>0 0 0 1 1 *</td>
-                    </tr>
-                    <tr>
-                        <td>@monthly</td>
-                        <td>Run once a month, midnight, first of month</td>
-                        <td>0 0 0 1 * *</td>
-                    </tr>
-                    <tr>
-                        <td>@weekly</td>
-                        <td>Run once a week, midnight on Sunday</td>
-                        <td>0 0 0 * * 0</td>
-                    </tr>
-                    <tr>
-                        <td>@daily (or @midnight)</td>
-                        <td>Run once a day, midnight</td>
-                        <td>0 0 0 * * *</td>
-                    </tr>
-                    <tr>
-                        <td>@hourly</td>
-                        <td>Run once an hour, beginning of hour</td>
-                        <td>0 0 * * * *</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
-        </div>
-    </div>
-</div>
+  </div>
 </div>
