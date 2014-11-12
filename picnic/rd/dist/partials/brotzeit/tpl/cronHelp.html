@@ -1,5 +1,6 @@
 <div class="modal-header">
-  <button type="button" class="close" data-ng-click="close()"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+  <button type="button" class="close" data-ng-click="close()"><span aria-hidden="true">×</span><span class="sr-only">Close</span>
+  </button>
   <h4 class="modal-title">Cron Help</h4>
 </div>
 <div class="modal-body">
@@ -106,6 +107,24 @@
       </tbody>
     </table>
   </div>
+
+  <h4>Intervals</h4>
+
+  <p>You may also schedule a job to execute at fixed intervals. This is supported by
+    formatting the cron spec like this: <code>@every &lt;duration&gt;</code>
+    where "duration" is a string accepted by time.ParseDuration
+    <a href="http://golang.org/pkg/time/#ParseDuration"
+       target="_blank">http://golang.org/pkg/time/#ParseDuration</a>.</p>
+
+  <p>For example, <code>@every 1h30m10s</code> would indicate a schedule that activates every
+    1 hour, 30 minutes, 10 seconds.</p>
+
+  <p>Note: The interval does take the job runtime into account. For example,
+    if a job takes 4-8 minutes to run, and it is scheduled to run every 5 minutes,
+    it will either have only 1 minute of idle time between each run or
+    it will disable the start of a second job.</p>
+
+
 </div>
 <div class="modal-footer">
   <button class="btn btn-primary" data-ng-click="close()">Close</button>

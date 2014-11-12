@@ -4,7 +4,13 @@
       <div class="widget-header">
         <i class="fa fa-glass"></i> Brotzeit - The URL Cache
         <div class="btn-group pull-right">
-          <button type="button" class="close" data-ng-click="openHelp()"><i class="fa fa-question-circle"></i></button>
+          <!--Why you not working popovaaaaa?-->
+          <button Popover-animation="true"
+                  popover="Brotzeit is needed to load all the URLs from the different provisioners into
+              its database. After Brotzeit has collected all the URLs it can send out the Wanderers
+              to hit the servers." popover-title="What is Brotzeit?" class="close">
+            <i class="fa fa-question-circle"></i>
+          </button>
 
         </div>
         <div class="clearfix"></div>
@@ -33,13 +39,15 @@
             </tr>
             </thead>
             <tbody>
+
             <tr>
               <td><i class="fa fa-sitemap"></i> Sitemap</td>
               <td class="text-right"> 121.125</td>
               <td class="text-center">
-                <button class="btn btn-xs btn-success" data-ng-click="showCronForm()"
-                        title="Setup cron job"><i
-                    class="fa fa-clock-o"></i></button>
+                <button class="btn btn-xs btn-success" data-ng-click="isCollapsed = !isCollapsed"
+                        title="Setup cron job">
+                  <i class="fa fa-clock-o"></i>
+                </button>
               </td>
               <td class="text-center">
                 <button class="btn btn-xs btn-warning"
@@ -51,6 +59,35 @@
               </td>
               <td class="text-center"><span class="text-success"><i class="fa fa-check"></i></span></td>
             </tr>
+            <tr data-collapse="isCollapsed">
+              <td colspan="6">
+
+                <form class="form-horizontal" role="form">
+                  <div class="form-group-sm">
+                    <label for="inputEmail3" class="col-xs-3 control-label">Cron Expression</label>
+
+                    <div class="col-xs-4">
+                      <input type="text" class="input-sm form-control" id="inputEmail3" placeholder="* * * * * *">
+                    </div>
+                    <div class="col-xs-2">
+
+                      <div class="btn-group" role="group">
+
+                        <button type="button" class="btn btn-sm btn-default">Save</button>
+                        <button type="button" class="btn btn-sm btn-default" data-ng-click="openCronHelp()">
+                          <i class="fa fa-question-circle"></i>
+                        </button>
+
+                      </div>
+
+
+                    </div>
+                  </div>
+                </form>
+              </td>
+            </tr>
+
+
             <tr>
               <td><i class="fa fa-file-text-o"></i> Textarea</td>
               <td>25</td>
@@ -90,9 +127,6 @@
             </tbody>
           </table>
         </div>
-        <p style="margin: 0 8px;">Brotzeit is needed to load all the URLs from the different provisioners into its
-          database.
-          After Brotzeit has collected all the URLs it can send out the Wanderers to hit the servers.</p>
       </div>
     </div>
     <p>Mental Note: </p>
@@ -101,26 +135,5 @@
       <li class="list-group-item">Info/Disabled: Automatic not available</li>
       <li class="list-group-item">Info: Automatic not set up</li>
     </ul>
-  </div>
-
-  <div class="col-lg-6" data-ng-controller="CronJobController" data-ng-show="isShownCronForm">
-
-    <rd-widget>
-      <rd-widget-header title="CronJob Config for {{title}}" icon="{{icon}}">
-        <button type="button" class="close" data-ng-click="hideCronForm()"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-      </rd-widget-header>
-      <rd-widget-body xloading="isLoading">
-        <form name="cronForm" role="form">
-
-          <div class="form-group has-feedback Xhas-success">
-            <label for="exampleInputEmail1">Cron Expression</label>
-            <input type="text" class="form-control" id="exampleInputEmail1" placeholder="* * * * * *">
-            <span class="glyphicon glyphicon-ok form-control-feedback"></span>
-          </div>
-        </form>
-
-      </rd-widget-body>
-    </rd-widget>
-
   </div>
 </div>

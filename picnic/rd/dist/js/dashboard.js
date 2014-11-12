@@ -973,10 +973,14 @@ angular
     '$scope',
     '$modal',
     function ($scope, $modal) {
+
       $scope.showCronForm = function () {
         alert('Use a popover');
       };
-      $scope.openHelp = function () {
+
+      $scope.isCollapsed = true;
+
+      $scope.openCronHelp = function () {
         $modal.open({
           templateUrl: 'partials/brotzeit/tpl/cronHelp.html',
           controller: 'CronHelpController',
