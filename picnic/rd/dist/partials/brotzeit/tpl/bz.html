@@ -4,14 +4,12 @@
       <div class="widget-header">
         <i class="fa fa-glass"></i> Brotzeit - The URL Cache
         <div class="btn-group pull-right">
-          <!--Why you not working popovaaaaa?-->
-          <button Popover-animation="true"
+          <button popover-placement="bottom" popover-append-to-body="true"
                   popover="Brotzeit is needed to load all the URLs from the different provisioners into
               its database. After Brotzeit has collected all the URLs it can send out the Wanderers
               to hit the servers." popover-title="What is Brotzeit?" class="close">
             <i class="fa fa-question-circle"></i>
           </button>
-
         </div>
         <div class="clearfix"></div>
       </div>
@@ -21,18 +19,16 @@
             <thead>
             <tr>
               <th>Provisioner</th>
-              <th>URL count</th>
+              <th>URLs</th>
               <th class="text-center">Cron job</th>
               <th class="text-center">
-                <button class="btn btn-xs btn-warning"
-                        title="Purge All">
-                  <i class="fa fa-bomb"></i> Purge All
+                <button class="btn btn-xs btn-warning" tooltip="Purge All">
+                  <i class="fa fa-bomb"></i>
                 </button>
               </th>
               <th class="text-center">
-                <button class="btn btn-xs btn-info"
-                        title="Refresh All">
-                  <i class="fa fa-refresh"></i> Refresh All
+                <button class="btn btn-xs btn-info" tooltip="Refresh All">
+                  <i class="fa fa-refresh"></i>
                 </button>
               </th>
               <th></th>
@@ -45,17 +41,15 @@
               <td class="text-right"> 121.125</td>
               <td class="text-center">
                 <button class="btn btn-xs btn-success" data-ng-click="isCollapsed = !isCollapsed"
-                        title="Setup cron job">
+                        title="Cron job configured">
                   <i class="fa fa-clock-o"></i>
                 </button>
               </td>
               <td class="text-center">
-                <button class="btn btn-xs btn-warning"
-                        title="Purge"><i class="fa fa-bomb"></i></button>
+                <button class="btn btn-xs btn-warning" tooltip="Purge"><i class="fa fa-bomb"></i></button>
               </td>
               <td class="text-center">
-                <button class="btn btn-xs btn-info"
-                        title="Refresh"><i class="fa fa-refresh"></i></button>
+                <button class="btn btn-xs btn-info" tooltip="Refresh"><i class="fa fa-refresh"></i></button>
               </td>
               <td class="text-center"><span class="text-success"><i class="fa fa-check"></i></span></td>
             </tr>
@@ -64,20 +58,18 @@
 
                 <form class="form-horizontal" role="form">
                   <div class="form-group-sm">
-                    <label for="inputEmail3" class="col-xs-3 control-label">Cron Expression</label>
+                    <label for="inputEmail3" class="col-xs-4 control-label">Cron Expression</label>
 
                     <div class="col-xs-4">
                       <input type="text" class="input-sm form-control" id="inputEmail3" placeholder="* * * * * *">
                     </div>
-                    <div class="col-xs-2">
+                    <div class="col-xs-3">
 
                       <div class="btn-group" role="group">
-
                         <button type="button" class="btn btn-sm btn-default">Save</button>
                         <button type="button" class="btn btn-sm btn-default" data-ng-click="openCronHelp()">
                           <i class="fa fa-question-circle"></i>
                         </button>
-
                       </div>
 
 
@@ -92,21 +84,22 @@
               <td><i class="fa fa-file-text-o"></i> Textarea</td>
               <td>25</td>
               <td class="text-center">
-                <button class="btn btn-xs btn-info"
-                        disabled="disabled"
-                        title="Setup cron job"><i class="fa fa-clock-o"></i>
+                <button class="btn btn-xs btn-danger" disabled="disabled" title="Cron job not available">
+                  <i class="fa fa-clock-o"></i>
                 </button>
               </td>
               <td class="text-center">
-                <button class="btn btn-xs btn-warning"
-                        title="Purge"><i class="fa fa-bomb"></i></button>
+                <button class="btn btn-xs btn-warning" tooltip="Purge">
+                  <i class="fa fa-bomb"></i></button>
               </td>
               <td class="text-center">
-                <button class="btn btn-xs btn-info"
-                        title="Refresh"><i class="fa fa-refresh"></i></button>
+                <button class="btn btn-xs btn-info" tooltip="Refresh"
+                    ><i class="fa fa-refresh"></i>
+                </button>
               </td>
               <td class="text-center"><span class="text-danger"><i class="fa fa-times"></i></span></td>
             </tr>
+
             <tr>
               <td><i class="fa fa-file-text-o"></i> G'Analytics</td>
               <td>25</td>
