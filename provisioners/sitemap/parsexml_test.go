@@ -156,7 +156,7 @@ var sitemapCollection = []smc{
 func TestParseSiteMapIndex(t *testing.T) {
 	for _, s := range sitemapCollection {
 		si := helpers.NewReadCloser(s.data)
-		sc, isSiteMapIndex, err := parseSiteMap(si)
+		sc, isSiteMapIndex, err := ParseSiteMap(si)
 
 		if nil != err {
 			t.Error(err)
@@ -198,7 +198,7 @@ func TestParseSiteMapIndexAmazon(t *testing.T) {
 	if nil != err {
 		t.Error(err)
 	}
-	sc, isSiteMapIndex, err := parseSiteMap(file)
+	sc, isSiteMapIndex, err := ParseSiteMap(file)
 	if false == isSiteMapIndex {
 		t.Fatalf("Expecting a sitemapindex: %s", file)
 	}
@@ -218,7 +218,7 @@ func TestParseSiteMapIndexAmazon(t *testing.T) {
 func BenchmarkParseSiteMapIndex(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		si := helpers.NewReadCloser(sitemapCollection[2].data)
-		parseSiteMap(si)
+		ParseSiteMap(si)
 	}
 }
 
@@ -226,7 +226,7 @@ func TestParseSiteMap(t *testing.T) {
 
 	for _, s := range sitemapCollection {
 		si := helpers.NewReadCloser(s.data)
-		sm, isSitemap, err := parseSiteMap(si)
+		sm, isSitemap, err := ParseSiteMap(si)
 		if nil != err {
 			t.Error(err)
 		}
@@ -253,7 +253,7 @@ func TestParseSiteMap(t *testing.T) {
 func BenchmarkParseSiteMap(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		si := helpers.NewReadCloser(sitemapCollection[3].data)
-		parseSiteMap(si)
+		ParseSiteMap(si)
 	}
 }
 

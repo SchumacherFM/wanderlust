@@ -30,7 +30,6 @@ const (
 )
 
 var (
-	// @todo investigate if a []string is faster instead of a map ...
 	changefreqMapper = map[string]string{
 		"always":  "z",
 		"hourly":  "y",
@@ -60,13 +59,13 @@ type XhtmlLink struct {
 
 // sortKey generates the sort key if Priority, Lastmod & Changefreq aren't empty
 func (u *UrlNode) sortKey(url string) string {
-	cf, _ := changefreqMapper[u.Changefreq]
 	if "" == url {
 		url = u.Loc
 	}
 	if "" == u.Priority && "" == u.Lastmod && "" == u.Changefreq {
 		return url
 	}
+	cf, _ := changefreqMapper[u.Changefreq]
 	return u.Priority + u.Lastmod + cf + sortKeySeparator + url
 }
 
@@ -78,7 +77,7 @@ func (x *XhtmlLink) sortKey(u *UrlNode) string {
 // parseSiteMap parses sitemapindex and sitemap XML files. Returns a slice with all available
 // URLs in reverse sorted order. Sort criteria is: Priority, LastMod, ChangeFreqeuency and the URL.
 // The XML is parsed continuously and not all at once.
-func parseSiteMap(r io.ReadCloser) ([]string, bool, error) {
+func ParseSiteMap(r io.ReadCloser) ([]string, bool, error) {
 	maxUrls := make([]string, maxUrlsPerSitemap)
 	urlCount := 0
 	totalErr := 0
