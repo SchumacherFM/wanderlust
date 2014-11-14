@@ -7,7 +7,7 @@ angular
     'LocalStorageModule',
     'ngResource',
     'ui.gravatar',
-    'ui.bootstrap',
+    'angular-growl',
     'picnic.services',
     'angulartics',
     'angulartics.piwik',
@@ -25,7 +25,8 @@ angular
   .config([
     '$resourceProvider',
     'gravatarServiceProvider',
-    function ($resourceProvider, gravatarServiceProvider) {
+    'growlProvider',
+    function ($resourceProvider, gravatarServiceProvider, growlProvider) {
       // Don't strip trailing slashes from calculated URLs
       $resourceProvider.defaults.stripTrailingSlashes = false;
       gravatarServiceProvider.defaults = {
@@ -35,13 +36,17 @@ angular
 
       // Use https endpoint
       gravatarServiceProvider.secure = true;
+
+      growlProvider.globalTimeToLive({success: 1000, error: 2000, warning: 3000, info: 4000});
+
     }]);
 
 if (!Array.isArray) {
-  Array.isArray = function(arg) {
+  Array.isArray = function (arg) {
     return Object.prototype.toString.call(arg) === '[object Array]';
   };
 }
+
 /**
  * ErrorInterceptor will be applied in the routes.js file
  */
@@ -62,7 +67,7 @@ angular
     };
 
   })
-  .factory('ErrorInterceptor', function ($q, /*$location, */ Session, Alert) {
+  .factory('ErrorInterceptor', function ($q, /*$location, */ Session, growl) {
     return {
 
       response: function (response) {
@@ -97,7 +102,7 @@ angular
         }
         console.log('msg', msg);
         if (msg.length > 0) {
-          Alert.danger(msg);
+          growl.warning(msg);
         }
         return rejection;
       }
@@ -197,8 +202,8 @@ angular.module('picnic.services', [])
         }
       };
     }])
-  .service('Session', ['$location', 'localStorageService', '$q', 'AUTH_TOKEN_STORAGE_KEY', 'Alert', 'TrackUser',
-    function ($location, localStorageService, $q, AUTH_TOKEN_STORAGE_KEY, Alert, TrackUser) {
+  .service('Session', ['$location', 'localStorageService', '$q', 'AUTH_TOKEN_STORAGE_KEY', 'growl', 'TrackUser',
+    function ($location, localStorageService, $q, AUTH_TOKEN_STORAGE_KEY, growl, TrackUser) {
       var noRedirectUrls = {
         "/login": true,
         "/changepass": true,
@@ -232,7 +237,7 @@ angular.module('picnic.services', [])
       Session.prototype.redirectToLogin = function () {
         this.clear();
         this.setLastLoginUrl();
-        Alert.danger("You must be logged in");
+        growl.warning("You must be logged in");
         $location.path("/login");
       };
 
@@ -318,39 +323,7 @@ angular.module('picnic.services', [])
         }
       });
     }
-  ])
-  .service('Alert', [
-    function () {
-      function Alert() {
-        var $this = this;
-        $this.messages = [];
-
-        var addMessage = function (type, message) {
-          $this.messages.push({
-            message: message,
-            type: type
-          });
-        };
-
-        $this.dismiss = function (index) {
-          $this.messages.splice(index, 1);
-        };
-
-        $this.dismissLast = function () {
-          $this.messages.pop();
-        };
-
-        $this.success = addMessage.bind(null, "success");
-        $this.info = addMessage.bind(null, "info");
-        $this.warning = addMessage.bind(null, "warning");
-        $this.danger = addMessage.bind(null, "danger");
-      }
-
-      return new Alert();
-
-    }
   ]);
-
 angular
   .module('Wanderlust')
   .directive('rdCheck', function () {
@@ -432,19 +405,9 @@ angular
     '$timeout',
     'Session',
     'AuthResource',
-    'Alert',
-    function ($scope, $state, localStorageService, $timeout, Session, AuthResource, Alert) {
+    function ($scope, $state, localStorageService, $timeout, Session, AuthResource) {
       'use strict';
       var LS_TOGGLE_KEY = 'wlToggle';
-      //<Alerts>
-      $scope.alert = Alert;
-      $scope.$watchCollection('alert.messages', function () {
-        $timeout(function () {
-          //  @todo        $analytics.eventTrack('alert.messages', {  category: 'category' });
-          Alert.dismissLast();
-        }, 3000);
-      });
-      //</Alerts>
 
       //<Sessions>
       Session.init(AuthResource);
@@ -674,14 +637,14 @@ angular
     '$window',
     'Session',
     'AuthResource',
-    'Alert',
+    'growl',
     'AUTH_TOKEN_HEADER',
     function ($scope,
               $location,
               $window,
               Session,
               AuthResource,
-              Alert,
+              growl,
               AUTH_TOKEN_HEADER) {
 
       $scope.formData = new AuthResource();
@@ -692,7 +655,7 @@ angular
 
           if (result.loggedIn) {
             Session.login(result, headers(AUTH_TOKEN_HEADER));
-            Alert.success("Welcome back, " + result.name);
+            growl.success("Welcome back, " + result.name);
             var path = Session.getLastLoginUrl();
             if (path) {
               $location.path(path);
@@ -733,8 +696,8 @@ angular
   .factory('ProvisionerForm', [
     '$timeout',
     'ProvisionerResource',
-    'Alert',
-    function ($timeout, ProvisionerResource, Alert) {
+    'growl',
+    function ($timeout, ProvisionerResource, growl) {
       'use strict';
 
       return {
@@ -771,7 +734,7 @@ angular
               });
             }
             // invalid input data will be indicated via form input error class
-            //Alert.warning("Data is not valid for: " + inputFieldName);
+            //growl.warning("Data is not valid for: " + inputFieldName);
 
           };
         },
@@ -791,7 +754,7 @@ angular
           ProvisionerResource.get({prov: $that._type}).$promise.then(
             function success(response) {
               if (!response.data || !Array.isArray(response.data)) {
-                Alert.warning("Error in retrieving provisioner success data. See console.log for more info.");
+                growl.warning("Error in retrieving provisioner success data. See console.log for more info.");
                 return console.error('Provisioner success error', response);
               }
 
@@ -809,7 +772,7 @@ angular
 
             },
             function err(data) {
-              Alert.warning("Error in retrieving provisioner data. See console.log for more info.");
+              growl.warning("Error in retrieving provisioner data. See console.log for more info.");
               console.error('Provisioner:', data.data || data);
             }
           );
@@ -823,8 +786,8 @@ angular
   .module('Wanderlust')
   .controller('MarketplaceController', [
     '$scope',
-    'Alert',
-    function ($scope, Alert) {
+    'growl',
+    function ($scope, growl) {
       /**
        * this is only the temporary implementation. All this will be outsources into magento
        * and we will talk directly to Magento REST API. Concept is that GoLang talks to Magento
@@ -963,7 +926,8 @@ angular
       ];
       $scope.products = ps;
       $scope.helloWorld = function () {
-        Alert.danger('Hello World! This feature is WIP');
+        console.log('hello');
+        growl.warning('Hello World! This feature is WIP');
       }
     }
   ]);

@@ -178,10 +178,7 @@
       </div>
       <!-- End Header Bar -->
 
-      <!-- Alerts -->
-      <div class="col-xs-12">
-        <alert data-ng-repeat="msg in alert.messages" type="{{msg.type}}" close="alert.dismiss($index)">{{msg.message}}</alert>
-      </div>
+      <div growl></div>
 
       <!-- Main Content -->
       <section data-ui-view></section>

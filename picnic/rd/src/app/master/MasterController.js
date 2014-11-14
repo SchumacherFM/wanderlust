@@ -10,19 +10,9 @@ angular
     '$timeout',
     'Session',
     'AuthResource',
-    'Alert',
-    function ($scope, $state, localStorageService, $timeout, Session, AuthResource, Alert) {
+    function ($scope, $state, localStorageService, $timeout, Session, AuthResource) {
       'use strict';
       var LS_TOGGLE_KEY = 'wlToggle';
-      //<Alerts>
-      $scope.alert = Alert;
-      $scope.$watchCollection('alert.messages', function () {
-        $timeout(function () {
-          //  @todo        $analytics.eventTrack('alert.messages', {  category: 'category' });
-          Alert.dismissLast();
-        }, 3000);
-      });
-      //</Alerts>
 
       //<Sessions>
       Session.init(AuthResource);

@@ -6,7 +6,7 @@ angular
     'LocalStorageModule',
     'ngResource',
     'ui.gravatar',
-    'ui.bootstrap',
+    'angular-growl',
     'picnic.services',
     'angulartics',
     'angulartics.piwik',
@@ -24,7 +24,8 @@ angular
   .config([
     '$resourceProvider',
     'gravatarServiceProvider',
-    function ($resourceProvider, gravatarServiceProvider) {
+    'growlProvider',
+    function ($resourceProvider, gravatarServiceProvider, growlProvider) {
       // Don't strip trailing slashes from calculated URLs
       $resourceProvider.defaults.stripTrailingSlashes = false;
       gravatarServiceProvider.defaults = {
@@ -34,10 +35,13 @@ angular
 
       // Use https endpoint
       gravatarServiceProvider.secure = true;
+
+      growlProvider.globalTimeToLive({success: 1000, error: 2000, warning: 3000, info: 4000});
+
     }]);
 
 if (!Array.isArray) {
-  Array.isArray = function(arg) {
+  Array.isArray = function (arg) {
     return Object.prototype.toString.call(arg) === '[object Array]';
   };
 }

@@ -21,8 +21,8 @@ angular.module('picnic.services', [])
         }
       };
     }])
-  .service('Session', ['$location', 'localStorageService', '$q', 'AUTH_TOKEN_STORAGE_KEY', 'Alert', 'TrackUser',
-    function ($location, localStorageService, $q, AUTH_TOKEN_STORAGE_KEY, Alert, TrackUser) {
+  .service('Session', ['$location', 'localStorageService', '$q', 'AUTH_TOKEN_STORAGE_KEY', 'growl', 'TrackUser',
+    function ($location, localStorageService, $q, AUTH_TOKEN_STORAGE_KEY, growl, TrackUser) {
       var noRedirectUrls = {
         "/login": true,
         "/changepass": true,
@@ -56,7 +56,7 @@ angular.module('picnic.services', [])
       Session.prototype.redirectToLogin = function () {
         this.clear();
         this.setLastLoginUrl();
-        Alert.danger("You must be logged in");
+        growl.warning("You must be logged in");
         $location.path("/login");
       };
 
@@ -141,36 +141,5 @@ angular.module('picnic.services', [])
           url: picnicUrls.auth + 'changepass'
         }
       });
-    }
-  ])
-  .service('Alert', [
-    function () {
-      function Alert() {
-        var $this = this;
-        $this.messages = [];
-
-        var addMessage = function (type, message) {
-          $this.messages.push({
-            message: message,
-            type: type
-          });
-        };
-
-        $this.dismiss = function (index) {
-          $this.messages.splice(index, 1);
-        };
-
-        $this.dismissLast = function () {
-          $this.messages.pop();
-        };
-
-        $this.success = addMessage.bind(null, "success");
-        $this.info = addMessage.bind(null, "info");
-        $this.warning = addMessage.bind(null, "warning");
-        $this.danger = addMessage.bind(null, "danger");
-      }
-
-      return new Alert();
-
     }
   ]);

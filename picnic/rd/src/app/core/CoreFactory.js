@@ -18,7 +18,7 @@ angular
     };
 
   })
-  .factory('ErrorInterceptor', function ($q, /*$location, */ Session, Alert) {
+  .factory('ErrorInterceptor', function ($q, /*$location, */ Session, growl) {
     return {
 
       response: function (response) {
@@ -53,7 +53,7 @@ angular
         }
         console.log('msg', msg);
         if (msg.length > 0) {
-          Alert.danger(msg);
+          growl.warning(msg);
         }
         return rejection;
       }

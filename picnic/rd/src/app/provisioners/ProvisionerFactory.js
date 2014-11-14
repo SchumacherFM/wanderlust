@@ -12,8 +12,8 @@ angular
   .factory('ProvisionerForm', [
     '$timeout',
     'ProvisionerResource',
-    'Alert',
-    function ($timeout, ProvisionerResource, Alert) {
+    'growl',
+    function ($timeout, ProvisionerResource, growl) {
       'use strict';
 
       return {
@@ -50,7 +50,7 @@ angular
               });
             }
             // invalid input data will be indicated via form input error class
-            //Alert.warning("Data is not valid for: " + inputFieldName);
+            //growl.warning("Data is not valid for: " + inputFieldName);
 
           };
         },
@@ -70,7 +70,7 @@ angular
           ProvisionerResource.get({prov: $that._type}).$promise.then(
             function success(response) {
               if (!response.data || !Array.isArray(response.data)) {
-                Alert.warning("Error in retrieving provisioner success data. See console.log for more info.");
+                growl.warning("Error in retrieving provisioner success data. See console.log for more info.");
                 return console.error('Provisioner success error', response);
               }
 
@@ -88,7 +88,7 @@ angular
 
             },
             function err(data) {
-              Alert.warning("Error in retrieving provisioner data. See console.log for more info.");
+              growl.warning("Error in retrieving provisioner data. See console.log for more info.");
               console.error('Provisioner:', data.data || data);
             }
           );

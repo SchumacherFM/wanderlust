@@ -2,8 +2,8 @@ angular
   .module('Wanderlust')
   .controller('MarketplaceController', [
     '$scope',
-    'Alert',
-    function ($scope, Alert) {
+    'growl',
+    function ($scope, growl) {
       /**
        * this is only the temporary implementation. All this will be outsources into magento
        * and we will talk directly to Magento REST API. Concept is that GoLang talks to Magento
@@ -142,7 +142,8 @@ angular
       ];
       $scope.products = ps;
       $scope.helloWorld = function () {
-        Alert.danger('Hello World! This feature is WIP');
+        console.log('hello');
+        growl.warning('Hello World! This feature is WIP');
       }
     }
   ]);

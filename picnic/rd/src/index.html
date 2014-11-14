@@ -8,6 +8,7 @@
 
   <!-- build:less lib/bootstrap/css/bootstrap.css -->
   <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="bower_components/angular-growl-v2/build/angular-growl.css">
   <!-- endbuild -->
 
   <!-- build:css lib/font-awesome/css/font-awesome.css -->
@@ -43,6 +44,7 @@
   <script type="text/javascript" src="bower_components/angular-gravatar/build/angular-gravatar.js"></script>
   <script type="text/javascript" src="bower_components/angulartics/src/angulartics.js"></script>
   <script type="text/javascript" src="bower_components/angulartics/src/angulartics-piwik.js"></script>
+  <script type="text/javascript" src="bower_components/angular-growl-v2/build/angular-growl.js"></script>
   <!-- endbuild -->
 
   <!-- build:js js/dashboard.js -->
@@ -228,10 +230,7 @@
       </div>
       <!-- End Header Bar -->
 
-      <!-- Alerts -->
-      <div class="col-xs-12">
-        <alert data-ng-repeat="msg in alert.messages" type="{{msg.type}}" close="alert.dismiss($index)">{{msg.message}}</alert>
-      </div>
+      <div growl></div>
 
       <!-- Main Content -->
       <section data-ui-view></section>

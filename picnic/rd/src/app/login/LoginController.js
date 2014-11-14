@@ -6,14 +6,14 @@ angular
     '$window',
     'Session',
     'AuthResource',
-    'Alert',
+    'growl',
     'AUTH_TOKEN_HEADER',
     function ($scope,
               $location,
               $window,
               Session,
               AuthResource,
-              Alert,
+              growl,
               AUTH_TOKEN_HEADER) {
 
       $scope.formData = new AuthResource();
@@ -24,7 +24,7 @@ angular
 
           if (result.loggedIn) {
             Session.login(result, headers(AUTH_TOKEN_HEADER));
-            Alert.success("Welcome back, " + result.name);
+            growl.success("Welcome back, " + result.name);
             var path = Session.getLastLoginUrl();
             if (path) {
               $location.path(path);

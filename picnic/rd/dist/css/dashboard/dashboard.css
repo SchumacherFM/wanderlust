@@ -38,9 +38,6 @@ body {
 .row > div {
   margin-bottom: 15px;
 }
-.alerts-container .alert:last-child {
-  margin-bottom: 0;
-}
 #page-wrapper {
   padding-left: 70px;
   height: 100%;
@@ -390,9 +387,6 @@ ul.sidebar .sidebar-list .menu-icon {
 }
 .widget .widget-body button {
   margin-left: 5px;
-}
-.widget .widget-body div.alert {
-  margin-bottom: 10px;
 }
 .widget .widget-body.large {
   height: 350px;
