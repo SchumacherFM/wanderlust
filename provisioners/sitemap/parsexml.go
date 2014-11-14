@@ -19,11 +19,28 @@ package sitemap
 import (
 	"encoding/xml"
 	"io"
+	"sort"
+	"strings"
 )
 
 const (
 	// http://en.wikipedia.org/wiki/Sitemaps
-	maxUrlsPerSitemap int = 50000
+	maxUrlsPerSitemap int    = 50000
+	sortKeySeparator  string = "€"
+)
+
+var (
+	// @todo investigate if a []string is faster instead of a map ...
+	changefreqMapper = map[string]string{
+		"always":  "z",
+		"hourly":  "y",
+		"daily":   "x",
+		"weekly":  "w",
+		"monthly": "v",
+		"yearly":  "u",
+		"never":   "t",
+		"":        "s",
+	}
 )
 
 // UrlNode is used in the xml decode tokenizer
@@ -41,12 +58,26 @@ type XhtmlLink struct {
 	Href     string `xml:"href,attr"`
 }
 
-// r is equal to res, err := http.Get(url)
-// parseSiteMap parses sitemapindex and sitemap XML files. The file size does not matter as this
-// parser can parse TB huge files with using only ~5MB of memory
-// Use a sitemap to indicate alternate language pages
-// https://support.google.com/webmasters/answer/2620865?hl=en
-// returns urlSlice, isSiteMapIndex, Error
+// sortKey generates the sort key if Priority, Lastmod & Changefreq aren't empty
+func (u *UrlNode) sortKey(url string) string {
+	cf, _ := changefreqMapper[u.Changefreq]
+	if "" == url {
+		url = u.Loc
+	}
+	if "" == u.Priority && "" == u.Lastmod && "" == u.Changefreq {
+		return url
+	}
+	return u.Priority + u.Lastmod + cf + sortKeySeparator + url
+}
+
+// sortKey generates the sort key if Priority, Lastmod & Changefreq aren't empty
+func (x *XhtmlLink) sortKey(u *UrlNode) string {
+	return u.sortKey(x.Href)
+}
+
+// parseSiteMap parses sitemapindex and sitemap XML files. Returns a slice with all available
+// URLs in reverse sorted order. Sort criteria is: Priority, LastMod, ChangeFreqeuency and the URL.
+// The XML is parsed continuously and not all at once.
 func parseSiteMap(r io.ReadCloser) ([]string, bool, error) {
 	maxUrls := make([]string, maxUrlsPerSitemap)
 	urlCount := 0
@@ -86,21 +117,21 @@ func parseSiteMap(r io.ReadCloser) ([]string, bool, error) {
 					isSiteMapIndex = true
 				}
 				if true == isSiteMapUrl || true == isValidUrl(un.Loc) {
-					maxUrls[urlCount] = un.Loc
+					maxUrls[urlCount] = un.sortKey("")
 					urlCount++
 				}
 				if urlCount >= maxUrlsPerSitemap {
-					return maxUrls, isSiteMapIndex, nil
+					return sortUrls(maxUrls, isSiteMapIndex), isSiteMapIndex, nil
 				}
 				// the following if block is only for valid endpoints
 				if nil != un.XhtmlLink && len(un.XhtmlLink) > 0 {
 					for _, xHref := range un.XhtmlLink {
 						if true == isValidUrl(un.Loc) {
-							maxUrls[urlCount] = xHref.Href
+							maxUrls[urlCount] = xHref.sortKey(&un)
 							urlCount++
 						}
 						if urlCount >= maxUrlsPerSitemap {
-							return maxUrls, isSiteMapIndex, nil
+							return sortUrls(maxUrls, isSiteMapIndex), isSiteMapIndex, nil
 						}
 					}
 				}
@@ -113,5 +144,21 @@ func parseSiteMap(r io.ReadCloser) ([]string, bool, error) {
 	urls := make([]string, urlCount)
 	copy(urls, maxUrls[:urlCount])
 	maxUrls = nil
-	return urls, isSiteMapIndex, nil
+	return sortUrls(urls, isSiteMapIndex), isSiteMapIndex, nil
+}
+
+// sortUrls sorts a string slice in reverse order and removes the sort index prefix
+func sortUrls(urls []string, isSiteMapIndex bool) []string {
+	if true == isSiteMapIndex {
+		return urls
+	}
+	sl := len(sortKeySeparator)
+	sort.Sort(sort.Reverse(sort.StringSlice(urls)))
+	for i, u := range urls {
+		cut := strings.Index(u, sortKeySeparator) + sl
+		if cut > sl {
+			urls[i] = u[cut:]
+		}
+	}
+	return urls
 }

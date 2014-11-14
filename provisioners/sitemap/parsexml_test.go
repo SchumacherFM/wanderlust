@@ -113,7 +113,7 @@ var sitemapCollection = []smc{
 			<xhtml:link rel="alternate" hreflang="en-ch" href="http://www.golang.com/ch-en/women"/>
 			<lastmod>2014-11-08</lastmod>
 			<changefreq>weekly</changefreq>
-			<priority>0.5</priority>
+			<priority>0.2</priority>
 	</url>
 	<url>
 			<loc>http://www.golang.com/de-de/damen/bhs</loc>
@@ -249,6 +249,7 @@ func TestParseSiteMap(t *testing.T) {
 
 // MBA Mid 2012 1.8 GHz Intel Core i5
 // BenchmarkParseSiteMap	    2000	   1115713 ns/op	  849352 B/op	    1101 allocs/op with 50.000 maxUrls
+// BenchmarkParseSiteMap	    1000	   1281377 ns/op	  851738 B/op	    1139 allocs/op
 func BenchmarkParseSiteMap(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		si := helpers.NewReadCloser(sitemapCollection[3].data)
@@ -271,4 +272,25 @@ func TestIsValidUrl(t *testing.T) {
 			t.Errorf("Expected: %t got %t for %s ", res, act, url)
 		}
 	}
+}
+
+func TestSortUrlsNonSitemap(t *testing.T) {
+	in := []string{"f", "b", "w", "s"}
+	e := "wsfb"
+	out := sortUrls(in, false)
+	outs := strings.Join(out, "")
+	if outs != e {
+		t.Errorf("\nExpected %s\nActual %s", e, outs)
+	}
+}
+
+func TestSortUrlsSitemap(t *testing.T) {
+	in := []string{"f", "b", "w", "s"}
+	e := "fbws"
+	out := sortUrls(in, true)
+	outs := strings.Join(out, "")
+	if outs != e {
+		t.Errorf("\nExpected %s\nActual %s", e, outs)
+	}
+
 }
