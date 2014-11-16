@@ -34,7 +34,7 @@ var (
 	CliContext *cli.Context
 	wg         sync.WaitGroup
 	logger     *log.Logger
-	rs         rucksack.Backpacker
+	bp         rucksack.Backpacker
 )
 
 func Boot() {
@@ -69,7 +69,7 @@ func initLogger() {
 // BootRucksack inits the rucksack database and starts the background jobs
 func BootRucksack() {
 	var err error
-	rs, err = rucksack.NewRucksack(
+	bp, err = rucksack.NewRucksack(
 		CliContext.String("rucksack-file"),
 		logger,
 	)
@@ -79,7 +79,7 @@ func BootRucksack() {
 	// here can be added more services
 	go func() {
 		defer wg.Done()
-		rs.Writer()
+		bp.Writer()
 	}()
 	logger.Notice("DB Background Services started")
 }
@@ -91,7 +91,7 @@ func BootPicnic() {
 		CliContext.String("picnic-listen-address"),
 		CliContext.String("picnic-pem-dir"),
 		logger,
-		rs,
+		bp,
 	)
 
 	if nil != err {
@@ -117,14 +117,14 @@ func BootPicnic() {
 
 func BootBrotzeit() {
 	brotzeit.Logger = logger
-	//	if "" != rucksackApp.ListenAddress {
-	//		wg.Add(1)
-	//		go func() {
-	//			defer wg.Done()
-	//			rucksackApp.StartHttp()
-	//		}()
-	//	}
-	logger.Notice("Booting Brotzeit ... @todo")
+	brotzeit.BackPacker=bp
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				brotzeit.BootCron()
+			}()
+
+	logger.Notice("Booting Brotzeit ... ")
 }
 
 func BootWanderer() {
@@ -152,7 +152,7 @@ func catchSysCall() {
 	go func() {
 		for sig := range signalChannel {
 			logger.Notice("Received signal: %s. Closing database ...", sig.String())
-			if err := rs.Close(); nil != err {
+			if err := bp.Close(); nil != err {
 				logger.Check(err)
 			} else {
 				logger.Notice("Database successful closed!")

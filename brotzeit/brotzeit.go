@@ -24,36 +24,47 @@ import (
 	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 	"net/http"
+	"sync"
 )
 
 const (
-	// bpConfigName bucket/database contains mainly the cron configuration
-	bpConfigName           = "bzcfg"
+	// bpDbConfig bucket/database contains mainly the cron configuration
+	bpDbConfig = "bzcfg"
 	// bpCronKeyPrefix is the key prefix for identifying a real cron schedule
-	bpCronKeyPrefix        = "cronExpression"
-	// bpCollectionNamePrefix bucket/database contains millions of URLs
-	bpCollectionNamePrefix = "bzcol"
+	bpCronKeyPrefix = "cronExpression"
+	// bpDbUrlsPrefix bucket/database contains millions of URLs
+	bpDbUrlsPrefix = "bzcol"
 )
 
 var (
 	Logger               *log.Logger
+	BackPacker           rucksack.Backpacker
 	ErrCronScheduleEmpty = errors.New("Cron Schedule is empty.")
+	crond                = cron.New()
+	bootCronOne          sync.Once
 )
 
-func BootMe() error {
+// BootCron starts the cron daemon once
+func BootCron() {
+	bootCronOne.Do(bootCron)
+}
 
-	// job/worker
+// bootCron internal start function
+func bootCron() {
 
-	//	pc, err := provisioners.GetAvailable()
-	//	if nil != err {
-	//		return err
-	//	}
-	//	for _, prov := range pc.Collection {
-	//
-	//		go prov.Api.ProduceUrls()
-	//
-	//	}
-	return nil
+	// retrieve schedule collection
+	sc, err := BackPacker.FindAll(bpDbConfig)
+	if nil != err {
+		Logger.Notice("%s",err)
+	}
+
+	for i := 0; i < len(sc); i = i + 2 {
+		jobName := sc[i]
+		jobSchedule := sc[i+1]
+		Logger.Debug("%s: %s\n",jobName, jobSchedule)
+	}
+
+	Logger.Debug("Brotzeit cron daemon started!")
 }
 
 type (
@@ -79,9 +90,9 @@ func GetCollection(pc *provisionerApi.Provisioners, bp rucksack.Backpacker) (*Bz
 	for i, p := range pc.Collection {
 
 		// possibility that database and key will not exists but we ignore that
-		cd, _ := bp.FindOne(bpConfigName, bpCronKeyPrefix+p.Api.Route())
+		cd, _ := bp.FindOne(bpDbConfig, bpCronKeyPrefix+p.Api.Route())
 
-		uc, _ := bp.Count(bpCollectionNamePrefix + p.Api.Route())
+		uc, _ := bp.Count(bpDbUrlsPrefix + p.Api.Route())
 
 		bzc := &BzConfig{
 			Route:    p.Api.Route(),
@@ -108,7 +119,7 @@ func SaveConfig(bp rucksack.Backpacker, r *http.Request) error {
 	}
 
 	if "" == f.Schedule {
-		bp.Delete(bpConfigName, bpCronKeyPrefix+f.Route)
+		bp.Delete(bpDbConfig, bpCronKeyPrefix+f.Route)
 		return nil
 	}
 
@@ -116,5 +127,5 @@ func SaveConfig(bp rucksack.Backpacker, r *http.Request) error {
 	if nil != err {
 		return err
 	}
-	return bp.Insert(bpConfigName, bpCronKeyPrefix+f.Route, []byte(f.Schedule))
+	return bp.Insert(bpDbConfig, bpCronKeyPrefix+f.Route, []byte(f.Schedule))
 }

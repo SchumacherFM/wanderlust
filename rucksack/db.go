@@ -50,6 +50,7 @@ type (
 		FindOne(string, string) ([]byte, error)
 
 		// FindAll uses the bucketName to search for all keys/values in a database
+		// Returns an array i = key, i+1 = value
 		FindAll(string) ([][]byte, error)
 
 		// Insert Data: bucketName, keyName, data

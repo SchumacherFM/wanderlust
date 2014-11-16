@@ -29,7 +29,7 @@ angular
           },
           function success() {
             bzModel.isCollapsed = true;
-            bzModel.ScheduleIsValid = true;
+            bzModel.ScheduleIsValid = bzModel.Schedule !== '';
             growl.info('Cron Schedule saved!');
           }
         );
