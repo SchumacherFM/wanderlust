@@ -27,8 +27,11 @@ import (
 )
 
 const (
+	// bpConfigName bucket/database contains mainly the cron configuration
 	bpConfigName           = "bzcfg"
+	// bpCronKeyPrefix is the key prefix for identifying a real cron schedule
 	bpCronKeyPrefix        = "cronExpression"
+	// bpCollectionNamePrefix bucket/database contains millions of URLs
 	bpCollectionNamePrefix = "bzcol"
 )
 
@@ -94,14 +97,19 @@ func GetCollection(pc *provisionerApi.Provisioners, bp rucksack.Backpacker) (*Bz
 	return bzcc, nil
 }
 
-// SaveConfig stores the cron schedule in the backpacker
+// SaveConfig stores the cron schedule in the backpacker. If the schedule is empty then it will be deleted from the DB
 func SaveConfig(bp rucksack.Backpacker, r *http.Request) error {
 
 	f := &BzConfig{}
 	helpers.DecodeJSON(r, f)
 
-	if "" == f.Route || "" == f.Schedule {
+	if "" == f.Route {
 		return ErrCronScheduleEmpty
+	}
+
+	if "" == f.Schedule {
+		bp.Delete(bpConfigName, bpCronKeyPrefix+f.Route)
+		return nil
 	}
 
 	_, err := cron.Parse(f.Schedule)

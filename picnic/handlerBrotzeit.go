@@ -27,8 +27,8 @@ import (
 
 func (p *PicnicApp) initRoutesBrotzeit(r *mux.Router) error {
 	sr := r.PathPrefix("/brotzeit/").Subrouter()
-	sr.HandleFunc("/", p.handler(brotzeitCollectionHandler, AUTH_LEVEL_IGNORE)).Methods("GET")
-	sr.HandleFunc("/", p.handler(brotzeitSaveHandler, AUTH_LEVEL_IGNORE)).Methods("POST")
+	sr.HandleFunc("/", p.handler(brotzeitCollectionHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
+	sr.HandleFunc("/", p.handler(brotzeitSaveHandler, AUTH_LEVEL_LOGIN)).Methods("POST")
 
 	//	// @todo
 	//	brotzeitApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")

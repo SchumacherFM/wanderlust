@@ -47,18 +47,29 @@ func TestGetCollection(t *testing.T) {
 
 }
 
-func TestSaveConfigErrorEmpty(t *testing.T) {
+func TestSaveConfigErrorEmptyRoute(t *testing.T) {
 	bp := &rsTestHelper.DbMock{
 		CountValue: 52,
 	}
 
-	body := helpers.NewReadCloser(`{"Route":"","Schedule":""}`)
+	body := helpers.NewReadCloser(`{"Route":"","Schedule":"Lord of the tests"}`)
 	req, err := http.NewRequest("GET", "/unimportant", body)
 	assert.NoError(t, err)
 	saveErr := SaveConfig(bp, req)
 	assert.Error(t, saveErr)
 	assert.EqualError(t, saveErr, ErrCronScheduleEmpty.Error())
+}
 
+func TestSaveConfigErrorEmptySchedule(t *testing.T) {
+	bp := &rsTestHelper.DbMock{
+		CountValue: 65,
+	}
+
+	body := helpers.NewReadCloser(`{"Route":"testProv","Schedule":""}`)
+	req, err := http.NewRequest("GET", "/unimportant", body)
+	assert.NoError(t, err)
+	saveErr := SaveConfig(bp, req)
+	assert.NoError(t, saveErr)
 }
 
 func TestSaveConfigErrorCron(t *testing.T) {
