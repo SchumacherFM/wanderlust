@@ -49,11 +49,14 @@ type (
 		// FindOne searches for bucketName and keyName to return the value or an error
 		FindOne(string, string) ([]byte, error)
 
-		// FindAll searches for all keys/values in a bucketName
+		// FindAll uses the bucketName to search for all keys/values in a database
 		FindAll(string) ([][]byte, error)
 
-		// Inserts Data: bucketName, keyName, data
+		// Insert Data: bucketName, keyName, data
 		Insert(string, string, []byte) error
+
+		// Delete removes a keyName from a bucketName
+		Delete(string, string) error
 
 		// Count returns the number of keys in a bucketName or an error and key count = 0
 		Count(string) (int, error)
@@ -181,6 +184,21 @@ func (this *Rucksack) Insert(b, k string, d []byte) error {
 		data:   d,
 	}
 	this.writerChan <- be
+	return nil
+}
+
+func (this *Rucksack) Delete(b, k string) error {
+	be := &bEntity{
+		bucket: b,
+		key:    k,
+	}
+	err := this.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket(be.getBucketByte())
+		return b.Delete(be.getKeyByte())
+	})
+	if nil != err {
+		this.logger.Emergency("DB delete failed: %s", err)
+	}
 	return nil
 }
 

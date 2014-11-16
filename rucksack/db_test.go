@@ -141,8 +141,8 @@ func TestWriterIntegration(t *testing.T) {
 	assert.NoError(t, err)
 
 	// test Count()
-	kc, kcErr := db.Count(bucketName)
-	assert.NoError(t, kcErr)
+	kc, err := db.Count(bucketName)
+	assert.NoError(t, err)
 	assert.Equal(t, len(result)/2, kc)
 
 	ti := 0
@@ -155,6 +155,16 @@ func TestWriterIntegration(t *testing.T) {
 			ti++
 		}
 	}
+
+	// test Delete
+	err = db.Delete(bucketName, keyPrefix+"1")
+	assert.NoError(t, err)
+	notFoundData, err := db.FindOne(bucketName, keyPrefix+"1")
+	assert.Error(t, err)
+	assert.Empty(t, notFoundData)
+
+	err = db.Delete(bucketName, keyPrefix+"NonExistent")
+	assert.NoError(t, err)
 }
 
 // BufferSize = 10

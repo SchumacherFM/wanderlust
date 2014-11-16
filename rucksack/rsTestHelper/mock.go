@@ -28,6 +28,7 @@ type (
 		FindAllData [][]byte
 		FindAllErr  error
 		InsertErr   error
+		DeleteErr   error
 		CountValue  int
 		CountErr    error
 	}
@@ -40,4 +41,5 @@ func (db *DbMock) Close() error                        { return db.CloseErr }
 func (db *DbMock) FindOne(b, k string) ([]byte, error) { return db.FindOneData, db.FindOneErr }
 func (db *DbMock) FindAll(bn string) ([][]byte, error) { return db.FindAllData, db.FindAllErr }
 func (db *DbMock) Insert(b, k string, d []byte) error  { return db.InsertErr }
+func (db *DbMock) Delete(b, k string) error            { return db.DeleteErr }
 func (db *DbMock) Count(bn string) (int, error)        { return db.CountValue, db.CountErr }
