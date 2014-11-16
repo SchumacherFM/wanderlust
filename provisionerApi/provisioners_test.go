@@ -29,13 +29,6 @@ func setUp() *Provisioners {
 }
 
 func TestProvisionersAdd(t *testing.T) {
-
 	ps := setUp()
-	assert.Len(t, ps.Collection, 1)
-}
-
-func TestProvisionersLength(t *testing.T) {
-	ps := setUp()
-	assert.Exactly(t, ps.Length(), 1)
-
+	assert.Len(t, ps.Col, 1)
 }

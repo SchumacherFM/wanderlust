@@ -72,7 +72,7 @@ func TestGetKeyByte(t *testing.T) {
 
 func setUpDb(f string) (*Rucksack, *log.Logger, error) {
 	l := log.New(os.Stdout, log.DEBUG, "Testing")
-	db, err := NewRucksack(f, l)
+	db, err := New(f, l)
 	return db, l, err
 }
 

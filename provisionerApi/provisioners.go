@@ -23,20 +23,29 @@ import (
 type (
 	// Provisioners is a collection of configurations
 	Provisioners struct {
-		Collection []*Config
+		Col []*Config
 	}
 
-	ProvisionersJsonIf interface {
+	ProvisionersJsonIf interface { // crap name and superfluous
 		MarshalJSON() ([]byte, error)
 		MarshalJSONBuf(buf *bytes.Buffer) error
 	}
+
+	Collectioner interface {
+		Collection() []*Config
+	}
+)
+
+var (
+	_ Collectioner = &Provisioners{}
 )
 
 func (p *Provisioners) Add(prov *Config) {
-	p.Collection = append(p.Collection, prov)
+	p.Col = append(p.Col, prov)
 }
-func (p *Provisioners) Length() int {
-	return len(p.Collection)
+
+func (p *Provisioners) Collection() []*Config {
+	return p.Col
 }
 
 func NewProvisioners() *Provisioners {

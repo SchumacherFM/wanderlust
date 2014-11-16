@@ -45,9 +45,9 @@ func (mj *Provisioners) MarshalJSONBuf(buf *bytes.Buffer) error {
 		buf.WriteString(`,`)
 	}
 	buf.WriteString(`"Collection":`)
-	if mj.Collection != nil {
+	if mj.Collection() != nil {
 		buf.WriteString(`[`)
-		for i, v := range mj.Collection {
+		for i, v := range mj.Collection() {
 			if i != 0 {
 				buf.WriteString(`,`)
 			}

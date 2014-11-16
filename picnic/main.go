@@ -47,7 +47,7 @@ type PicnicApp struct {
 }
 
 // la = listen address, pd = pemDir, lo = logger
-func NewPicnicApp(la, pd string, lo *log.Logger, db rucksack.Backpacker) (*PicnicApp, error) {
+func New(la, pd string, lo *log.Logger, db rucksack.Backpacker) (*PicnicApp, error) {
 	var err error
 	logger = lo
 	pa := &PicnicApp{

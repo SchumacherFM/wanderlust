@@ -36,8 +36,6 @@ type (
 
 var _ rucksack.Backpacker = &DbMock{}
 
-func (db *DbMock) Writer()                             {}
-func (db *DbMock) Close() error                        { return db.CloseErr }
 func (db *DbMock) FindOne(b, k string) ([]byte, error) { return db.FindOneData, db.FindOneErr }
 func (db *DbMock) FindAll(bn string) ([][]byte, error) { return db.FindAllData, db.FindAllErr }
 func (db *DbMock) Insert(b, k string, d []byte) error  { return db.InsertErr }

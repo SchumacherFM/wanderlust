@@ -22,6 +22,7 @@ import (
 	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/provisionerApi"
+	"github.com/SchumacherFM/wanderlust/provisioners"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 	"net/http"
 	"sync"
@@ -37,37 +38,20 @@ const (
 )
 
 var (
-	Logger               *log.Logger
-	BackPacker           rucksack.Backpacker
 	ErrCronScheduleEmpty = errors.New("Cron Schedule is empty.")
 	crond                = cron.New()
 	bootCronOne          sync.Once
+	// BrotZeitConfigCollection
+	bzcc = &BzConfigs{}
 )
 
-// BootCron starts the cron daemon once
-func BootCron() {
-	bootCronOne.Do(bootCron)
-}
-
-// bootCron internal start function
-func bootCron() {
-
-	// retrieve schedule collection
-	sc, err := BackPacker.FindAll(bpDbConfig)
-	if nil != err {
-		Logger.Notice("%s",err)
-	}
-
-	for i := 0; i < len(sc); i = i + 2 {
-		jobName := sc[i]
-		jobSchedule := sc[i+1]
-		Logger.Debug("%s: %s\n",jobName, jobSchedule)
-	}
-
-	Logger.Debug("Brotzeit cron daemon started!")
-}
-
 type (
+	Brotzeit struct {
+		l  *log.Logger
+		bp rucksack.Backpacker
+		pc provisionerApi.Collectioner
+	}
+
 	BzConfig struct {
 		Route    string
 		Name     string
@@ -81,13 +65,57 @@ type (
 	}
 )
 
+func New(l *log.Logger, bp rucksack.Backpacker) *Brotzeit {
+	pc, _ := provisioners.GetAvailable()
+	return &Brotzeit{
+		l:  l,
+		bp: bp,
+		pc: pc,
+	}
+}
+
+// BootCron starts the cron daemon once
+func (b *Brotzeit) BootCron() {
+	bootCronOne.Do(b.bootCron)
+}
+
+// bootCron internal start function
+func (b *Brotzeit) bootCron() {
+
+	// refactor here everything and use GetCollection(b.pc,b,bp)
+
+	// retrieve schedule collection
+	sc, err := b.bp.FindAll(bpDbConfig)
+	if nil != err {
+		b.l.Notice("%s", err)
+	}
+
+	for i := 0; i < len(sc); i = i + 2 {
+		jobName := sc[i]
+		jobSchedule := sc[i+1]
+		b.l.Debug("%s: %s\n", jobName, jobSchedule)
+	}
+
+	b.l.Debug("Brotzeit cron daemon started!")
+}
+
+func (b *Brotzeit) Close() error {
+	if len(crond.Entries()) > 0 {
+		crond.Stop()
+	}
+	return nil
+}
+
 // GetCollection returns a collection containing all the provisioners with their brotzeit cron schedule
 // and UrlCount
-func GetCollection(pc *provisionerApi.Provisioners, bp rucksack.Backpacker) (*BzConfigs, error) {
+func GetCollection(pc provisionerApi.Collectioner, bp rucksack.Backpacker) (*BzConfigs, error) {
 
-	bzcc := &BzConfigs{}
-	bzcc.Collection = make([]*BzConfig, pc.Length())
-	for i, p := range pc.Collection {
+	if len(bzcc.Collection) > 0 {
+		return bzcc, nil
+	}
+
+	bzcc.Collection = make([]*BzConfig, len(pc.Collection()))
+	for i, p := range pc.Collection() {
 
 		// possibility that database and key will not exists but we ignore that
 		cd, _ := bp.FindOne(bpDbConfig, bpCronKeyPrefix+p.Api.Route())

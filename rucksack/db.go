@@ -38,13 +38,6 @@ var (
 
 type (
 	Backpacker interface {
-		// Writer runs in a goroutine and waits for data coming through the channel
-		Writer()
-
-		// WriterOnce() @todo checks if the key already exists, if so returns something that key exits
-
-		// Close closes the database when terminating the app
-		Close() error
 
 		// FindOne searches for bucketName and keyName to return the value or an error
 		FindOne(string, string) ([]byte, error)
@@ -92,7 +85,7 @@ func (this *bEntity) getKeyByte() []byte {
 	return []byte(this.key)
 }
 
-func NewRucksack(dbFileName string, l *log.Logger) (*Rucksack, error) {
+func New(dbFileName string, l *log.Logger) (*Rucksack, error) {
 
 	if "" == dbFileName {
 		dbFileName = helpers.GetTempDir() + "wldb_" + helpers.RandomString(10) + ".db"
@@ -132,7 +125,7 @@ func (this *Rucksack) Writer() {
 	}
 }
 
-// Close closes the database during app shutdown sequence
+// Close closes the database during app shutdown sequence. implements io.Closer
 func (this *Rucksack) Close() error {
 	return this.db.Close()
 }

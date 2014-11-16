@@ -22,6 +22,7 @@ import (
 	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/picnic"
 	"github.com/SchumacherFM/wanderlust/rucksack"
+	"io"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -34,7 +35,8 @@ var (
 	CliContext *cli.Context
 	wg         sync.WaitGroup
 	logger     *log.Logger
-	bp         rucksack.Backpacker
+	bp         *rucksack.Rucksack
+	bz         *brotzeit.Brotzeit
 )
 
 func Boot() {
@@ -69,7 +71,7 @@ func initLogger() {
 // BootRucksack inits the rucksack database and starts the background jobs
 func BootRucksack() {
 	var err error
-	bp, err = rucksack.NewRucksack(
+	bp, err = rucksack.New(
 		CliContext.String("rucksack-file"),
 		logger,
 	)
@@ -87,7 +89,7 @@ func BootRucksack() {
 // starts the HTTP server for the picnic web interface and runs it in a goroutine
 func BootPicnic() {
 
-	app, err := picnic.NewPicnicApp(
+	app, err := picnic.New(
 		CliContext.String("picnic-listen-address"),
 		CliContext.String("picnic-pem-dir"),
 		logger,
@@ -116,14 +118,13 @@ func BootPicnic() {
 }
 
 func BootBrotzeit() {
-	brotzeit.Logger = logger
-	brotzeit.BackPacker=bp
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
-				brotzeit.BootCron()
-			}()
 
+	bz = brotzeit.New(logger, bp)
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		bz.BootCron()
+	}()
 	logger.Notice("Booting Brotzeit ... ")
 }
 
@@ -134,13 +135,13 @@ func BootWanderer() {
 // final method to wait on all the goroutines which are running mostly the HTTP server or other daemons
 func Finalizer() {
 	logger.Notice("GOMAXPROCS is set to %d", runtime.NumCPU())
-	catchSysCall()
+	catchSysCall(bp, bz)
 	wg.Wait()
 }
 
 // catchSysCall ends the program correctly when receiving a sys call
 // @todo add things like remove PEM dir, DB dir when no CLI value has been provided
-func catchSysCall() {
+func catchSysCall(cl ...io.Closer) {
 	signalChannel := make(chan os.Signal, 1)
 	signal.Notify(
 		signalChannel,
@@ -151,11 +152,13 @@ func catchSysCall() {
 	)
 	go func() {
 		for sig := range signalChannel {
-			logger.Notice("Received signal: %s. Closing database ...", sig.String())
-			if err := bp.Close(); nil != err {
-				logger.Check(err)
-			} else {
-				logger.Notice("Database successful closed!")
+			logger.Notice("Received signal: %s. Closing %d app/s ...", sig.String(), len(cl))
+			for _, c := range cl {
+				if err := c.Close(); nil != err {
+					logger.Check(err)
+				} else {
+					logger.Notice("Successful closed %T!", c)
+				}
 			}
 			os.Exit(0)
 		}
