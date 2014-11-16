@@ -57,6 +57,7 @@ format:
 	${GOFMT} -w ${GOFILES}
 
 test:
+	go test -v --bench=. -test.benchmem ./brotzeit/
 	go test -v --bench=. -test.benchmem ./helpers/
 	go test -v --bench=. -test.benchmem ./picnic/middleware/
 	go test -v --bench=. -test.benchmem ./picnic/

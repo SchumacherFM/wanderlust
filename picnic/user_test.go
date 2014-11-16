@@ -17,42 +17,30 @@
 package picnic
 
 import (
-	"bytes"
+	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 	"github.com/SchumacherFM/wanderlust/helpers"
+	"github.com/SchumacherFM/wanderlust/rucksack/rsTestHelper"
 	"testing"
 )
-
-func bytesCompare(t *testing.T, expected, actual []byte) {
-	if 0 != bytes.Compare(expected, actual) {
-		t.Errorf("\nExpected\t%s\nActual\t\t%s\n", expected, actual)
-	}
-}
 
 var (
 	fixture0 = []byte(`{"CreatedAt":"2014-10-26T11:11:03.753110065+11:00","Email":"test@tester.com","IsActivated":false,"IsAdmin":false,"IsAuthenticated":false,"Name":"Test User","Password":"p/aH4*VfiXka7{3sB1PGOQ!p","RecoveryCode":"","UserName":"testuser"}`)
 	// password had been removed because FindAll removes PW for security reasons
 	fixture1 = []byte(`{"CreatedAt":"2014-10-26T11:11:03.753110065+11:00","Email":"test@tester.com","IsActivated":false,"IsAdmin":false,"IsAuthenticated":false,"Name":"Test User","Password":"","RecoveryCode":"","UserName":"testuser"}`)
 	fixture2 = []byte(`{"CreatedAt":"2014-10-26T11:11:03.753110066+11:00","Email":"test@tester2.com","IsActivated":false,"IsAdmin":false,"IsAuthenticated":false,"Name":"Test User2","Password":"","RecoveryCode":"","UserName":"testuser2"}`)
+	db       = &rsTestHelper.DbMock{
+		FindOneData: fixture0,
+		FindAllData: [][]byte{
+			[]byte(helpers.StringHashString("testuser")),
+			fixture1,
+			[]byte(helpers.StringHashString("testuser2")),
+			fixture2,
+		},
+	}
 )
 
-type dbMock struct{}
-
-func (this *dbMock) Writer()                             {}
-func (this *dbMock) Close() error                        { return nil }
-func (this *dbMock) Insert(b, k string, d []byte) error  { return nil }
-func (this *dbMock) FindOne(b, k string) ([]byte, error) { return fixture0, nil }
-
-func (this *dbMock) FindAll(bn string) ([][]byte, error) {
-	ret := make([][]byte, 4)
-	ret[0] = []byte(helpers.StringHashString("testuser"))  // key
-	ret[1] = fixture1                                      // value
-	ret[2] = []byte(helpers.StringHashString("testuser2")) // key
-	ret[3] = fixture2                                      // value
-	return ret, nil
-}
-
 func TestFindMe(t *testing.T) {
-	db := &dbMock{}
+
 	u := NewUserModel(db, "testuser")
 	found, err := u.FindMe()
 	if false == found || nil != err {
@@ -60,18 +48,18 @@ func TestFindMe(t *testing.T) {
 	}
 
 	actual, _ := u.MarshalJSON()
-	bytesCompare(t, fixture0, actual)
+	assert.Exactly(t, fixture0, actual)
 }
 
 func TestFindAllUsers(t *testing.T) {
-	db := &dbMock{}
+
 	uc := NewUserModelCollection(db)
 	err := uc.FindAllUsers()
 	if nil != err {
 		t.Error(err)
 	}
 	a1, _ := uc.Users[0].MarshalJSON()
-	bytesCompare(t, fixture1, a1)
+	assert.Exactly(t, fixture1, a1)
 	a2, _ := uc.Users[1].MarshalJSON()
-	bytesCompare(t, fixture2, a2)
+	assert.Exactly(t, fixture2, a2)
 }

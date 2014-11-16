@@ -14,15 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package provisionerApi
+package provTestHelper
 
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
+	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	"github.com/SchumacherFM/wanderlust/rucksack"
-	"testing"
 )
 
-// copied to avoid import cycle ...
 type (
 	ColdCutMock struct {
 		RouteMock  string
@@ -30,21 +28,10 @@ type (
 	}
 )
 
-var _ ColdCutter = &ColdCutMock{}
+var _ provisionerApi.ColdCutter = &ColdCutMock{} // check if struct implements interface
 
-// check if struct implements interface
-
-func (c *ColdCutMock) Route() string                                       { return c.RouteMock }
-func (c *ColdCutMock) Config() []string                                    { return c.ConfigMock }
-func (c *ColdCutMock) PrepareSave(pd *PostData) ([]byte, error)            { return nil, nil }
-func (c *ColdCutMock) ConfigComplete(bp rucksack.Backpacker) (bool, error) { return false, nil }
-func (c *ColdCutMock) FetchUrls(bp rucksack.Backpacker) []string           { return nil }
-
-func TestNewProvisioner(t *testing.T) {
-	papi := &ColdCutMock{
-		RouteMock: "TestRoute",
-	}
-
-	p := NewProvisioner("TestProv", "TestIcon", papi)
-	assert.Exactly(t, "/"+UrlRoutePrefix+"/TestRoute", p.Url)
-}
+func (c *ColdCutMock) Route() string                                           { return c.RouteMock }
+func (c *ColdCutMock) Config() []string                                        { return c.ConfigMock }
+func (c *ColdCutMock) PrepareSave(pd *provisionerApi.PostData) ([]byte, error) { return nil, nil }
+func (c *ColdCutMock) ConfigComplete(bp rucksack.Backpacker) (bool, error)     { return false, nil }
+func (c *ColdCutMock) FetchUrls(bp rucksack.Backpacker) []string               { return nil }

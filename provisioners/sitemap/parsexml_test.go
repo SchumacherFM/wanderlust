@@ -17,6 +17,7 @@
 package sitemap
 
 import (
+	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"os"
 	"os/exec"
@@ -157,21 +158,12 @@ func TestParseSiteMapIndex(t *testing.T) {
 	for _, s := range sitemapCollection {
 		si := helpers.NewReadCloser(s.data)
 		sc, isSiteMapIndex, err := ParseSiteMap(si)
-
-		if nil != err {
-			t.Error(err)
-		}
-		if isSiteMapIndex != s.isSiteMapIndex {
-			t.Errorf("Should be a siteMapIndex\n%#v\n%#v", sc, s)
-		}
+		assert.NoError(t, err)
+		assert.Exactly(t, isSiteMapIndex, s.isSiteMapIndex)
 		if true == isSiteMapIndex {
-			if s.loc != len(sc) {
-				t.Errorf("\nExpected: %d\nActual: %d", s.loc, len(sc))
-			}
+			assert.Equal(t, s.loc, len(sc))
 			for _, sv := range sc {
-				if false == strings.Contains(sv, ".xml") {
-					t.Error("Not a sitemap.xml", sv)
-				}
+				assert.Contains(t, sv, ".xml")
 			}
 		}
 	}
@@ -195,20 +187,13 @@ func TestParseSiteMapIndexAmazon(t *testing.T) {
 	}
 	var fMode os.FileMode = 400
 	file, err := os.OpenFile(fn, os.O_RDONLY, fMode)
-	if nil != err {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 	sc, isSiteMapIndex, err := ParseSiteMap(file)
-	if false == isSiteMapIndex {
-		t.Fatalf("Expecting a sitemapindex: %s", file)
-	}
-	if 5636 != len(sc) {
-		t.Errorf("Unknown length of Amazon sitemapindex file %d; should be 5636", len(sc))
-	}
+	assert.True(t, isSiteMapIndex, "Expecting a sitemapindex")
+	assert.Equal(t, 5636, len(sc), "Unknown length of Amazon sitemapindex file %d; should be 5636")
+
 	for _, sLoc := range sc {
-		if false == isValidSitemapUrl(sLoc) {
-			t.Error("Not a sitemap URL", sLoc)
-		}
+		assert.True(t, isValidSitemapUrl(sLoc), sLoc)
 	}
 }
 
@@ -227,9 +212,7 @@ func TestParseSiteMap(t *testing.T) {
 	for _, s := range sitemapCollection {
 		si := helpers.NewReadCloser(s.data)
 		sm, isSitemap, err := ParseSiteMap(si)
-		if nil != err {
-			t.Error(err)
-		}
+		assert.NoError(t, err)
 
 		if 0 == len(sm) && true == s.isSiteMap {
 			t.Errorf("Should be not a siteMap\n%#v\n%#v\n", sm, s)
@@ -239,9 +222,7 @@ func TestParseSiteMap(t *testing.T) {
 		}
 		if true == isSitemap {
 			for _, sLoc := range sm {
-				if false == isValidUrl(sLoc) {
-					t.Errorf("Invalid URL %s", sLoc)
-				}
+				assert.True(t, isValidUrl(sLoc), sLoc)
 			}
 		}
 	}
@@ -279,9 +260,7 @@ func TestSortUrlsNonSitemap(t *testing.T) {
 	e := "wsfb"
 	out := sortUrls(in, false)
 	outs := strings.Join(out, "")
-	if outs != e {
-		t.Errorf("\nExpected %s\nActual %s", e, outs)
-	}
+	assert.Exactly(t, e, outs)
 }
 
 func TestSortUrlsSitemap(t *testing.T) {
@@ -289,8 +268,5 @@ func TestSortUrlsSitemap(t *testing.T) {
 	e := "fbws"
 	out := sortUrls(in, true)
 	outs := strings.Join(out, "")
-	if outs != e {
-		t.Errorf("\nExpected %s\nActual %s", e, outs)
-	}
-
+	assert.Exactly(t, e, outs)
 }

@@ -7,10 +7,9 @@ angular
     '$scope',
     '$state',
     'localStorageService',
-    '$timeout',
     'Session',
     'AuthResource',
-    function ($scope, $state, localStorageService, $timeout, Session, AuthResource) {
+    function ($scope, $state, localStorageService, Session, AuthResource) {
       'use strict';
       var LS_TOGGLE_KEY = 'wlToggle';
 

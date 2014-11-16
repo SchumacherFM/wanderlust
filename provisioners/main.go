@@ -59,7 +59,7 @@ func GetRoutePathPrefix() string {
 // FormGenerate prepares the JSON object for AngularJS to fill the input fields of the HTML partials
 // with its values. The input field names are hardcoded in the HTML partial as we would like to avoid
 // dynamic rendered forms ...
-func FormGenerate(p provisionerApi.ColdCuts) picnicApi.HandlerFunc {
+func FormGenerate(p provisionerApi.ColdCutter) picnicApi.HandlerFunc {
 	return func(c picnicApi.Context, w http.ResponseWriter, r *http.Request) error {
 		var jsonData = make([]string, 2*len(p.Config()))
 		var i = 0
@@ -78,7 +78,7 @@ func FormGenerate(p provisionerApi.ColdCuts) picnicApi.HandlerFunc {
 
 // FormSave saves the key/value pair in the rucksack.Backpacker. Does also some validation provided by the
 // Config API
-func FormSave(p provisionerApi.ColdCuts) picnicApi.HandlerFunc {
+func FormSave(p provisionerApi.ColdCutter) picnicApi.HandlerFunc {
 	return func(c picnicApi.Context, w http.ResponseWriter, r *http.Request) error {
 		status := http.StatusOK
 

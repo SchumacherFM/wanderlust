@@ -17,11 +17,10 @@
 package rucksack
 
 import (
-	"bytes"
 	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
+	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"os"
-	"reflect"
 	"strconv"
 	"strings"
 	"testing"
@@ -51,12 +50,6 @@ func init() {
 	}
 }
 
-func bytesCompare(t *testing.T, expected, actual []byte) {
-	if 0 != bytes.Compare(expected, actual) {
-		t.Errorf("\nExpected\t%s\nActual\t\t%s\n", expected, actual)
-	}
-}
-
 func TestGetBucketByte(t *testing.T) {
 	expectedB := []byte(`Bucket`)
 	be := &bEntity{
@@ -64,7 +57,7 @@ func TestGetBucketByte(t *testing.T) {
 		key:    "Key",
 		data:   []byte(`Data`),
 	}
-	bytesCompare(t, expectedB, be.getBucketByte())
+	assert.Exactly(t, expectedB, be.getBucketByte())
 }
 
 func TestGetKeyByte(t *testing.T) {
@@ -74,7 +67,7 @@ func TestGetKeyByte(t *testing.T) {
 		key:    "Key",
 		data:   []byte(`Data`),
 	}
-	bytesCompare(t, expectedK, be.getKeyByte())
+	assert.Exactly(t, expectedK, be.getKeyByte())
 }
 
 func setUpDb(f string) (*Rucksack, *log.Logger, error) {
@@ -88,20 +81,12 @@ func TestNewRDB(t *testing.T) {
 	db, l, err := setUpDb(f)
 	defer func() {
 		err := os.Remove(f)
-		if nil != err {
-			t.Error(err)
-		}
+		assert.NoError(t, err)
 	}()
+	assert.NoError(t, err)
+	assert.NotNil(t, db.writerChan, "db.writerChan is nil")
+	assert.Equal(t, l, db.logger)
 
-	if nil != err {
-		t.Error(err)
-	}
-	if nil == db.writerChan {
-		t.Error("db.writerChan is nil")
-	}
-	if false == reflect.DeepEqual(l, db.logger) {
-		t.Errorf("Loggers are different!\nE: %#v\nA: %#v\n", l, db.logger)
-	}
 	if _, ferr := os.Stat(f); os.IsNotExist(ferr) {
 		t.Errorf("File not created: %s\n%s", f, ferr)
 	}
@@ -113,14 +98,9 @@ func TestWriterIntegration(t *testing.T) {
 	db, _, err := setUpDb(f)
 	defer func() {
 		err := os.Remove(f)
-		if nil != err {
-			t.Error(err)
-		}
+		assert.NoError(t, err)
 	}()
-
-	if nil != err {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 
 	// Replace writerDone with a closure that will tell us when the writer is
 	// exiting.
@@ -142,9 +122,7 @@ func TestWriterIntegration(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		testData[i] = []byte(helpers.RandomString(i + 1*10))
 		err = db.Insert(bucketName, keyPrefix+strconv.Itoa(i), testData[i])
-		if nil != err {
-			t.Error(err)
-		}
+		assert.NoError(t, err)
 	}
 
 	// I think that is lame with time.Sleep, waiting for the end of the write
@@ -154,23 +132,25 @@ func TestWriterIntegration(t *testing.T) {
 
 	for i := 0; i < 10; i++ {
 		foundData, err := db.FindOne(bucketName, keyPrefix+strconv.Itoa(i))
-		if nil != err {
-			t.Error(err)
-		}
-		bytesCompare(t, testData[i], foundData)
+		assert.NoError(t, err)
+		assert.Exactly(t, testData[i], foundData)
 	}
 
-	// test FindAll
+	// test FindAll()
 	result, err := db.FindAll(bucketName)
-	if nil != err {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
+
+	// test Count()
+	kc, kcErr := db.Count(bucketName)
+	assert.NoError(t, kcErr)
+	assert.Equal(t, len(result)/2, kc)
+
 	ti := 0
 	for j := 0; j < len(result); j = j + 2 {
 		actualKey := result[j]
 		actualVal := result[j+1]
-		bytesCompare(t, []byte(keyPrefix+strconv.Itoa(ti)), actualKey)
-		bytesCompare(t, testData[ti], actualVal)
+		assert.Exactly(t, []byte(keyPrefix+strconv.Itoa(ti)), actualKey)
+		assert.Exactly(t, testData[ti], actualVal)
 		if 0 == j%2 {
 			ti++
 		}

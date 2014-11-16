@@ -17,21 +17,96 @@
 package brotzeit
 
 import (
-	"github.com/SchumacherFM/wanderlust/provisioners"
+	"errors"
+	"github.com/SchumacherFM/wanderlust/github.com/robfig/cron"
+	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
+	"github.com/SchumacherFM/wanderlust/helpers"
+	"github.com/SchumacherFM/wanderlust/provisionerApi"
+	"github.com/SchumacherFM/wanderlust/rucksack"
+	"net/http"
+)
+
+const (
+	bpConfigName           = "bzcfg"
+	bpCronKeyPrefix        = "cronExpression"
+	bpCollectionNamePrefix = "bzcol"
+)
+
+var (
+	Logger               *log.Logger
+	ErrCronScheduleEmpty = errors.New("Cron Schedule is empty.")
 )
 
 func BootMe() error {
 
 	// job/worker
 
-	pc, err := provisioners.GetAvailable()
+	//	pc, err := provisioners.GetAvailable()
+	//	if nil != err {
+	//		return err
+	//	}
+	//	for _, prov := range pc.Collection {
+	//
+	//		go prov.Api.ProduceUrls()
+	//
+	//	}
+	return nil
+}
+
+type (
+	BzConfig struct {
+		Route    string
+		Name     string
+		Icon     string
+		Schedule string
+		UrlCount int
+	}
+	BzConfigs struct {
+		// C holds the Collection of BzConfig
+		Collection []*BzConfig
+	}
+)
+
+// GetCollection returns a collection containing all the provisioners with their brotzeit cron schedule
+// and UrlCount
+func GetCollection(pc *provisionerApi.Provisioners, bp rucksack.Backpacker) (*BzConfigs, error) {
+
+	bzcc := &BzConfigs{}
+	bzcc.Collection = make([]*BzConfig, pc.Length())
+	for i, p := range pc.Collection {
+
+		// possibility that database and key will not exists but we ignore that
+		cd, _ := bp.FindOne(bpConfigName, bpCronKeyPrefix+p.Api.Route())
+
+		uc, _ := bp.Count(bpCollectionNamePrefix + p.Api.Route())
+
+		bzc := &BzConfig{
+			Route:    p.Api.Route(),
+			Name:     p.Name,
+			Icon:     p.Icon,
+			Schedule: string(cd),
+			UrlCount: uc,
+		}
+		bzcc.Collection[i] = bzc
+
+	}
+
+	return bzcc, nil
+}
+
+// SaveConfig stores the cron schedule in the backpacker
+func SaveConfig(bp rucksack.Backpacker, r *http.Request) error {
+
+	f := &BzConfig{}
+	helpers.DecodeJSON(r, f)
+
+	if "" == f.Route || "" == f.Schedule {
+		return ErrCronScheduleEmpty
+	}
+
+	_, err := cron.Parse(f.Schedule)
 	if nil != err {
 		return err
 	}
-	for _, prov := range pc.Collection {
-
-		go prov.Api.ProduceUrls()
-
-	}
-	return nil
+	return bp.Insert(bpConfigName, bpCronKeyPrefix+f.Route, []byte(f.Schedule))
 }

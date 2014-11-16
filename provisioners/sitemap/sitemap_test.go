@@ -17,6 +17,7 @@
 package sitemap
 
 import (
+	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	. "github.com/SchumacherFM/wanderlust/rucksack/rsTestHelper"
 	"testing"
@@ -40,9 +41,7 @@ func TestPrepareSave(t *testing.T) {
 	for url, eErr := range expected {
 		pd.Value = url
 		actualData, actualErr := p.Api.PrepareSave(pd)
-		if eErr != actualErr {
-			t.Errorf("\nExpected: %#v\nActual:\t%#v\nURL: %s\n", eErr, actualErr, url)
-		}
+		assert.Exactly(t, eErr, actualErr, url)
 		if url != string(actualData) && nil == actualErr {
 			t.Errorf("\nExpected: %s\nActual:\t%s\n", url, actualData)
 		}
@@ -67,20 +66,12 @@ func TestConfigComplete(t *testing.T) {
 		FindOneData: []byte(`http://www.golang.org/sitemap.xml`),
 	}
 	ok, err := p.Api.ConfigComplete(db)
-	if false == ok {
-		t.Error("Config must be complete!")
-	}
-	if nil != err {
-		t.Error(err)
-	}
+	assert.True(t, ok, "Config must be complete!")
+	assert.NoError(t, err)
 	db.FindOneData = []byte(``)
 	ok, err = p.Api.ConfigComplete(db)
-	if true == ok {
-		t.Error("Config is not complete!")
-	}
-	if nil != err {
-		t.Error(err)
-	}
+	assert.False(t, ok, "Config is not complete!")
+	assert.NoError(t, err)
 }
 
 func TestFetchUrls(t *testing.T) {

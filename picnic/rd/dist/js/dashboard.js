@@ -18,6 +18,7 @@ angular
     users: '/users/',
     sysinfo: '/sysinfo/',
     provisioners: '/provisioners/',
+    brotzeit: '/brotzeit/',
     messages: '/api/messages'
   })
   .constant('AUTH_TOKEN_HEADER', 'X-Auth-Token')
@@ -37,7 +38,7 @@ angular
       // Use https endpoint
       gravatarServiceProvider.secure = true;
 
-      growlProvider.globalTimeToLive({success: 1000, error: 2000, warning: 3000, info: 4000});
+      growlProvider.globalTimeToLive({success: 1000, error: 3500, warning: 3000, info: 4000});
 
     }]);
 
@@ -102,7 +103,7 @@ angular
         }
         console.log('msg', msg);
         if (msg.length > 0) {
-          growl.warning(msg);
+          growl.error(msg);
         }
         return rejection;
       }
@@ -337,7 +338,6 @@ angular
   }
 );
 
-
 /**
  * Loading Directive
  * @see http://tobiasahlin.com/spinkit/
@@ -402,10 +402,9 @@ angular
     '$scope',
     '$state',
     'localStorageService',
-    '$timeout',
     'Session',
     'AuthResource',
-    function ($scope, $state, localStorageService, $timeout, Session, AuthResource) {
+    function ($scope, $state, localStorageService, Session, AuthResource) {
       'use strict';
       var LS_TOGGLE_KEY = 'wlToggle';
 
@@ -669,21 +668,6 @@ angular
   ]);
 angular
   .module('Wanderlust')
-  .controller('ProvisionerController', [
-    '$scope',
-    '$stateParams',
-    'ProvisionerResource',
-    'ProvisionerForm',
-    function ($scope, $stateParams, ProvisionerResource, ProvisionerForm) {
-      var type = $stateParams.type || 'textarea';
-      $scope.typeName = type;
-
-      ProvisionerForm.setScope($scope).setType(type).init();
-    }
-  ]);
-
-angular
-  .module('Wanderlust')
 
   // handles all the provisioners
   .factory('ProvisionerResource', [
@@ -779,6 +763,21 @@ angular
         }
       };
 
+    }
+  ]);
+
+angular
+  .module('Wanderlust')
+  .controller('ProvisionerController', [
+    '$scope',
+    '$stateParams',
+    'ProvisionerResource',
+    'ProvisionerForm',
+    function ($scope, $stateParams, ProvisionerResource, ProvisionerForm) {
+      var type = $stateParams.type || 'textarea';
+      $scope.typeName = type;
+
+      ProvisionerForm.setScope($scope).setType(type).init();
     }
   ]);
 
@@ -933,16 +932,50 @@ angular
   ]);
 angular
   .module('Wanderlust')
+  .factory('BrotzeitResource', [
+    '$resource',
+    'picnicUrls',
+    function ($resource, picnicUrls) {
+      return $resource(picnicUrls.brotzeit);
+    }
+  ]);
+
+angular
+  .module('Wanderlust')
   .controller('BrotzeitController', [
     '$scope',
     '$modal',
-    function ($scope, $modal) {
+    'BrotzeitResource',
+    'growl',
+    function ($scope, $modal, BrotzeitResource, growl) {
+      $scope.bzConfigs = [];
+      BrotzeitResource.get().$promise.then(
+        function success(data) {
+          $scope.bzConfigs = data.Collection || [];
+          $scope.bzConfigs.forEach(function (bzc) {
+            bzc.isCollapsed = true;
+            bzc.ScheduleIsValid = bzc.Schedule !== '';
+          });
+        },
+        function err(data) {
+          growl.warning('Error in retrieving Brotzeit collection. See console log');
+          console.log('BrotzeitResource err', data);
+        }
+      );
 
-      $scope.showCronForm = function () {
-        alert('Use a popover');
+      $scope.saveCronExpression = function (bzModel) {
+        BrotzeitResource.save(
+          {
+            Route: bzModel.Route || '',
+            Schedule: bzModel.Schedule || ''
+          },
+          function success() {
+            bzModel.isCollapsed = true;
+            bzModel.ScheduleIsValid = true;
+            growl.info('Cron Schedule saved!');
+          }
+        );
       };
-
-      $scope.isCollapsed = true;
 
       $scope.openCronHelp = function () {
         $modal.open({

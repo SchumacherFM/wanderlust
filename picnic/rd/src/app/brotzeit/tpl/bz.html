@@ -31,17 +31,20 @@
                   <i class="fa fa-refresh"></i>
                 </button>
               </th>
-              <th></th>
             </tr>
             </thead>
             <tbody>
 
-            <tr>
-              <td><i class="fa fa-sitemap"></i> Sitemap</td>
-              <td class="text-right"> 121.125</td>
+            <tr data-ng-repeat-start="bz in bzConfigs">
+              <td>
+                <rd-nav-icon icon="{{bz.Icon}}"></rd-nav-icon>
+                {{ bz.Name }}
+              </td>
+              <td class="text-right"> {{ bz.UrlCount }}</td>
               <td class="text-center">
-                <button class="btn btn-xs btn-success" data-ng-click="isCollapsed = !isCollapsed"
-                        title="Cron job configured">
+                <button class="btn btn-xs" data-ng-click="bz.isCollapsed = !bz.isCollapsed"
+                        data-ng-class="{'btn-success':bz.ScheduleIsValid}"
+                        title="Configure cron job">
                   <i class="fa fa-clock-o"></i>
                 </button>
               </td>
@@ -51,27 +54,23 @@
               <td class="text-center">
                 <button class="btn btn-xs btn-info" tooltip="Refresh"><i class="fa fa-refresh"></i></button>
               </td>
-              <td class="text-center"><span class="text-success"><i class="fa fa-check"></i></span></td>
             </tr>
-            <tr data-collapse="isCollapsed">
-              <td colspan="6">
-
-                <form class="form-horizontal" role="form">
+            <tr data-ng-repeat-end data-collapse="bz.isCollapsed">
+              <td colspan="5">
+                <form class="form-horizontal" role="form" data-ng-submit="saveCronExpression(bz)">
                   <div class="form-group-sm">
-                    <label for="inputEmail3" class="col-xs-4 control-label">Cron Expression</label>
+                    <label class="col-xs-4 control-label">Cron Expression</label>
 
                     <div class="col-xs-4">
-                      <input type="text" class="input-sm form-control" id="inputEmail3" placeholder="* * * * * *">
+                      <input type="text" class="input-sm form-control" data-ng-model="bz.Schedule" placeholder="* * * * * *">
                     </div>
                     <div class="col-xs-3">
-
                       <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-sm btn-default">Save</button>
+                        <button type="submit" class="btn btn-sm btn-default">Save</button>
                         <button type="button" class="btn btn-sm btn-default" data-ng-click="openCronHelp()">
                           <i class="fa fa-question-circle"></i>
                         </button>
                       </div>
-
 
                     </div>
                   </div>
@@ -80,43 +79,6 @@
             </tr>
 
 
-            <tr>
-              <td><i class="fa fa-file-text-o"></i> Textarea</td>
-              <td>25</td>
-              <td class="text-center">
-                <button class="btn btn-xs btn-danger" disabled="disabled" title="Cron job not available">
-                  <i class="fa fa-clock-o"></i>
-                </button>
-              </td>
-              <td class="text-center">
-                <button class="btn btn-xs btn-warning" tooltip="Purge">
-                  <i class="fa fa-bomb"></i></button>
-              </td>
-              <td class="text-center">
-                <button class="btn btn-xs btn-info" tooltip="Refresh"
-                    ><i class="fa fa-refresh"></i>
-                </button>
-              </td>
-              <td class="text-center"><span class="text-danger"><i class="fa fa-times"></i></span></td>
-            </tr>
-
-            <tr>
-              <td><i class="fa fa-file-text-o"></i> G'Analytics</td>
-              <td>25</td>
-              <td class="text-center">
-                <button class="btn btn-xs btn-info"
-                        title="Setup cron job"><i class="fa fa-clock-o"></i></button>
-              </td>
-              <td class="text-center">
-                <button class="btn btn-xs btn-warning"
-                        title="Purge"><i class="fa fa-bomb"></i></button>
-              </td>
-              <td class="text-center">
-                <button class="btn btn-xs btn-info"
-                        title="Refresh"><i class="fa fa-refresh"></i></button>
-              </td>
-              <td class="text-center"><span class="text-danger"><i class="fa fa-times"></i></span></td>
-            </tr>
             </tbody>
           </table>
         </div>

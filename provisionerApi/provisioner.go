@@ -30,8 +30,8 @@ const (
 type (
 	// https://restful-api-design.readthedocs.org/en/latest/methods.html#standard-methods
 
-	// ColdCuts methods will be used to query the provisioner instance, set values
-	ColdCuts interface {
+	// ColdCutter methods will be used to query the provisioner instance, set values
+	ColdCutter interface {
 		// Route returns the endpoint of the route and is also abused as the database name
 		Route() string
 		// FormHandler returns a JSON object with a key called data which contains a key/value object
@@ -56,13 +56,13 @@ type (
 	// Implements encoding/json.Marshaler interface is mainly used for the route
 	Config struct {
 		// This name appears in the frontend
-		name string
+		Name string
 		// REST path
-		url string
+		Url string
 		// can be a fa-* icon or path to an image
-		icon string
+		Icon string
 		// internal handler
-		Api ColdCuts
+		Api ColdCutter
 	}
 
 	PostData struct {
@@ -72,7 +72,7 @@ type (
 
 	// Base struct is for embedding/composition in other provisioner structs aka Parent Class ;-)
 	Base struct {
-		// route is the public name for the resource access
+		// route is the public name for the resource access and acts also as internal identifier
 		TheRoute string
 		// config contains all the input field names which are use in the HTML partials
 		TheConfig []string
@@ -80,11 +80,11 @@ type (
 )
 
 // NewProvisioner returns a new Config with the API of them
-func NewProvisioner(n, i string, a ColdCuts) *Config {
+func NewProvisioner(n, i string, a ColdCutter) *Config {
 	return &Config{
-		name: n,
-		url:  "/" + UrlRoutePrefix + "/" + a.Route(),
-		icon: i,
+		Name: n,
+		Url:  "/" + UrlRoutePrefix + "/" + a.Route(),
+		Icon: i,
 		Api:  a,
 	}
 }

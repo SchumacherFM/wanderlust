@@ -32,7 +32,8 @@ var (
 	ErrBreadbasketNotFound = errors.New("Breadbasket / Database not found")
 	ErrBreadNotFound       = errors.New("Bread / DB Entity not found")
 	// Hook that may be overridden for integration tests.
-	writerDone = func() {}
+	writerDone            = func() {}
+	_          Backpacker = &Rucksack{}
 )
 
 type (
@@ -45,12 +46,19 @@ type (
 		// Close closes the database when terminating the app
 		Close() error
 
-		FindOne(b, k string) ([]byte, error)
+		// FindOne searches for bucketName and keyName to return the value or an error
+		FindOne(string, string) ([]byte, error)
 
-		FindAll(bn string) ([][]byte, error)
-		// Inserts Data: b = bucket Name, k = key, d = data
-		Insert(b, k string, d []byte) error
+		// FindAll searches for all keys/values in a bucketName
+		FindAll(string) ([][]byte, error)
+
+		// Inserts Data: bucketName, keyName, data
+		Insert(string, string, []byte) error
+
+		// Count returns the number of keys in a bucketName or an error and key count = 0
+		Count(string) (int, error)
 	}
+
 	bEntity struct {
 		bucket string
 		key    string
@@ -174,4 +182,20 @@ func (this *Rucksack) Insert(b, k string, d []byte) error {
 	}
 	this.writerChan <- be
 	return nil
+}
+
+// Count returns the total number of keys within that bucketName
+func (this *Rucksack) Count(bn string) (int, error) {
+
+	tx, err := this.db.Begin(false)
+	if nil != err {
+		return 0, err
+	}
+	b := tx.Bucket([]byte(bn))
+	if nil == b {
+		return 0, ErrBreadbasketNotFound
+	}
+	s := b.Stats()
+	tx.Commit()
+	return s.KeyN, nil
 }

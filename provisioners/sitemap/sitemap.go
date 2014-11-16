@@ -43,8 +43,8 @@ type (
 
 var (
 	ErrValidate = errors.New("Invalid sitemap URL")
-	// provide a static (compile time) check that sm satisfies the ColdCuts interface
-	_ provisionerApi.ColdCuts = &sm{}
+	// provide a static (compile time) check that sm satisfies the ColdCutter interface
+	_ provisionerApi.ColdCutter = &sm{}
 )
 
 // ConfigComplete implements the brotzeit.Fetcher interface to check if all config values

@@ -17,6 +17,7 @@
 package wlapp
 
 import (
+	"github.com/SchumacherFM/wanderlust/brotzeit"
 	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/cli"
 	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/picnic"
@@ -115,6 +116,7 @@ func BootPicnic() {
 }
 
 func BootBrotzeit() {
+	brotzeit.Logger = logger
 	//	if "" != rucksackApp.ListenAddress {
 	//		wg.Add(1)
 	//		go func() {

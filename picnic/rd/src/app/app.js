@@ -17,6 +17,7 @@ angular
     users: '/users/',
     sysinfo: '/sysinfo/',
     provisioners: '/provisioners/',
+    brotzeit: '/brotzeit/',
     messages: '/api/messages'
   })
   .constant('AUTH_TOKEN_HEADER', 'X-Auth-Token')
@@ -36,7 +37,7 @@ angular
       // Use https endpoint
       gravatarServiceProvider.secure = true;
 
-      growlProvider.globalTimeToLive({success: 1000, error: 2000, warning: 3000, info: 4000});
+      growlProvider.globalTimeToLive({success: 1000, error: 3500, warning: 3000, info: 4000});
 
     }]);
 

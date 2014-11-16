@@ -45,8 +45,8 @@ type (
 var (
 	ErrValidate    = errors.New("Failed to validate the value")
 	ErrTooManyURLs = errors.New("Too many URLs detected! Maximum is 20.")
-	// provide a static (compile time) check that ta satisfies the ColdCuts interface
-	_ provisionerApi.ColdCuts = &ta{}
+	// provide a static (compile time) check that ta satisfies the ColdCutter interface
+	_ provisionerApi.ColdCutter = &ta{}
 )
 
 // PrepareSave removes duplicated lines and too much white space. creates a unique URL set

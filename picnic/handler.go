@@ -54,15 +54,8 @@ func (p *PicnicApp) getHandler() *negroni.Negroni {
 	p.initRoutesUsers(r)
 	p.initRoutesSystemInfo(r)
 	p.initRoutesProvisioners(r)
+	p.initRoutesBrotzeit(r)
 
-	//	// @todo
-	//	brotzeitApi := r.PathPrefix("/brotzeit/").Subrouter()
-	//	brotzeitApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
-	//	brotzeitApi.HandleFunc("/stop", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
-	//	brotzeitApi.HandleFunc("/purge", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET") // purges all collected URLs
-	//	brotzeitApi.HandleFunc("/concurrency", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("PUT")
-	//	brotzeitApi.HandleFunc("/collections", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET") // retrieves running processes
-	//
 	//	// @todo
 	//	wandererApi := r.PathPrefix("/wanderer/").Subrouter()
 	//	wandererApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")

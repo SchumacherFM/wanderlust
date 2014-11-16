@@ -53,7 +53,7 @@ angular
         }
         console.log('msg', msg);
         if (msg.length > 0) {
-          growl.warning(msg);
+          growl.error(msg);
         }
         return rejection;
       }

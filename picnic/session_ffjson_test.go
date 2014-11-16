@@ -3,6 +3,7 @@ package picnic
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 	"testing"
 	"time"
 )
@@ -32,13 +33,8 @@ func TestFFMarshalJSON(t *testing.T) {
 	si := newSessionInfo(tu)
 
 	actual, err := si.MarshalJSON()
-	if nil != err {
-		t.Error(err)
-	}
-
-	if bytes.Compare(actual, expected) != 0 {
-		t.Errorf("\nExpected: %s\nActual:   %s\n", expected, actual)
-	}
+	assert.NoError(t, err)
+	assert.Exactly(t, expected, actual)
 }
 
 func TestGoMarshalJSON(t *testing.T) {
@@ -46,16 +42,10 @@ func TestGoMarshalJSON(t *testing.T) {
 	si := newSessionInfo(tu)
 	var jBufActual bytes.Buffer
 	err := json.NewEncoder(&jBufActual).Encode(si)
-	if nil != err {
-		t.Error(err)
-	}
-	es := string(expected)
+	assert.NoError(t, err)
 	jBufActualBytes := jBufActual.Bytes()
 	jBufActualBytes = jBufActualBytes[:len(jBufActualBytes)-1] // remove last \n
-	as := string(jBufActualBytes)
-	if as != es {
-		t.Errorf("\nExpected: %s\nActual:   %s\n", es, as)
-	}
+	assert.Exactly(t, expected, jBufActualBytes)
 }
 
 // BenchmarkFFMarshalJSON	 1,000,000	      1459 ns/op

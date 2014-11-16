@@ -17,19 +17,17 @@
 package picnic
 
 import (
+	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"runtime"
-	"strings"
 	"testing"
 )
 
 func compareSystemInfoJsonString(t *testing.T, json string) {
 	expected := [4]string{"Brotzeit", "Goroutines", "Wanderers", "SessionExpires"}
 	for _, e := range expected {
-		if false == strings.Contains(json, e) {
-			t.Errorf("\nExpected: %s in Actual:   %s\n", e, json)
-		}
+		assert.Contains(t, json, e)
 	}
 }
 
@@ -37,28 +35,19 @@ func TestSystemInfoHandler(t *testing.T) {
 	rc := &testRequestContext{}
 	w := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "http://localhost/systeminfo", nil)
-	if nil != err {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 	actualErr := systemInfoHandler(rc, w, req)
-	if nil != actualErr {
-		t.Error(actualErr)
-	}
+	assert.NoError(t, actualErr)
 	compareSystemInfoJsonString(t, w.Body.String())
 }
 
 func TestNewSystemInfo(t *testing.T) {
 
 	si := newSystemInfo()
-	if si.Goroutines != runtime.NumGoroutine() {
-		t.Errorf("Number of Goroutines changed ;-) from %d to %d", si.Goroutines, runtime.NumGoroutine())
-	}
-	if 0 != si.SessionExpires {
-		t.Errorf("SessionExpires must be zero but it is %d", si.SessionExpires)
-	}
+	assert.Exactly(t, si.Goroutines, runtime.NumGoroutine()) // ;-)
+	assert.Exactly(t, 0, si.SessionExpires)
+
 	sij, err := si.MarshalJSON()
-	if nil != err {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 	compareSystemInfoJsonString(t, string(sij))
 }

@@ -17,6 +17,7 @@
 package provisionerApi
 
 import (
+	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -30,14 +31,11 @@ func setUp() *Provisioners {
 func TestProvisionersAdd(t *testing.T) {
 
 	ps := setUp()
-	if 1 != len(ps.Collection) {
-		t.Errorf("Expected 1 got %d", len(ps.Collection))
-	}
+	assert.Len(t, ps.Collection, 1)
 }
 
 func TestProvisionersLength(t *testing.T) {
 	ps := setUp()
-	if 1 != ps.Length() {
-		t.Errorf("Expected 1 got %d", len(ps.Collection))
-	}
+	assert.Exactly(t, ps.Length(), 1)
+
 }

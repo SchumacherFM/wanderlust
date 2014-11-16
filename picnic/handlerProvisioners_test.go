@@ -17,7 +17,7 @@
 package picnic
 
 import (
-	"bytes"
+	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"github.com/SchumacherFM/wanderlust/provisioners"
 	"github.com/SchumacherFM/wanderlust/rucksack"
@@ -45,14 +45,8 @@ func TestAvailableProvisionersHandler(t *testing.T) {
 	rc := &testRequestContext{}
 	w := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", "http://localhost"+provisioners.GetRoutePathPrefix(), nil)
-	if nil != err {
-		t.Error(err)
-	}
+	assert.NoError(t, err)
 	actualErr := availableProvisionersHandler(rc, w, req)
-	if nil != actualErr {
-		t.Error(actualErr)
-	}
-	if bytes.Compare(w.Body.Bytes(), expected) != 0 {
-		t.Errorf("\nExpected: %s\nActual:   %s\n", expected, w.Body.Bytes())
-	}
+	assert.NoError(t, actualErr)
+	assert.Exactly(t, w.Body.Bytes(), expected)
 }
