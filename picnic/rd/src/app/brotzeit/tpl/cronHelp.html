@@ -1,7 +1,7 @@
 <div class="modal-header">
   <button type="button" class="close" data-ng-click="close()"><span aria-hidden="true">×</span><span class="sr-only">Close</span>
   </button>
-  <h4 class="modal-title">Cron Help</h4>
+  <h4 class="modal-title">CRON Expression Format</h4>
 </div>
 <div class="modal-body">
 <pre>
@@ -11,11 +11,13 @@
 |   |   |   |day of month(1-31)
 |   |   |hour(0-23)
 |   |minute(0-59)
-|seconds(0-59)
-           </pre>
+|seconds(0-59)</pre>
+
+  <p>A cron expression represents a set of times, using 6 space-separated fields.</p>
 
   <div class="table-responsive">
     <table class="table table-hover">
+
       <thead>
       <tr>
         <th>Field name</th>
@@ -27,50 +29,78 @@
       <tbody>
       <tr>
         <td>Seconds</td>
-        <td>Yes</td>
+        <td>No</td>
         <td>0-59</td>
-        <td> / , -</td>
+        <td>* / , -</td>
       </tr>
       <tr>
         <td>Minutes</td>
         <td>Yes</td>
         <td>0-59</td>
-        <td> / , -</td>
+        <td>* / , -</td>
       </tr>
       <tr>
         <td>Hours</td>
         <td>Yes</td>
         <td>0-23</td>
-        <td>/ , -</td>
+        <td>* / , -</td>
       </tr>
       <tr>
         <td>Day of month</td>
         <td>Yes</td>
         <td>1-31</td>
-        <td>/ , - ?</td>
+        <td>* / , - ?</td>
       </tr>
       <tr>
         <td>Month</td>
         <td>Yes</td>
         <td>1-12 or JAN-DEC</td>
-        <td>/ , -</td>
+        <td>* / , -</td>
       </tr>
       <tr>
         <td>Day of week</td>
         <td>Yes</td>
         <td>0-6 or SUN-SAT</td>
-        <td>/ , - ?</td>
+        <td>* / , - ?</td>
       </tr>
       </tbody>
     </table>
   </div>
+  <p>Note: Month and Day-of-week field values are case insensitive. &quot;SUN&quot;, &quot;Sun&quot;,
+    and &quot;sun&quot; are equally accepted.</p>
+  <h4 id="special-characters">Special Characters</h4>
+  <h5 id="asterisk-">Asterisk ( * )</h5>
 
-  <h4>Predefined schedules</h4>
+  <p>The asterisk indicates that the cron expression will match for all values of the
+    field; e.g., using an asterisk in the 5th field (month) would indicate every
+    month.</p>
+  <h5 id="slash-">Slash ( / )</h5>
+
+  <p>Slashes are used to describe increments of ranges. For example 3-59/15 in the
+    1st field (minutes) would indicate the 3rd minute of the hour and every 15
+    minutes thereafter. The form &quot;*\/...&quot; is equivalent to the form &quot;first-last/...&quot;,
+    that is, an increment over the largest possible range of the field. The form
+    &quot;N/...&quot; is accepted as meaning &quot;N-MAX/...&quot;, that is, starting at N, use the
+    increment until the end of that specific range. It does not wrap around.</p>
+  <h5 id="comma-">Comma ( , )</h5>
+
+  <p>Commas are used to separate items of a list. For example, using &quot;MON,WED,FRI&quot; in
+    the 5th field (day of week) would mean Mondays, Wednesdays and Fridays.</p>
+  <h5 id="hyphen-">Hyphen ( - )</h5>
+
+  <p>Hyphens are used to define ranges. For example, 9-17 would indicate every
+    hour between 9am and 5pm inclusive.</p>
+  <h5 id="question-mark-">Question mark ( ? )</h5>
+
+  <p>Question mark may be used instead of &#39;*&#39; for leaving either day-of-month or
+    day-of-week blank.</p>
+  <h5 id="predefined-schedules">Predefined schedules</h5>
 
   <p>You may use one of several pre-defined schedules in place of a cron expression.</p>
 
   <div class="table-responsive">
     <table class="table table-hover">
+
       <thead>
       <tr>
         <th>Entry</th>
@@ -87,42 +117,44 @@
       <tr>
         <td>@monthly</td>
         <td>Run once a month, midnight, first of month</td>
-        <td>0 0 0 1 * *</td>
+        <td>0 0 0 1 <em> </em></td>
       </tr>
       <tr>
         <td>@weekly</td>
         <td>Run once a week, midnight on Sunday</td>
-        <td>0 0 0 * * 0</td>
+        <td>0 0 0 <em> </em> 0</td>
       </tr>
       <tr>
         <td>@daily (or @midnight)</td>
         <td>Run once a day, midnight</td>
-        <td>0 0 0 * * *</td>
+        <td>0 0 0 <em> </em> *</td>
       </tr>
       <tr>
         <td>@hourly</td>
         <td>Run once an hour, beginning of hour</td>
-        <td>0 0 * * * *</td>
+        <td>0 0 <em> </em> <em> </em></td>
       </tr>
       </tbody>
     </table>
   </div>
-
-  <h4>Intervals</h4>
+  <h5 id="intervals">Intervals</h5>
 
   <p>You may also schedule a job to execute at fixed intervals. This is supported by
-    formatting the cron spec like this: <code>@every &lt;duration&gt;</code>
-    where "duration" is a string accepted by time.ParseDuration
-    <a href="http://golang.org/pkg/time/#ParseDuration"
-       target="_blank">http://golang.org/pkg/time/#ParseDuration</a>.</p>
+    formatting the cron spec like this:</p>
+  <pre><code>@every &lt;duration&gt;</code></pre>
+  <p>where &quot;duration&quot; is a string accepted by time.ParseDuration
+    (<a target="_blank" href="http://golang.org/pkg/time/#ParseDuration">http://golang.org/pkg/time/#ParseDuration</a>).</p>
 
-  <p>For example, <code>@every 1h30m10s</code> would indicate a schedule that activates every
+  <p>For example, &quot;@every 1h30m10s&quot; would indicate a schedule that activates every
     1 hour, 30 minutes, 10 seconds.</p>
 
   <p>Note: The interval does take the job runtime into account. For example,
     if a job takes 4-8 minutes to run, and it is scheduled to run every 5 minutes,
-    it will either have only 1 minute of idle time between each run or
-    it will disable the start of a second job.</p>
+    it will have either only 1 minute of idle time between each run or blocks.</p>
+  <h5 id="time-zones">Time zones</h5>
+
+  <p>If TZ= field is not provided in the spec string, all interpretation and scheduling is done in the machine&#39;s local time zone (as
+    provided by the Go time package (<a target="_blank" href="http://www.golang.org/pkg/time">http://www.golang.org/pkg/time</a>).</p>
 
 
 </div>
