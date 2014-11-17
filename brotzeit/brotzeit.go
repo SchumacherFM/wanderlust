@@ -111,6 +111,7 @@ func (b *Brotzeit) errWar(e error) {
 	}
 }
 
+// Close shuts down the cron job when the app receives a signal
 func (b *Brotzeit) Close() error {
 	if len(crond.Entries()) > 0 {
 		crond.Stop()
@@ -163,5 +164,6 @@ func SaveConfig(bp rucksack.Backpacker, r *http.Request) error {
 	if nil != err {
 		return err
 	}
+	// @todo onSave event trigger the cron: check if config complete, add job, and press start
 	return bp.Insert(bpDbConfig, bpCronKeyPrefix+f.Route, []byte(f.Schedule))
 }
