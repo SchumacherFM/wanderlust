@@ -19,6 +19,7 @@
 package provisionerApi
 
 import (
+	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 )
 
@@ -42,15 +43,18 @@ type (
 		// the entered data is valid
 		PrepareSave(pd *PostData) ([]byte, error)
 
-		// ConfigComplete checks if all config values
-		// have been successfully entered by the user. if so brotzeit can start automatically fetching URLs
-		ConfigComplete(rucksack.Backpacker) (bool, error)
-
-		// FetchUrls process can take quite a long time or nanoseconds
-		FetchUrls(rucksack.Backpacker) []string
-
 		// idea: maybe for output
 		// ProgressInfo() string
+
+		// ConfigComplete checks if all config values
+		// have been successfully entered by the user. if so brotzeit can start automatically fetching URLs
+		// This func will also be used to check if we can add FetchUrls to the crond. A user can have configured a
+		// cron schedule but not fully provided all config details
+		ConfigComplete(rucksack.Backpacker) (bool, error)
+
+		// FetchURLs downloads all the URLs and stores them in the brotzeit DB.
+		// Process can take quite a long time or nanoseconds.
+		FetchURLs(rucksack.Backpacker, *log.Logger) func()
 	}
 
 	// Implements encoding/json.Marshaler interface is mainly used for the route

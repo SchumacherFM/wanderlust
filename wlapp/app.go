@@ -56,9 +56,9 @@ func initLogger() {
 		if err != nil {
 			panic(err)
 		}
-		logger = log.New(logFilePointer, log.DEBUG, "[WL] ")
+		logger = log.New(logFilePointer, log.DEBUG, "WL")
 	} else {
-		logger = log.New(os.Stderr, log.DEBUG, "[WL] ")
+		logger = log.New(os.Stderr, log.DEBUG, "WL")
 	}
 	if "" == logLevel {
 		logLevel = "debug"

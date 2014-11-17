@@ -19,6 +19,7 @@ package textarea
 import (
 	"bytes"
 	"errors"
+	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 	"strings"
@@ -99,6 +100,8 @@ func (t *ta) ConfigComplete(bp rucksack.Backpacker) (bool, error) {
 }
 
 // FetchUrls implements the brotzeit.Fetcher interface
-func (s *ta) FetchUrls(bp rucksack.Backpacker) []string {
-	return nil
+func (s *ta) FetchURLs(bp rucksack.Backpacker, l *log.Logger) func() {
+	return func() {
+		l.Debug("TA CRON %s", s.Route())
+	}
 }

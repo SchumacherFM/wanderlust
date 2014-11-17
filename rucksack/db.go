@@ -101,7 +101,7 @@ func New(dbFileName string, l *log.Logger) (*Rucksack, error) {
 	rdb := &Rucksack{
 		db:         db,
 		writerChan: w,
-		logger:     l,
+		logger:     l.New("RS"),
 	}
 	return rdb, err
 }

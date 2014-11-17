@@ -18,6 +18,7 @@ package brotzeit
 
 import (
 	"errors"
+	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 	"github.com/SchumacherFM/wanderlust/github.com/robfig/cron"
 	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/helpers"
@@ -41,8 +42,6 @@ var (
 	ErrCronScheduleEmpty = errors.New("Cron Schedule is empty.")
 	crond                = cron.New()
 	bootCronOne          sync.Once
-	// BrotZeitConfigCollection
-	bzcc = &BzConfigs{}
 )
 
 type (
@@ -68,7 +67,7 @@ type (
 func New(l *log.Logger, bp rucksack.Backpacker) *Brotzeit {
 	pc, _ := provisioners.GetAvailable()
 	return &Brotzeit{
-		l:  l,
+		l:  l.New("BZ"),
 		bp: bp,
 		pc: pc,
 	}
@@ -79,24 +78,37 @@ func (b *Brotzeit) BootCron() {
 	bootCronOne.Do(b.bootCron)
 }
 
-// bootCron internal start function
+// bootCron internal start function to start the cronjobs
 func (b *Brotzeit) bootCron() {
+	for _, p := range b.pc.Collection() {
+		s, _ := b.bp.FindOne(bpDbConfig, bpCronKeyPrefix+p.Api.Route())
+		if nil == s {
+			continue
+		}
 
-	// refactor here everything and use GetCollection(b.pc,b,bp)
-
-	// retrieve schedule collection
-	sc, err := b.bp.FindAll(bpDbConfig)
-	if nil != err {
-		b.l.Notice("%s", err)
+		ok, err := p.Api.ConfigComplete(b.bp)
+		b.errWar(err)
+		if true == ok {
+			js := string(s)
+			if err := crond.AddFunc(js, p.Api.FetchURLs(b.bp, b.l)); nil != err {
+				b.errWar(err)
+			} else {
+				b.l.Debug("Cron added for: %s, Schedule: %s", p.Api.Route(), js)
+			}
+		}
 	}
 
-	for i := 0; i < len(sc); i = i + 2 {
-		jobName := sc[i]
-		jobSchedule := sc[i+1]
-		b.l.Debug("%s: %s\n", jobName, jobSchedule)
+	if len(crond.Entries()) > 0 {
+		crond.Start()
 	}
 
 	b.l.Debug("Brotzeit cron daemon started!")
+}
+
+func (b *Brotzeit) errWar(e error) {
+	if nil != e {
+		b.l.Warning(errgo.Details(errgo.New(e.Error())))
+	}
 }
 
 func (b *Brotzeit) Close() error {
@@ -110,18 +122,15 @@ func (b *Brotzeit) Close() error {
 // and UrlCount
 func GetCollection(pc provisionerApi.Collectioner, bp rucksack.Backpacker) (*BzConfigs, error) {
 
-	if len(bzcc.Collection) > 0 {
-		return bzcc, nil
+	var bzcc = &BzConfigs{
+		Collection: make([]*BzConfig, len(pc.Collection())),
 	}
 
-	bzcc.Collection = make([]*BzConfig, len(pc.Collection()))
 	for i, p := range pc.Collection() {
 
 		// possibility that database and key will not exists but we ignore that
 		cd, _ := bp.FindOne(bpDbConfig, bpCronKeyPrefix+p.Api.Route())
-
 		uc, _ := bp.Count(bpDbUrlsPrefix + p.Api.Route())
-
 		bzc := &BzConfig{
 			Route:    p.Api.Route(),
 			Name:     p.Name,
@@ -130,7 +139,6 @@ func GetCollection(pc provisionerApi.Collectioner, bp rucksack.Backpacker) (*BzC
 			UrlCount: uc,
 		}
 		bzcc.Collection[i] = bzc
-
 	}
 
 	return bzcc, nil

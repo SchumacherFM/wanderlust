@@ -49,7 +49,7 @@ type PicnicApp struct {
 // la = listen address, pd = pemDir, lo = logger
 func New(la, pd string, lo *log.Logger, db rucksack.Backpacker) (*PicnicApp, error) {
 	var err error
-	logger = lo
+	logger = lo.New("PN")
 	pa := &PicnicApp{
 		ListenAddress: la,
 		PemDir:        pd,

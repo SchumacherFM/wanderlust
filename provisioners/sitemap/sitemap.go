@@ -18,6 +18,7 @@ package sitemap
 
 import (
 	"errors"
+	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 	"strings"
@@ -47,6 +48,13 @@ var (
 	_ provisionerApi.ColdCutter = &sm{}
 )
 
+func (s *sm) PrepareSave(pd *provisionerApi.PostData) ([]byte, error) {
+	if false == isValidSitemapUrl(pd.Value) {
+		return nil, ErrValidate
+	}
+	return []byte(strings.TrimSpace(pd.Value)), nil
+}
+
 // ConfigComplete implements the brotzeit.Fetcher interface to check if all config values
 // have been successfully entered by the user. if so brotzeit can start automatically fetching URLs
 func (s *sm) ConfigComplete(bp rucksack.Backpacker) (bool, error) {
@@ -62,16 +70,11 @@ func (s *sm) ConfigComplete(bp rucksack.Backpacker) (bool, error) {
 		(len(sm2) > 5 && true == isValidSitemapUrl(string(sm2))), nil
 }
 
-func (s *sm) PrepareSave(pd *provisionerApi.PostData) ([]byte, error) {
-	if false == isValidSitemapUrl(pd.Value) {
-		return nil, ErrValidate
+// Fetch implements the brotzeit.Fetcher interface
+func (s *sm) FetchURLs(bp rucksack.Backpacker, l *log.Logger) func() {
+	return func() {
+		l.Debug("SM CRON %s", s.Route())
 	}
-	return []byte(strings.TrimSpace(pd.Value)), nil
-}
-
-// FetchUrls implements the brotzeit.Fetcher interface
-func (s *sm) FetchUrls(bp rucksack.Backpacker) []string {
-	return nil
 }
 
 // isValid checks if the Value of PostData is valid sitemap URL
