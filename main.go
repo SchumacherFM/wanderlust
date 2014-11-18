@@ -37,6 +37,12 @@ func mainAction(c *cli.Context) {
 	wlapp.Boot()
 }
 
+// passwordAction changes the password for the admin user
+func passwordAction(c *cli.Context) {
+	wlapp.CliContext = c
+	wlapp.UpdateAdminPassword()
+}
+
 // @todo maybe use https://github.com/spf13/viper
 func main() {
 	setMaxParallelism()
@@ -86,6 +92,18 @@ func main() {
 				cli.BoolFlag{
 					Name:  "browser",
 					Usage: "If set opens your web browser with the picnic URL immediately. Default false.",
+				},
+			},
+		},
+		{
+			Name:   "pw",
+			Usage:  "Change password for administrator",
+			Action: passwordAction,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "rucksack-file,rf",
+					Value: "",
+					Usage: "Storage DB file for the rucksack. If empty app will fail.",
 				},
 			},
 		},

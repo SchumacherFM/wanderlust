@@ -164,3 +164,37 @@ func catchSysCall(cl ...io.Closer) {
 		}
 	}()
 }
+
+func UpdateAdminPassword() {
+	done := make(chan bool)
+	rucksack.WriterDone = func() {
+		done <- true
+	}
+	rf := CliContext.String("rucksack-file")
+	if _, err := os.Stat(rf); os.IsNotExist(err) || "" == rf {
+		print("Rucksack File not found!\n") // @todo also check if file has a lock resp. wanderlust is running
+		os.Exit(255)
+	}
+	initLogger()
+	BootRucksack()
+	admin := picnic.NewUserModel(bp, picnic.USER_ROOT)
+	f, err := admin.FindMe()
+	logger.Check(err)
+	if false == f {
+		logger.Emergency("User %s not found!", picnic.USER_ROOT)
+		os.Exit(1)
+	}
+	if err := admin.GeneratePassword(); nil != err {
+		logger.Check(err)
+	}
+	logger.Emergency("Changed password for user %s: %s", picnic.USER_ROOT, admin.Password)
+	if err := admin.EncryptPassword(); nil != err {
+		logger.Check(err)
+	}
+	ae, err := admin.Encode()
+	logger.Check(err)
+	bp.Insert(picnic.USER_DB_COLLECTION_NAME, admin.GetId(), ae)
+	<-done
+	bp.Close()
+	os.Exit(0)
+}

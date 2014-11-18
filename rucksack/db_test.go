@@ -102,17 +102,17 @@ func TestWriterIntegration(t *testing.T) {
 	}()
 	assert.NoError(t, err)
 
-	// Replace writerDone with a closure that will tell us when the writer is
+	// Replace WriterDone with a closure that will tell us when the writer is
 	// exiting.
 	done := make(chan bool)
-	writerDone = func() {
+	WriterDone = func() {
 		close(db.writerChan)
 		done <- true
 	}
 
 	// Put things as they were when the test finishes.
 	defer func() {
-		writerDone = func() {}
+		WriterDone = func() {}
 	}()
 
 	go db.Writer()

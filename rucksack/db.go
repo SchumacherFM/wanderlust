@@ -32,7 +32,7 @@ var (
 	ErrBreadbasketNotFound = errors.New("Breadbasket / Database not found")
 	ErrBreadNotFound       = errors.New("Bread / DB Entity not found")
 	// Hook that may be overridden for integration tests.
-	writerDone            = func() {}
+	WriterDone            = func() {}
 	_          Backpacker = &Rucksack{}
 )
 
@@ -120,13 +120,14 @@ func (this *Rucksack) Writer() {
 			this.logger.Emergency("DB update failed: %s", err)
 		}
 		if 0 == len(this.writerChan) {
-			writerDone()
+			WriterDone()
 		}
 	}
 }
 
 // Close closes the database during app shutdown sequence. implements io.Closer
 func (this *Rucksack) Close() error {
+	close(this.writerChan)
 	return this.db.Close()
 }
 
