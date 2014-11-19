@@ -23,13 +23,13 @@ import (
 type (
 	DbMock struct {
 		CloseErr    error
-		FindOneData []byte
+		FindOneData []byte // @todo use func
 		FindOneErr  error
-		FindAllData [][]byte
+		FindAllData [][]byte // @todo use func
 		FindAllErr  error
-		InsertErr   error
-		DeleteErr   error
-		CountValue  int
+		InsertErr   error // @todo use func
+		DeleteErr   error // @todo use func
+		CountValue  int   // @todo use func
 		CountErr    error
 	}
 )
