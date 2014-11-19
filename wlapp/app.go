@@ -125,6 +125,11 @@ func BootBrotzeit() {
 		defer wg.Done()
 		bz.BootCron()
 	}()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		bz.BootCronNotifier()
+	}()
 	logger.Notice("Booting Brotzeit ... ")
 }
 

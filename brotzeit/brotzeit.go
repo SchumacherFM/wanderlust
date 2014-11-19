@@ -26,22 +26,21 @@ import (
 	"github.com/SchumacherFM/wanderlust/provisioners"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 	"net/http"
-	"sync"
 )
 
 const (
-	// bpDbConfig bucket/database contains mainly the cron configuration
-	bpDbConfig = "bzcfg"
-	// bpCronKeyPrefix is the key prefix for identifying a real cron schedule
-	bpCronKeyPrefix = "cronExpression"
-	// bpDbUrlsPrefix bucket/database contains millions of URLs
-	bpDbUrlsPrefix = "bzcol"
+	// dbConfig bucket/database contains mainly the cron configuration
+	dbConfig = "bzcfg"
+	// dbCronKeyPrefix is the key prefix for identifying a real cron schedule
+	dbCronKeyPrefix = "cronExpression"
+	// dbURLPrefix bucket/database contains millions of URLs
+	dbURLPrefix = "bzcol"
 )
 
 var (
 	ErrCronScheduleEmpty = errors.New("Cron Schedule is empty.")
 	crond                = cron.New()
-	bootCronOne          sync.Once
+	cronSaveNotifier     = make(chan *BzConfig, 1)
 )
 
 type (
@@ -73,15 +72,12 @@ func New(l *log.Logger, bp rucksack.Backpacker) *Brotzeit {
 	}
 }
 
-// BootCron starts the cron daemon once
+// BootCron runs in a goroutine and starts the cron daemon only once!
 func (b *Brotzeit) BootCron() {
-	bootCronOne.Do(b.bootCron)
-}
 
-// bootCron internal start function to start the cronjobs
-func (b *Brotzeit) bootCron() {
 	for _, p := range b.pc.Collection() {
-		s, _ := b.bp.FindOne(bpDbConfig, bpCronKeyPrefix+p.Api.Route())
+		// get cron schedule
+		s, _ := b.bp.FindOne(dbConfig, dbCronKeyPrefix+p.Api.Route())
 		if nil == s {
 			continue
 		}
@@ -97,12 +93,21 @@ func (b *Brotzeit) bootCron() {
 			}
 		}
 	}
-
-	if len(crond.Entries()) > 0 {
-		crond.Start()
-	}
-
+	startCron()
 	b.l.Debug("Brotzeit cron daemon started!")
+}
+
+// BootCronNotifier runs in a goroutine and listens for the cronSaveNotifier channel. Once there is a save event
+// it handles the starting and stopping of the cron jobs
+func (b *Brotzeit) BootCronNotifier() {
+	for bz := range cronSaveNotifier {
+		b.l.Debug("BootCronNotifier: %#v", bz)
+		// get API
+		// check config complete
+		// if not remove cron, if running
+		// if complete start cron
+		// would be nice to use the websocket to notify the user about this steps here
+	}
 }
 
 func (b *Brotzeit) errWar(e error) {
@@ -116,7 +121,15 @@ func (b *Brotzeit) Close() error {
 	if len(crond.Entries()) > 0 {
 		crond.Stop()
 	}
+	close(cronSaveNotifier)
 	return nil
+}
+
+// startCron starts the cron service if there are any entries
+func startCron() {
+	if len(crond.Entries()) > 0 {
+		crond.Start()
+	}
 }
 
 // GetCollection returns a collection containing all the provisioners with their brotzeit cron schedule
@@ -130,8 +143,8 @@ func GetCollection(pc provisionerApi.Collectioner, bp rucksack.Backpacker) (*BzC
 	for i, p := range pc.Collection() {
 
 		// possibility that database and key will not exists but we ignore that
-		cd, _ := bp.FindOne(bpDbConfig, bpCronKeyPrefix+p.Api.Route())
-		uc, _ := bp.Count(bpDbUrlsPrefix + p.Api.Route())
+		cd, _ := bp.FindOne(dbConfig, dbCronKeyPrefix+p.Api.Route())
+		uc, _ := bp.Count(dbURLPrefix + p.Api.Route())
 		bzc := &BzConfig{
 			Route:    p.Api.Route(),
 			Name:     p.Name,
@@ -156,7 +169,7 @@ func SaveConfig(bp rucksack.Backpacker, r *http.Request) error {
 	}
 
 	if "" == f.Schedule {
-		bp.Delete(bpDbConfig, bpCronKeyPrefix+f.Route)
+		bp.Delete(dbConfig, dbCronKeyPrefix+f.Route)
 		return nil
 	}
 
@@ -165,5 +178,6 @@ func SaveConfig(bp rucksack.Backpacker, r *http.Request) error {
 		return err
 	}
 	// @todo onSave event trigger the cron: check if config complete, add job, and press start
-	return bp.Insert(bpDbConfig, bpCronKeyPrefix+f.Route, []byte(f.Schedule))
+	cronSaveNotifier <- f
+	return bp.Insert(dbConfig, dbCronKeyPrefix+f.Route, []byte(f.Schedule))
 }
