@@ -56,6 +56,7 @@ type (
 		Count(string) (int, error)
 	}
 
+	// boltEntity
 	bEntity struct {
 		bucket string
 		key    string
@@ -78,11 +79,11 @@ func newbEntity(b, k string, d []byte) *bEntity {
 	return be
 }
 
-func (this *bEntity) getBucketByte() []byte {
-	return []byte(this.bucket)
+func (e *bEntity) getBucketByte() []byte {
+	return []byte(e.bucket)
 }
-func (this *bEntity) getKeyByte() []byte {
-	return []byte(this.key)
+func (e *bEntity) getKeyByte() []byte {
+	return []byte(e.key)
 }
 
 func New(dbFileName string, l *log.Logger) (*Rucksack, error) {
@@ -107,9 +108,9 @@ func New(dbFileName string, l *log.Logger) (*Rucksack, error) {
 }
 
 // Writer method runs in a goroutine and waits to data in the channel to write into the boltdb
-func (this *Rucksack) Writer() {
-	for data := range this.writerChan {
-		err := this.db.Update(func(tx *bolt.Tx) error {
+func (r *Rucksack) Writer() {
+	for data := range r.writerChan {
+		err := r.db.Update(func(tx *bolt.Tx) error {
 			b, err := tx.CreateBucketIfNotExists(data.getBucketByte())
 			if err != nil {
 				return err
@@ -117,24 +118,24 @@ func (this *Rucksack) Writer() {
 			return b.Put(data.getKeyByte(), data.data)
 		})
 		if nil != err {
-			this.logger.Emergency("DB update failed: %s", err)
+			r.logger.Emergency("DB update failed: %s", err)
 		}
-		if 0 == len(this.writerChan) {
+		if 0 == len(r.writerChan) {
 			WriterDone()
 		}
 	}
 }
 
 // Close closes the database during app shutdown sequence. implements io.Closer
-func (this *Rucksack) Close() error {
-	close(this.writerChan)
-	return this.db.Close()
+func (r *Rucksack) Close() error {
+	close(r.writerChan)
+	return r.db.Close()
 }
 
 // FindOne returns a value for a bucketName and keyName
-func (this *Rucksack) FindOne(b, k string) ([]byte, error) {
+func (r *Rucksack) FindOne(b, k string) ([]byte, error) {
 	data := newbEntity(b, k, nil)
-	this.db.View(func(tx *bolt.Tx) error {
+	r.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket(data.getBucketByte())
 		if nil == b {
 			return ErrBreadbasketNotFound
@@ -149,9 +150,9 @@ func (this *Rucksack) FindOne(b, k string) ([]byte, error) {
 }
 
 // FindAll finds all keys belonging to a bucketName. Returns an array i = key, i+1 = value
-func (this *Rucksack) FindAll(bn string) ([][]byte, error) {
+func (r *Rucksack) FindAll(bn string) ([][]byte, error) {
 
-	tx, err := this.db.Begin(false)
+	tx, err := r.db.Begin(false)
 	if nil != err {
 		return nil, err
 	}
@@ -172,35 +173,35 @@ func (this *Rucksack) FindAll(bn string) ([][]byte, error) {
 	return ret, nil
 }
 
-func (this *Rucksack) Insert(b, k string, d []byte) error {
+func (r *Rucksack) Insert(b, k string, d []byte) error {
 	be := &bEntity{
 		bucket: b,
 		key:    k,
 		data:   d,
 	}
-	this.writerChan <- be
+	r.writerChan <- be
 	return nil
 }
 
-func (this *Rucksack) Delete(b, k string) error {
+func (r *Rucksack) Delete(b, k string) error {
 	be := &bEntity{
 		bucket: b,
 		key:    k,
 	}
-	err := this.db.Update(func(tx *bolt.Tx) error {
+	err := r.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket(be.getBucketByte())
 		return b.Delete(be.getKeyByte())
 	})
 	if nil != err {
-		this.logger.Emergency("DB delete failed: %s", err)
+		r.logger.Emergency("DB delete failed: %s", err)
 	}
 	return nil
 }
 
 // Count returns the total number of keys within that bucketName
-func (this *Rucksack) Count(bn string) (int, error) {
+func (r *Rucksack) Count(bn string) (int, error) {
 
-	tx, err := this.db.Begin(false)
+	tx, err := r.db.Begin(false)
 	if nil != err {
 		return 0, err
 	}
