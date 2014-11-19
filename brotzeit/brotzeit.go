@@ -40,7 +40,8 @@ const (
 var (
 	ErrCronScheduleEmpty = errors.New("Cron Schedule is empty.")
 	crond                = cron.New()
-	cronSaveNotifier     = make(chan *BzConfig, 1)
+	// @todo implement http://talks.golang.org/2013/advconc.slide
+	cronSaveNotifier = make(chan *BzConfig, 1)
 )
 
 type (

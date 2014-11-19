@@ -54,6 +54,7 @@ type (
 
 		// FetchURLs downloads all the URLs and stores them in the brotzeit DB.
 		// Process can take quite a long time or nanoseconds.
+		// @todo implement http://talks.golang.org/2013/advconc.slide
 		FetchURLs(rucksack.Backpacker, *log.Logger) func()
 	}
 
