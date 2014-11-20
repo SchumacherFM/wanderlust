@@ -17,7 +17,6 @@
 package picnic
 
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 	"net/http"
@@ -29,8 +28,8 @@ type (
 	// request-specific requestContext
 	// contains the app config so we have access to all the objects we need
 	requestContext struct {
-		sm   picnicApi.SessionManager
-		vars map[string]string
+		sm picnicApi.SessionManager
+		//		vars map[string]string
 		user picnicApi.UserSessionIf
 		bp   rucksack.Backpacker
 	}
@@ -46,8 +45,8 @@ type (
 // per request on context
 func newRequestContext(s picnicApi.SessionManager, r *http.Request, u picnicApi.UserSessionIf, b rucksack.Backpacker) *requestContext {
 	ctx := &requestContext{
-		sm:   s,
-		vars: mux.Vars(r),
+		sm: s,
+		//		vars: mux.Vars(r),
 		user: u,
 		bp:   b,
 	}

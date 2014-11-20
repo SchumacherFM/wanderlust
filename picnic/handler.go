@@ -23,7 +23,7 @@ import (
 	"fmt"
 	gzrice "github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice"
 	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/negroni"
-	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
+	"github.com/SchumacherFM/wanderlust/github.com/julienschmidt/httprouter"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/picnic/middleware"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
@@ -48,7 +48,7 @@ func (p *PicnicApp) handler(h picnicApi.HandlerFunc, level authLevel) http.Handl
 }
 
 func (p *PicnicApp) getHandler() *negroni.Negroni {
-	r := mux.NewRouter()
+	r := httprouter.New()
 
 	p.initRoutesAuth(r)
 	p.initRoutesUsers(r)

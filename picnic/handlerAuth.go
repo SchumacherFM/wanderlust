@@ -20,7 +20,7 @@
 package picnic
 
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
+	"github.com/SchumacherFM/wanderlust/github.com/julienschmidt/httprouter"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"net/http"
@@ -31,7 +31,7 @@ type loginPostData struct {
 	Password string `json:"password"`
 }
 
-func (p *PicnicApp) initRoutesAuth(r *mux.Router) error {
+func (p *PicnicApp) initRoutesAuth(r *httprouter.Router) error {
 	sr := r.PathPrefix("/auth/").Subrouter()
 	sr.HandleFunc("/", p.handler(sessionInfoHandler, AUTH_LEVEL_CHECK)).Methods("GET")
 	sr.HandleFunc("/", p.handler(loginHandler, AUTH_LEVEL_IGNORE)).Methods("POST")
