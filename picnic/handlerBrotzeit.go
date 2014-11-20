@@ -18,17 +18,17 @@ package picnic
 
 import (
 	"github.com/SchumacherFM/wanderlust/brotzeit"
-	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
+	"github.com/SchumacherFM/wanderlust/github.com/julienschmidt/httprouter"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"github.com/SchumacherFM/wanderlust/provisioners"
 	"net/http"
 )
 
-func (p *PicnicApp) initRoutesBrotzeit(r *mux.Router) error {
-	sr := r.PathPrefix("/brotzeit/").Subrouter()
-	sr.HandleFunc("/", p.handler(brotzeitCollectionHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
-	sr.HandleFunc("/", p.handler(brotzeitSaveHandler, AUTH_LEVEL_LOGIN)).Methods("POST")
+func (p *PicnicApp) initRoutesBrotzeit(r *httprouter.Router) error {
+
+	r.HandlerFunc("GET", "/brotzeit/", p.handler(brotzeitCollectionHandler, AUTH_LEVEL_LOGIN))
+	r.HandlerFunc("POST", "/brotzeit/", p.handler(brotzeitSaveHandler, AUTH_LEVEL_LOGIN))
 
 	//	// @todo
 	//	brotzeitApi.HandleFunc("/start", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")

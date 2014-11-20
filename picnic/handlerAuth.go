@@ -32,10 +32,10 @@ type loginPostData struct {
 }
 
 func (p *PicnicApp) initRoutesAuth(r *httprouter.Router) error {
-	sr := r.PathPrefix("/auth/").Subrouter()
-	sr.HandleFunc("/", p.handler(sessionInfoHandler, AUTH_LEVEL_CHECK)).Methods("GET")
-	sr.HandleFunc("/", p.handler(loginHandler, AUTH_LEVEL_IGNORE)).Methods("POST")
-	sr.HandleFunc("/", p.handler(logoutHandler, AUTH_LEVEL_LOGIN)).Methods("DELETE")
+
+	r.HandlerFunc("GET", "/auth/", p.handler(sessionInfoHandler, AUTH_LEVEL_CHECK))
+	r.HandlerFunc("POST", "/auth/", p.handler(loginHandler, AUTH_LEVEL_IGNORE))
+	r.HandlerFunc("DELETE", "/auth/", p.handler(logoutHandler, AUTH_LEVEL_LOGIN))
 	return nil
 }
 

@@ -20,16 +20,19 @@
 package picnic
 
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
+	"github.com/SchumacherFM/wanderlust/github.com/julienschmidt/httprouter"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"net/http"
 )
 
-func (p *PicnicApp) initRoutesUsers(r *mux.Router) error {
-	sr := r.PathPrefix("/users/").Subrouter()
+func (p *PicnicApp) initRoutesUsers(r *httprouter.Router) error {
 
-	sr.HandleFunc("/", p.handler(userCollectionHandler, AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
+	r.HandlerFunc(
+		"GET",
+		"/users/",
+		p.handler(userCollectionHandler, AUTH_LEVEL_LOGIN_WAIT),
+	)
 	//	user.HandleFunc("/", p.handler(userCreateHandler, AUTH_LEVEL_LOGIN)).Methods("POST")
 	//	user.HandleFunc("/{id:[0-9]+}", p.handler(userGetHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
 	//	user.HandleFunc("/{id:[0-9]+}", p.handler(userUpdateHandler, AUTH_LEVEL_LOGIN)).Methods("PUT")

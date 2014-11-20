@@ -17,7 +17,7 @@
 package picnic
 
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
+	"github.com/SchumacherFM/wanderlust/github.com/julienschmidt/httprouter"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"net/http"
@@ -36,9 +36,13 @@ type SystemInfo struct {
 	CronJobs []string
 }
 
-func (p *PicnicApp) initRoutesSystemInfo(r *mux.Router) error {
-	sr := r.PathPrefix("/sysinfo/").Subrouter()
-	sr.HandleFunc("/", p.handler(systemInfoHandler, AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
+func (p *PicnicApp) initRoutesSystemInfo(r *httprouter.Router) error {
+
+	r.HandlerFunc(
+		"GET",
+		"/sysinfo/",
+		p.handler(systemInfoHandler, AUTH_LEVEL_LOGIN_WAIT),
+	)
 	return nil
 }
 

@@ -17,25 +17,37 @@
 package picnic
 
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/gorilla/mux"
+	"github.com/SchumacherFM/wanderlust/github.com/julienschmidt/httprouter"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"github.com/SchumacherFM/wanderlust/provisioners"
 	"net/http"
 )
 
-func (p *PicnicApp) initRoutesProvisioners(r *mux.Router) error {
-	sr := r.PathPrefix("/" + provisioners.GetRoutePathPrefix() + "/").Subrouter()
-	sr.HandleFunc("/", p.handler(availableProvisionersHandler, AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
+func (p *PicnicApp) initRoutesProvisioners(r *httprouter.Router) error {
+	prefix := "/" + provisioners.GetRoutePathPrefix() + "/"
+	r.HandlerFunc(
+		"GET",
+		prefix,
+		p.handler(availableProvisionersHandler, AUTH_LEVEL_LOGIN_WAIT),
+	)
 
 	pc, err := provisioners.GetAvailable()
 	if nil != err {
 		return err
 	}
 	for _, prov := range pc.Collection() {
-		sr.HandleFunc("/"+prov.Api.Route(), p.handler(provisioners.FormGenerate(prov.Api), AUTH_LEVEL_LOGIN_WAIT)).Methods("GET")
-		sr.HandleFunc("/"+prov.Api.Route(), p.handler(provisioners.FormSave(prov.Api), AUTH_LEVEL_LOGIN)).Methods("POST")
-		//		sr.HandleFunc("/"+prov.Api.Route(), p.handler(prov.Api.DeleteHandler(), AUTH_LEVEL_LOGIN)).Methods("DELETE")
+		route := prefix + prov.Api.Route()
+		r.HandlerFunc(
+			"GET",
+			route,
+			p.handler(provisioners.FormGenerate(prov.Api), AUTH_LEVEL_LOGIN),
+		)
+		r.HandlerFunc(
+			"POST",
+			route,
+			p.handler(provisioners.FormSave(prov.Api), AUTH_LEVEL_LOGIN),
+		)
 	}
 	return nil
 }

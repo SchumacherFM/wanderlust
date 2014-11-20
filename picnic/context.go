@@ -20,7 +20,6 @@ import (
 	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 	"net/http"
-	"strconv"
 )
 
 type (
@@ -33,6 +32,11 @@ type (
 		user picnicApi.UserSessionIf
 		bp   rucksack.Backpacker
 	}
+)
+
+var (
+	// check if interface has been implemented
+	_ picnicApi.Context = &requestContext{}
 )
 
 //SessionManager() SessionManager
@@ -61,22 +65,22 @@ func (rc *requestContext) Backpacker() rucksack.Backpacker {
 	return rc.bp
 }
 
-func (rc *requestContext) GetParamString(name string) string {
-	if val, ok := rc.vars[name]; ok {
-		return val
-	}
-	logger.Debug("%s not found request vars %#v", name, rc.vars)
-	return ""
-}
-
-func (rc *requestContext) GetParamInt64(name string) int64 {
-	v, e := strconv.ParseInt(rc.vars[name], 10, 0)
-	if nil == e {
-		return v
-	}
-	logger.Debug("%s not found request vars %#v", name, rc.vars)
-	return 0
-}
+//func (rc *requestContext) GetParamString(name string) string {
+//	if val, ok := rc.vars[name]; ok {
+//		return val
+//	}
+//	logger.Debug("%s not found request vars %#v", name, rc.vars)
+//	return ""
+//}
+//
+//func (rc *requestContext) GetParamInt64(name string) int64 {
+//	v, e := strconv.ParseInt(rc.vars[name], 10, 0)
+//	if nil == e {
+//		return v
+//	}
+//	logger.Debug("%s not found request vars %#v", name, rc.vars)
+//	return 0
+//}
 
 func (rc *requestContext) User() picnicApi.UserSessionIf {
 	return rc.user

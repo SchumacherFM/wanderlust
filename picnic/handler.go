@@ -63,13 +63,27 @@ func (p *PicnicApp) getHandler() *negroni.Negroni {
 	//	wandererApi.HandleFunc("/concurrency", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("PUT")
 	//	wandererApi.HandleFunc("/current", p.handler(noopHandler, AUTH_LEVEL_LOGIN)).Methods("GET")
 
-	dr := r.PathPrefix("/dashboard/").Subrouter()
-
 	// loads automatically the index.html
-	dr.PathPrefix("/").Handler(http.StripPrefix("/dashboard", http.FileServer(gzrice.MustFindBox("rd/dist/").HTTPBox())))
-	r.HandleFunc("/", handlerRedirectDashboard)
-	r.HandleFunc("/dashboard", handlerRedirectDashboard)
-	r.HandleFunc("/favicon.ico", handlerFavicon)
+	r.HandlerFunc("GET", "/", handlerRedirectDashboard)
+	r.HandlerFunc("GET", "/dashboard", handlerRedirectDashboard)
+
+	r.HandlerFunc(
+		"GET",
+		"/favicon.ico",
+		func(w http.ResponseWriter, _ *http.Request) {
+			w.Write(gzrice.MustFindBox("rd/dist/").MustBytes("img/favicon.ico"))
+		},
+	)
+
+	//	r.Handler(
+	//		"GET",
+	//		"/dashboard/",
+	//		http.StripPrefix("/dashboard", http.FileServer(gzrice.MustFindBox("rd/dist/").HTTPBox())),
+	//	)
+	r.ServeFiles(
+		"/dashboard/*filepath",
+		gzrice.MustFindBox("rd/dist/").HTTPBox(),
+	)
 
 	n := negroni.New(
 		negroni.HandlerFunc(middleware.CorsMiddleware),
@@ -81,9 +95,6 @@ func (p *PicnicApp) getHandler() *negroni.Negroni {
 
 func handlerRedirectDashboard(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/dashboard/", 301)
-}
-func handlerFavicon(w http.ResponseWriter, r *http.Request) {
-	w.Write(gzrice.MustFindBox("rd/dist/").MustBytes("img/favicon.ico"))
 }
 
 func noopHandler(rc picnicApi.Context, w http.ResponseWriter, r *http.Request) error {

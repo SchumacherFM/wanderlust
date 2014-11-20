@@ -43,8 +43,8 @@ type (
 
 	Context interface {
 		SessionManager() SessionManager
-		GetParamString(string) string
-		GetParamInt64(string) int64
+		//		GetParamString(string) string
+		//		GetParamInt64(string) int64
 		User() UserSessionIf
 		Backpacker() rucksack.Backpacker
 	}
