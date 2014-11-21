@@ -93,7 +93,7 @@ type dbMock2 struct {
 // Composition: we're now "overloading" the Insert method but the parent method is still available thru DbMock.Insert
 func (db *dbMock2) Insert(b, k string, d []byte) error {
 	assert.Equal(db.t, []byte(`1 3 * * *`), d)
-	assert.Equal(db.t, bpCronKeyPrefix+"testProvisioner", k)
+	assert.Equal(db.t, dbCronKeyPrefix+"testProvisioner", k)
 	return nil
 }
 
@@ -113,4 +113,8 @@ func TestSaveConfigSuccess(t *testing.T) {
 	assert.NoError(t, err)
 	saveErr := SaveConfig(bp, req)
 	assert.Nil(t, saveErr)
+}
+
+func TestBootCronNotifier(t *testing.T) {
+	t.Skip("@todo")
 }

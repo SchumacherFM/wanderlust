@@ -17,21 +17,24 @@
 package provTestHelper
 
 import (
+	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 )
 
 type (
 	ColdCutMock struct {
-		RouteMock  string
-		ConfigMock []string
+		RouteMockFnc  func() string
+		ConfigMockFnc func() []string
+		FetchUrlsFnc  func()
 	}
 )
 
-var _ provisionerApi.ColdCutter = &ColdCutMock{} // check if struct implements interface
+// check if struct implements interface
+var _ provisionerApi.ColdCutter = &ColdCutMock{}
 
-func (c *ColdCutMock) Route() string                                           { return c.RouteMock }
-func (c *ColdCutMock) Config() []string                                        { return c.ConfigMock }
+func (c *ColdCutMock) Route() string                                           { return c.RouteMockFnc() }
+func (c *ColdCutMock) Config() []string                                        { return c.ConfigMockFnc() }
 func (c *ColdCutMock) PrepareSave(pd *provisionerApi.PostData) ([]byte, error) { return nil, nil }
 func (c *ColdCutMock) ConfigComplete(bp rucksack.Backpacker) (bool, error)     { return false, nil }
-func (c *ColdCutMock) FetchUrls(bp rucksack.Backpacker) []string               { return nil }
+func (c *ColdCutMock) FetchURLs(bp rucksack.Backpacker, l *log.Logger) func()  { return c.FetchUrlsFnc }

@@ -122,6 +122,7 @@ func (b *Brotzeit) Close() error {
 	if len(crond.Entries()) > 0 {
 		crond.Stop()
 	}
+	// not really necessary but who knows ;-)
 	close(cronSaveNotifier)
 	return nil
 }
