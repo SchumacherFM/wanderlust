@@ -84,11 +84,11 @@ func (b *Brotzeit) BootCron() {
 		}
 
 		ok, err := p.Api.ConfigComplete(b.bp)
-		b.errWar(err)
+		b.errCheck(err)
 		if true == ok {
 			js := string(s)
 			if err := crond.AddFunc(js, p.Api.FetchURLs(b.bp, b.l)); nil != err {
-				b.errWar(err)
+				b.errCheck(err)
 			} else {
 				b.l.Debug("Cron added for: %s, Schedule: %s", p.Api.Route(), js)
 			}
@@ -111,7 +111,7 @@ func (b *Brotzeit) BootCronNotifier() {
 	}
 }
 
-func (b *Brotzeit) errWar(e error) {
+func (b *Brotzeit) errCheck(e error) {
 	if nil != e {
 		b.l.Warning(errgo.Details(errgo.New(e.Error())))
 	}

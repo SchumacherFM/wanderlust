@@ -35,7 +35,7 @@ func TestGetCollection(t *testing.T) {
 
 	pc := provisionerApi.NewProvisioners()
 	p1c := &provTestHelper.ColdCutMock{
-		RouteMock: "testprov1",
+		RouteMockFnc: func() string { return "testprov1" },
 	}
 	p1 := provisionerApi.NewProvisioner("TestProv1", "no-icon", p1c)
 	pc.Add(p1)
