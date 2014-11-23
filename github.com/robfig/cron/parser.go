@@ -23,21 +23,21 @@ func Parse(spec string) (_ Schedule, err error) {
 		}
 	}()
 
-	var loc *time.Location = nil
 	// Split on whitespace.
 	fields := strings.Fields(spec)
 
 	// Check if timezone field is present
+	var loc *time.Location = nil
 	if strings.HasPrefix(spec, "TZ=") {
 		var err error
-		if loc, err = time.LoadLocation(fields[0][3:len(fields[0])]); err != nil {
+		if loc, err = time.LoadLocation(fields[0][3:]); err != nil {
 			log.Panicf("Provided bad location %s", fields[0])
 		}
-		fields = fields[1:len(fields)]
+		fields = fields[1:]
 		spec = strings.Join(fields, " ")
 	}
 
-	if spec[0] == '@' {
+	if strings.HasPrefix(fields[0], "@") {
 		return parseDescriptor(spec, loc), nil
 	}
 
@@ -47,7 +47,7 @@ func Parse(spec string) (_ Schedule, err error) {
 		log.Panicf("Expected 5 or 6 fields, found %d: %s", len(fields), spec)
 	}
 
-	// If six fields are not provided (no seconds field), then it is equivalent to 0.
+	// If a six fields is not provided (no seconds field), then it is equivalent to 0.
 	if len(fields) == 5 {
 		newfields := []string{"00"}
 		newfields = append(newfields, fields...)

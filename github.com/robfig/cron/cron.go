@@ -1,4 +1,4 @@
-//Package cron implements a cron spec parser and runner.  See the README for
+// This library implements a cron spec parser and runner.  See the README for
 // more details.
 package cron
 
@@ -132,6 +132,7 @@ func (c *Cron) Schedule(schedule Schedule, cmd Job) {
 		c.entries = append(c.entries, entry)
 		return
 	}
+
 	c.add <- entry
 }
 

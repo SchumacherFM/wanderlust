@@ -1,7 +1,6 @@
 package cron
 
 import (
-	"strings"
 	"testing"
 	"time"
 )
@@ -110,6 +109,13 @@ func TestNext(t *testing.T) {
 		// Leap year
 		{"Mon Jul 9 23:35 2012", "0 0 0 29 Feb ?", "Mon Feb 29 00:00 2016"},
 
+		// Daylight savings time EST -> EDT
+		{"2012-03-11T00:00:00-0500", "0 30 2 11 Mar ?", "2013-03-11T02:30:00-0400"},
+
+		// Daylight savings time EDT -> EST
+		{"2012-11-04T00:00:00-0400", "0 30 2 04 Nov ?", "2012-11-04T02:30:00-0500"},
+		{"2012-11-04T01:45:00-0400", "0 30 1 04 Nov ?", "2012-11-04T01:30:00-0500"},
+
 		// Unsatisfiable
 		{"Mon Jul 9 23:35 2012", "0 0 0 30 Feb ?", ""},
 		{"Mon Jul 9 23:35 2012", "0 0 0 31 Apr ?", ""},
@@ -216,16 +222,23 @@ func TestErrors(t *testing.T) {
 }
 
 func getTime(value string) time.Time {
-	var t time.Time
-	var err error
-	switch strings.Count(value, ":") {
-	case 1:
-		t, err = time.Parse("Mon Jan 2 15:04 2006", value)
-	case 2:
-		t, err = time.Parse("Mon Jan 2 15:04:05 2006", value)
+	if value == "" {
+		return time.Time{}
 	}
+	t, err := time.Parse("Mon Jan 2 15:04 2006", value)
 	if err != nil {
-		panic(err)
+		t, err = time.Parse("Mon Jan 2 15:04:05 2006", value)
+		if err != nil {
+			t, err = time.Parse("2006-01-02T15:04:05-0700", value)
+			if err != nil {
+				panic(err)
+			}
+			// Daylight savings time tests require location
+			if ny, err := time.LoadLocation("America/New_York"); err == nil {
+				t = t.In(ny)
+			}
+		}
 	}
+
 	return t
 }
