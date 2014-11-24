@@ -116,5 +116,5 @@ func TestSaveConfigSuccess(t *testing.T) {
 }
 
 func TestBootCronNotifier(t *testing.T) {
-	t.Skip("@todo")
+	t.Skip("@todo implement")
 }
