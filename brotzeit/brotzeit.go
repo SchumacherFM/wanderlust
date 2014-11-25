@@ -41,7 +41,8 @@ var (
 	ErrCronScheduleEmpty = errors.New("Cron Schedule is empty.")
 	crond                = cron.New()
 	// @todo implement http://talks.golang.org/2013/advconc.slide
-	cronSaveNotifier = make(chan *BzConfig, 1)
+	chanCronAdd = make(chan *BzConfig, 1)
+	chanCronDel = make(chan *BzConfig, 1)
 )
 
 type (
@@ -98,17 +99,23 @@ func (b *Brotzeit) BootCron() {
 	b.l.Debug("Brotzeit cron daemon started!")
 }
 
-// BootCronNotifier runs in a goroutine and listens for the cronSaveNotifier channel. Once there is a save event
+// BootCronNotifier runs in a goroutine and listens for the chanCronAdd channel. Once there is a save event
 // it handles the starting and stopping of the cron jobs
 func (b *Brotzeit) BootCronNotifier() {
-	for bz := range cronSaveNotifier {
-		b.l.Debug("BootCronNotifier: %#v", bz)
-		// get API
-		// check config complete
-		// if not remove cron, if running
-		// if complete start cron
-		// would be nice to use the websocket to notify the user about this steps here
+	for {
+		select {
+		case bzAdd := <-chanCronAdd:
+			b.l.Debug("BootCronNotifier Add: %#v", bzAdd)
+			// get API
+			// check config complete
+			// if not remove cron, if running
+			// if complete start cron
+			// would be nice to use the websocket to notify the user about this steps here
+		case bzDel := <-chanCronDel:
+			b.l.Debug("BootCronNotifier Add: %#v", bzDel)
+		}
 	}
+
 }
 
 func (b *Brotzeit) errCheck(e error) {
@@ -123,13 +130,13 @@ func (b *Brotzeit) Close() error {
 		crond.Stop()
 	}
 	// not really necessary but who knows ;-)
-	close(cronSaveNotifier)
+	close(chanCronAdd)
 	return nil
 }
 
 // startCron starts the cron service if there are any entries
 func startCron() {
-	if len(crond.Entries()) > 0 {
+	if len(crond.Entries()) > 0 && false == crond.IsRunning() {
 		crond.Start()
 	}
 }
@@ -171,6 +178,7 @@ func SaveConfig(bp rucksack.Backpacker, r *http.Request) error {
 	}
 
 	if "" == f.Schedule {
+		chanCronDel <- f
 		bp.Delete(dbConfig, dbCronKeyPrefix+f.Route)
 		return nil
 	}
@@ -180,6 +188,6 @@ func SaveConfig(bp rucksack.Backpacker, r *http.Request) error {
 		return err
 	}
 	// @todo onSave event trigger the cron: check if config complete, add job, and press start
-	cronSaveNotifier <- f
+	chanCronAdd <- f
 	return bp.Insert(dbConfig, dbCronKeyPrefix+f.Route, []byte(f.Schedule))
 }
