@@ -255,3 +255,8 @@ func (c *Cron) entrySnapshot() []*Entry {
 	}
 	return entries
 }
+
+// IsRunning checks if the cron task is running
+func (c *Cron) IsRunning() bool {
+	return c.running
+}
