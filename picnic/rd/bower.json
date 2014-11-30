@@ -23,6 +23,7 @@
     "angular-ui-router": ">0.2.10",
     "angular-gravatar": "*",
     "angular-resource": "*",
+    "angular-growl-v2": "*",
     "angular-local-storage":"*",
     "angular-breadcrumb":"*",
     "bootstrap": "~3.2.0",
