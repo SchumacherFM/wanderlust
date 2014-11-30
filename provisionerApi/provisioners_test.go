@@ -32,3 +32,7 @@ func TestProvisionersAdd(t *testing.T) {
 	ps := setUp()
 	assert.Len(t, ps.Col, 1)
 }
+
+func TestGetByRoute(t *testing.T) {
+	t.Fail()
+}

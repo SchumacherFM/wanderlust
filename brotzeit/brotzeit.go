@@ -112,7 +112,7 @@ func (b *Brotzeit) BootCronNotifier() {
 			// if complete start cron
 			// would be nice to use the websocket to notify the user about this steps here
 		case bzDel := <-chanCronDel:
-			b.l.Debug("BootCronNotifier Add: %#v", bzDel)
+			b.l.Debug("BootCronNotifier Del: %#v", bzDel)
 		}
 	}
 

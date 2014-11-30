@@ -33,6 +33,7 @@ type (
 
 	Collectioner interface {
 		Collection() []*Config
+		GetByRoute(string) *Config
 	}
 )
 
@@ -46,6 +47,15 @@ func (p *Provisioners) Add(prov *Config) {
 
 func (p *Provisioners) Collection() []*Config {
 	return p.Col
+}
+
+func (p *Provisioners) GetByRoute(r string) *Config {
+	for _, c := range p.Collection() {
+		if r == c.Api.Route() {
+			return c
+		}
+	}
+	return nil
 }
 
 func NewProvisioners() *Provisioners {

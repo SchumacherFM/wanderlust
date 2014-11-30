@@ -17,6 +17,7 @@
 package provisionerApi
 
 import (
+	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 	"testing"
@@ -34,11 +35,11 @@ var _ ColdCutter = &ColdCutMock{}
 
 // check if struct implements interface
 
-func (c *ColdCutMock) Route() string                                       { return c.RouteMock }
-func (c *ColdCutMock) Config() []string                                    { return c.ConfigMock }
-func (c *ColdCutMock) PrepareSave(pd *PostData) ([]byte, error)            { return nil, nil }
-func (c *ColdCutMock) ConfigComplete(bp rucksack.Backpacker) (bool, error) { return false, nil }
-func (c *ColdCutMock) FetchUrls(bp rucksack.Backpacker) []string           { return nil }
+func (c *ColdCutMock) Route() string                                         { return c.RouteMock }
+func (c *ColdCutMock) Config() []string                                      { return c.ConfigMock }
+func (c *ColdCutMock) PrepareSave(pd *PostData) ([]byte, error)              { return nil, nil }
+func (c *ColdCutMock) ConfigComplete(bp rucksack.Backpacker) (bool, error)   { return false, nil }
+func (c *ColdCutMock) FetchURLs(_ rucksack.Backpacker, _ *log.Logger) func() { return func() {} }
 
 func TestNewProvisioner(t *testing.T) {
 	papi := &ColdCutMock{
