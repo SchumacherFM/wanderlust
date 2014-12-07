@@ -17,7 +17,6 @@
 package picnicApi
 
 import (
-	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 	"net/http"
 	"time"
@@ -62,7 +61,6 @@ type (
 		SetSessionExpiresIn(time.Duration) error
 		GetSessionExpiresIn() int
 		CheckPassword(string) bool
-		helpers.FfjsonIf
 	}
 
 	UserGetterIf interface {
@@ -73,7 +71,6 @@ type (
 		GetSessionExpiresIn() int
 		// FindMe searches a user in the database and fills the underlaying struct with the data
 		FindMe() (bool, error)
-		helpers.FfjsonIf
 	}
 
 	UserSetterIf interface {

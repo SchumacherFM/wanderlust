@@ -26,6 +26,14 @@ import (
 	"time"
 )
 
+var (
+	// check for interfaces
+	_ helpers.FfjsonIf        = (*userModel)(nil)
+	_ picnicApi.UserSessionIf = (*userModel)(nil)
+	_ picnicApi.UserGetterIf  = (*userModel)(nil)
+	_ picnicApi.UserSetterIf  = (*userModel)(nil) // @todo revise: not sure if needed or incorrect named
+)
+
 const (
 	USER_PASSWORD_LENGTH      = 24
 	USER_RECOVERY_CODE_LENGTH = 30
@@ -35,12 +43,12 @@ const (
 
 type userModelCollection struct {
 	db    rucksack.Backpacker
-	Users []picnicApi.UserGetterIf // is that an anti pattern to use an interface?
+	Users []*userModel
 }
 
 type userModel struct {
 	db rucksack.Backpacker
-	// @todo field names to lower case as they are private
+	// @todo field names to lower case as they are private ?
 	CreatedAt        time.Time
 	UserName         string
 	Name             string
