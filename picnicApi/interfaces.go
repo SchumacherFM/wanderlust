@@ -17,9 +17,10 @@
 package picnicApi
 
 import (
-	"github.com/SchumacherFM/wanderlust/rucksack"
 	"net/http"
 	"time"
+
+	"github.com/SchumacherFM/wanderlust/rucksack"
 )
 
 // And here we go ... ;-(

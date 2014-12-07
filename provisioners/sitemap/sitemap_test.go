@@ -17,10 +17,11 @@
 package sitemap
 
 import (
+	"testing"
+
 	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	. "github.com/SchumacherFM/wanderlust/rucksack/rsTestHelper"
-	"testing"
 )
 
 func TestPrepareSave(t *testing.T) {

@@ -17,11 +17,12 @@
 package main
 
 import (
+	"os"
+	"runtime"
+
 	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/cli"
 	"github.com/SchumacherFM/wanderlust/github.com/pkg/profile"
 	"github.com/SchumacherFM/wanderlust/wlapp"
-	"os"
-	"runtime"
 )
 
 // The following vars will be injected during the build process via -ldflags.

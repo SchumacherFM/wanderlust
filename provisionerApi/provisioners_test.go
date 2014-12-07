@@ -17,8 +17,9 @@
 package provisionerApi
 
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 )
 
 func setUp() *Provisioners {

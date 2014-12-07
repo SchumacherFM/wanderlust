@@ -18,6 +18,8 @@ package brotzeit
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 	"github.com/SchumacherFM/wanderlust/github.com/robfig/cron"
 	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
@@ -25,7 +27,6 @@ import (
 	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	"github.com/SchumacherFM/wanderlust/provisioners"
 	"github.com/SchumacherFM/wanderlust/rucksack"
-	"net/http"
 )
 
 const (

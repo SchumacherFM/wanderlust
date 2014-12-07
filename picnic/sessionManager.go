@@ -17,12 +17,13 @@
 package picnic
 
 import (
-	jwt "github.com/SchumacherFM/wanderlust/github.com/dgrijalva/jwt-go"
-	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
-	"github.com/SchumacherFM/wanderlust/picnic/middleware"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	jwt "github.com/SchumacherFM/wanderlust/github.com/dgrijalva/jwt-go"
+	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
+	"github.com/SchumacherFM/wanderlust/picnic/middleware"
 )
 
 const (

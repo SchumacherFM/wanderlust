@@ -17,11 +17,12 @@
 package picnic
 
 import (
+	"net/http"
+
 	"github.com/SchumacherFM/wanderlust/github.com/julienschmidt/httprouter"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"github.com/SchumacherFM/wanderlust/provisioners"
-	"net/http"
 )
 
 func (p *PicnicApp) initRoutesProvisioners(r *httprouter.Router) error {

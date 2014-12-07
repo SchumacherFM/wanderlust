@@ -17,14 +17,15 @@
 package brotzeit
 
 import (
+	"net/http"
+	"testing"
+
 	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	"github.com/SchumacherFM/wanderlust/provisionerApi/provTestHelper"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 	"github.com/SchumacherFM/wanderlust/rucksack/rsTestHelper"
-	"net/http"
-	"testing"
 )
 
 func TestGetCollection(t *testing.T) {

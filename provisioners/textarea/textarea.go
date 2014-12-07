@@ -19,10 +19,11 @@ package textarea
 import (
 	"bytes"
 	"errors"
+	"strings"
+
 	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	"github.com/SchumacherFM/wanderlust/rucksack"
-	"strings"
 )
 
 func GetProvisioner() *provisionerApi.Config {

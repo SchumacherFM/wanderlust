@@ -17,11 +17,12 @@
 package picnic
 
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"runtime"
 	"testing"
+
+	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 )
 
 func compareSystemInfoJsonString(t *testing.T, json string) {

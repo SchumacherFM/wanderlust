@@ -8,6 +8,7 @@ package picnic
 
 import (
 	"bytes"
+
 	"github.com/SchumacherFM/wanderlust/helpers"
 )
 

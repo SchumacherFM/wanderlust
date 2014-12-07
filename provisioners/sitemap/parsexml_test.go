@@ -17,14 +17,15 @@
 package sitemap
 
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
-	"github.com/SchumacherFM/wanderlust/helpers"
 	"os"
 	"os/exec"
 	"path"
 	"runtime"
 	"strings"
 	"testing"
+
+	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
+	"github.com/SchumacherFM/wanderlust/helpers"
 )
 
 // run with $ go test -v --bench=. -test.benchmem .

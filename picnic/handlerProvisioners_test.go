@@ -17,13 +17,14 @@
 package picnic
 
 import (
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"github.com/SchumacherFM/wanderlust/provisioners"
 	"github.com/SchumacherFM/wanderlust/rucksack"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 type testRequestContext struct {

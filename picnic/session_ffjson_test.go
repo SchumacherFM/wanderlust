@@ -3,9 +3,10 @@ package picnic
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 )
 
 type testUser struct {

@@ -23,10 +23,11 @@ package middleware
 
 import (
 	"compress/gzip"
-	gzrice "github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice"
-	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/negroni"
 	"net/http"
 	"strings"
+
+	gzrice "github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice"
+	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/negroni"
 )
 
 var (

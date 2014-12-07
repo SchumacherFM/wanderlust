@@ -17,13 +17,14 @@
 package rucksack
 
 import (
-	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
-	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
-	"github.com/SchumacherFM/wanderlust/helpers"
 	"os"
 	"strconv"
 	"strings"
 	"testing"
+
+	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
+	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
+	"github.com/SchumacherFM/wanderlust/helpers"
 )
 
 var (

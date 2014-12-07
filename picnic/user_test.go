@@ -17,10 +17,11 @@
 package picnic
 
 import (
+	"testing"
+
 	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/rucksack/rsTestHelper"
-	"testing"
 )
 
 var (

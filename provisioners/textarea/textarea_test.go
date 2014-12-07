@@ -17,11 +17,12 @@
 package textarea
 
 import (
+	"strings"
+	"testing"
+
 	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	. "github.com/SchumacherFM/wanderlust/rucksack/rsTestHelper"
-	"strings"
-	"testing"
 )
 
 func TestPrepareSave(t *testing.T) {
