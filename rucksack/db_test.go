@@ -22,9 +22,9 @@ import (
 	"strings"
 	"testing"
 
-	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 	"github.com/SchumacherFM/wanderlust/helpers"
+	log "github.com/segmentio/go-log"
 )
 
 var (

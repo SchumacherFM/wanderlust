@@ -19,9 +19,9 @@ package provisionerApi
 import (
 	"testing"
 
-	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 	"github.com/SchumacherFM/wanderlust/rucksack"
+	log "github.com/segmentio/go-log"
 )
 
 // copied to avoid import cycle ...

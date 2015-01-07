@@ -20,10 +20,10 @@ import (
 	"net/http"
 	"sync"
 
-	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"github.com/SchumacherFM/wanderlust/rucksack"
+	log "github.com/segmentio/go-log"
 )
 
 const (

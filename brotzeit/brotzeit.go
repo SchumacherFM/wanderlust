@@ -21,12 +21,12 @@ import (
 	"net/http"
 
 	"github.com/SchumacherFM/wanderlust/github.com/robfig/cron"
-	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	"github.com/SchumacherFM/wanderlust/provisioners"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 	"github.com/juju/errgo"
+	log "github.com/segmentio/go-log"
 )
 
 const (

@@ -20,9 +20,9 @@ import (
 	"errors"
 	"time"
 
-	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/boltdb/bolt"
+	log "github.com/segmentio/go-log"
 )
 
 const (

@@ -21,9 +21,9 @@ import (
 	"errors"
 	"strings"
 
-	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	"github.com/SchumacherFM/wanderlust/rucksack"
+	log "github.com/segmentio/go-log"
 )
 
 func GetProvisioner() *provisionerApi.Config {
