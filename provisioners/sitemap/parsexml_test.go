@@ -24,8 +24,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
 	"github.com/SchumacherFM/wanderlust/helpers"
+	"github.com/stretchr/testify/assert"
 )
 
 // run with $ go test -v --bench=. -test.benchmem .
