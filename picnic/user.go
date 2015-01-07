@@ -20,7 +20,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/SchumacherFM/wanderlust/code.google.com/p/go.crypto/bcrypt"
+	"code.google.com/p/go.crypto/bcrypt"
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
