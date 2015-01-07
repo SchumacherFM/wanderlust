@@ -15,12 +15,13 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 	"math/big"
 	"net"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/juju/errgo"
 )
 
 // GeneratePems creates new PEM files if they not yet exists

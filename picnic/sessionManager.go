@@ -21,9 +21,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 	"github.com/SchumacherFM/wanderlust/picnic/middleware"
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/juju/errgo"
 )
 
 const (
