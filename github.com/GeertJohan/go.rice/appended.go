@@ -2,13 +2,14 @@ package rice
 
 import (
 	"archive/zip"
-	zipexe "github.com/SchumacherFM/wanderlust/github.com/daaku/go.zipexe"
-	"github.com/SchumacherFM/wanderlust/github.com/kardianos/osext"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/SchumacherFM/wanderlust/github.com/kardianos/osext"
+	zipexe "github.com/daaku/go.zipexe"
 )
 
 // appendedBox defines an appended box
