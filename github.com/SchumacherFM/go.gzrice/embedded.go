@@ -1,9 +1,10 @@
 package gzrice
 
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice/embedded"
 	"os"
 	"time"
+
+	"github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice/embedded"
 )
 
 // re-type to make exported methods invisible to user (godoc)

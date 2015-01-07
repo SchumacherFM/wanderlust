@@ -3,13 +3,14 @@ package gzrice
 import (
 	"errors"
 	"fmt"
-	"github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice/embedded"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
+
+	"github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice/embedded"
 )
 
 // Box abstracts a directory for resources/files.
