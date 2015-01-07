@@ -20,9 +20,9 @@ import (
 	"net/http"
 	"runtime"
 
-	"github.com/SchumacherFM/wanderlust/github.com/julienschmidt/httprouter"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
+	"github.com/julienschmidt/httprouter"
 )
 
 type SystemInfo struct {

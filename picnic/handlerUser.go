@@ -22,9 +22,9 @@ package picnic
 import (
 	"net/http"
 
-	"github.com/SchumacherFM/wanderlust/github.com/julienschmidt/httprouter"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
+	"github.com/julienschmidt/httprouter"
 )
 
 func (p *PicnicApp) initRoutesUsers(r *httprouter.Router) error {
