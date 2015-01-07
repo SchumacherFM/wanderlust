@@ -26,10 +26,10 @@ import (
 	"syscall"
 
 	"github.com/SchumacherFM/wanderlust/brotzeit"
-	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/cli"
 	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/picnic"
 	"github.com/SchumacherFM/wanderlust/rucksack"
+	"github.com/codegangsta/cli"
 )
 
 var (

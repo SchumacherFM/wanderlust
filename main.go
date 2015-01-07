@@ -20,9 +20,9 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/cli"
 	"github.com/SchumacherFM/wanderlust/github.com/pkg/profile"
 	"github.com/SchumacherFM/wanderlust/wlapp"
+	"github.com/codegangsta/cli"
 )
 
 // The following vars will be injected during the build process via -ldflags.
