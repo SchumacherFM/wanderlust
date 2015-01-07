@@ -19,8 +19,8 @@ package provisionerApi
 import (
 	"testing"
 
-	log "github.com/SchumacherFM/wanderlust/github.com/segmentio/go-log"
-	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
+	log "github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/segmentio/go-log"
+	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/stretchr/testify/assert"
 	"github.com/SchumacherFM/wanderlust/rucksack"
 )
 

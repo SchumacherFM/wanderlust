@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
+	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/juju/errgo"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
 )
 

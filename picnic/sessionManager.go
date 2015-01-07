@@ -21,8 +21,8 @@ import (
 	"net/http"
 	"time"
 
-	jwt "github.com/SchumacherFM/wanderlust/github.com/dgrijalva/jwt-go"
-	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
+	jwt "github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/dgrijalva/jwt-go"
+	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/juju/errgo"
 	"github.com/SchumacherFM/wanderlust/picnic/middleware"
 )
 

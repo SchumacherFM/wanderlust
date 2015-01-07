@@ -20,8 +20,8 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/cli"
-	"github.com/SchumacherFM/wanderlust/github.com/pkg/profile"
+	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/codegangsta/cli"
+	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/pkg/profile"
 	"github.com/SchumacherFM/wanderlust/wlapp"
 )
 

@@ -22,7 +22,7 @@ package picnic
 import (
 	"net/http"
 
-	"github.com/SchumacherFM/wanderlust/github.com/julienschmidt/httprouter"
+	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/julienschmidt/httprouter"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
 )

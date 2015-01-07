@@ -21,8 +21,9 @@ package helpers
 
 import (
 	"encoding/json"
-	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 	"net/http"
+
+	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/juju/errgo"
 )
 
 func WriteBody(w http.ResponseWriter, body []byte, status int, contentType string) error {

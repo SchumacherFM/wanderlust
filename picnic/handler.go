@@ -23,9 +23,9 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/codegangsta/negroni"
+	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/julienschmidt/httprouter"
 	gzrice "github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice"
-	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/negroni"
-	"github.com/SchumacherFM/wanderlust/github.com/julienschmidt/httprouter"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/picnic/middleware"
 	"github.com/SchumacherFM/wanderlust/picnicApi"

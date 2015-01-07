@@ -1,0 +1,69 @@
+{
+	"ImportPath": "github.com/SchumacherFM/wanderlust",
+	"GoVersion": "go1.4",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/GeertJohan/go.incremental",
+			"Rev": "92fd0ce4a694213e8b3dfd2d39b16e51d26d0fbf"
+		},
+		{
+			"ImportPath": "github.com/boltdb/bolt",
+			"Comment": "v1.0-5-g33e7a07",
+			"Rev": "33e7a074e2c470b6d0b7ee23322a1c4cc759044b"
+		},
+		{
+			"ImportPath": "github.com/codegangsta/cli",
+			"Comment": "1.2.0-50-ga14c5b4",
+			"Rev": "a14c5b47c7efa4ff80cc42e1079a34b4756f2311"
+		},
+		{
+			"ImportPath": "github.com/codegangsta/negroni",
+			"Comment": "v0.1-55-g1dd3ab0",
+			"Rev": "1dd3ab0ff59e13f5b73dcbf70703710aebe50d2f"
+		},
+		{
+			"ImportPath": "github.com/dgrijalva/jwt-go",
+			"Comment": "v2.2.0-9-g7b97402",
+			"Rev": "7b974027108b5a6209373d13107b71f3ebdc6320"
+		},
+		{
+			"ImportPath": "github.com/jessevdk/go-flags",
+			"Comment": "v1-285-g1679536",
+			"Rev": "1679536dcc895411a9f5848d9a0250be7856448c"
+		},
+		{
+			"ImportPath": "github.com/juju/errgo",
+			"Rev": "08cceb5d0b5331634b9826762a8fd53b29b86ad8"
+		},
+		{
+			"ImportPath": "github.com/julienschmidt/httprouter",
+			"Rev": "b55664b9e92004aebb7f19a19a9d06271f3a41fc"
+		},
+		{
+			"ImportPath": "github.com/pkg/profile",
+			"Rev": "c795610ec6e479e5795f7852db65ea15073674a6"
+		},
+		{
+			"ImportPath": "github.com/segmentio/go-log",
+			"Comment": "v1.8.0-4-g9c7ea0f",
+			"Rev": "9c7ea0f744953ff5220087609a8525790dc01d8b"
+		},
+		{
+			"ImportPath": "github.com/stretchr/testify/assert",
+			"Rev": "2eaa4b48b8954bf871229043b8064ca156a542a5"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/bcrypt",
+			"Comment": "null-234",
+			"Rev": "60a80aaa50ff0e8506f61b1fa35078a24941be50"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/blowfish",
+			"Comment": "null-234",
+			"Rev": "60a80aaa50ff0e8506f61b1fa35078a24941be50"
+		}
+	]
+}

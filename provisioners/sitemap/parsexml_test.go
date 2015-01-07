@@ -24,7 +24,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/SchumacherFM/wanderlust/github.com/stretchr/testify/assert"
+	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/stretchr/testify/assert"
 	"github.com/SchumacherFM/wanderlust/helpers"
 )
 

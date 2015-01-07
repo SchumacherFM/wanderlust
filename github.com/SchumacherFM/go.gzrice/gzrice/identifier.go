@@ -1,8 +1,9 @@
 package main
 
 import (
-	incremental "github.com/SchumacherFM/wanderlust/github.com/GeertJohan/go.incremental"
 	"strconv"
+
+	incremental "github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/GeertJohan/go.incremental"
 )
 
 var identifierCount incremental.Uint64
