@@ -23,7 +23,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/juju/errgo"
+	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/juju/errgo"
 )
 
 func WriteBody(w http.ResponseWriter, body []byte, status int, contentType string) error {

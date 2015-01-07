@@ -46,6 +46,12 @@ repository, mainly those which are on github and keep those which needs hg or bz
 
 Cross build inside docker container [https://github.com/docker-library/docs/tree/master/golang](https://github.com/docker-library/docs/tree/master/golang)
 
+## Godeps
+
+```
+$ godep save -r ./...
+```
+
 ## Profiling
 
 To start the program with CPU profiling: `$ WL_PPROF_CPU=1 ./wanderlust [options] [arguments]`

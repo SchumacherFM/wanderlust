@@ -20,13 +20,13 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/juju/errgo"
+	log "github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/segmentio/go-log"
 	"github.com/SchumacherFM/wanderlust/github.com/robfig/cron"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/provisionerApi"
 	"github.com/SchumacherFM/wanderlust/provisioners"
 	"github.com/SchumacherFM/wanderlust/rucksack"
-	"github.com/juju/errgo"
-	log "github.com/segmentio/go-log"
 )
 
 const (

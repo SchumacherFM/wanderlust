@@ -21,10 +21,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/stretchr/testify/assert"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"github.com/SchumacherFM/wanderlust/provisioners"
 	"github.com/SchumacherFM/wanderlust/rucksack"
-	"github.com/stretchr/testify/assert"
 )
 
 type testRequestContext struct {

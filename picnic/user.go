@@ -20,11 +20,11 @@ import (
 	"encoding/json"
 	"time"
 
-	"code.google.com/p/go.crypto/bcrypt"
+	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/juju/errgo"
+	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/golang.org/x/crypto/bcrypt"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
 	"github.com/SchumacherFM/wanderlust/rucksack"
-	"github.com/juju/errgo"
 )
 
 var (
