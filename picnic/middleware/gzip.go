@@ -27,7 +27,7 @@ import (
 	"strings"
 
 	gzrice "github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice"
-	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/negroni"
+	"github.com/codegangsta/negroni"
 )
 
 var (

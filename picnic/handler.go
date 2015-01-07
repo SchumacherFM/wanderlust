@@ -24,11 +24,11 @@ import (
 	"net/http"
 
 	gzrice "github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice"
-	"github.com/SchumacherFM/wanderlust/github.com/codegangsta/negroni"
 	"github.com/SchumacherFM/wanderlust/github.com/julienschmidt/httprouter"
 	"github.com/SchumacherFM/wanderlust/helpers"
 	"github.com/SchumacherFM/wanderlust/picnic/middleware"
 	"github.com/SchumacherFM/wanderlust/picnicApi"
+	"github.com/codegangsta/negroni"
 )
 
 // the handler should create a new context on each request, and handle any returned
