@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	gc "github.com/SchumacherFM/wanderlust/github.com/go-check/check"
+	gc "github.com/go-check/check"
 
 	"github.com/SchumacherFM/wanderlust/github.com/juju/errgo"
 )
