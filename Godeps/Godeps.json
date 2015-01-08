@@ -26,8 +26,8 @@
 		},
 		{
 			"ImportPath": "github.com/dgrijalva/jwt-go",
-			"Comment": "v2.2.0-9-g7b97402",
-			"Rev": "7b974027108b5a6209373d13107b71f3ebdc6320"
+			"Comment": "v2.2.0-11-g7c18dce",
+			"Rev": "7c18dce7b8ff32db34d4b7054d488db656d75cc3"
 		},
 		{
 			"ImportPath": "github.com/jessevdk/go-flags",
