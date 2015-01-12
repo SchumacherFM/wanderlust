@@ -2,7 +2,7 @@ package jwt_test
 
 import (
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/dgrijalva/jwt-go"
 	"io/ioutil"
 	"net/http"
 	"reflect"

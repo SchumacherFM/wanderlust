@@ -1,7 +1,7 @@
 package jwt_test
 
 import (
-	"github.com/dgrijalva/jwt-go"
+	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/dgrijalva/jwt-go"
 	"io/ioutil"
 	"strings"
 	"testing"
