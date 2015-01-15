@@ -93,7 +93,7 @@ func (n *Negroni) Run(addr string) {
 }
 
 // Returns a list of all the handlers in the current Negroni middleware chain.
-func (n *Negroni) Handlers() ([]Handler) {
+func (n *Negroni) Handlers() []Handler {
 	return n.handlers
 }
 
