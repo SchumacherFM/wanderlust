@@ -29,18 +29,24 @@ func GetTlsConfig() *tls.Config {
 	// @see http://www.hydrogen18.com/blog/your-own-pki-tls-golang.html
 	// @see https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html @todo
 	tlsConfig.CipherSuites = []uint16{
-		//		tls.TLS_RSA_WITH_AES_128_CBC_SHA,
-		tls.TLS_RSA_WITH_AES_256_CBC_SHA,
-		//		tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
-		tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
-		//		tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-		tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-		//		tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
 		tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+		tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+		tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+		tls.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+		tls.TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA,
+		tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+		tls.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+		tls.TLS_ECDHE_ECDSA_WITH_RC4_128_SHA,
+		tls.TLS_RSA_WITH_AES_256_CBC_SHA,
+		tls.TLS_RSA_WITH_AES_128_CBC_SHA,
+		tls.TLS_RSA_WITH_3DES_EDE_CBC_SHA,
 	}
 	tlsConfig.MinVersion = tls.VersionTLS12
 	// no need to disable session resumption http://chimera.labs.oreilly.com/books/1230000000545/ch04.html#TLS_RESUME
 
+	// prefer server order 
+	tlsConfig.PreferServerCipherSuites: true
+	
 	// https://twitter.com/karlseguin/status/508531717011820544
 	tlsConfig.ClientSessionCache = tls.NewLRUClientSessionCache(DEFAULT_TLS_SESSION_CACHE_CAPACITY)
 
