@@ -44,9 +44,9 @@ func GetTlsConfig() *tls.Config {
 	tlsConfig.MinVersion = tls.VersionTLS12
 	// no need to disable session resumption http://chimera.labs.oreilly.com/books/1230000000545/ch04.html#TLS_RESUME
 
-	// prefer server order 
-	tlsConfig.PreferServerCipherSuites: true
-	
+	// prefer server order
+	tlsConfig.PreferServerCipherSuites = true
+
 	// https://twitter.com/karlseguin/status/508531717011820544
 	tlsConfig.ClientSessionCache = tls.NewLRUClientSessionCache(DEFAULT_TLS_SESSION_CACHE_CAPACITY)
 
