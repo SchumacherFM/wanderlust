@@ -32,25 +32,17 @@ and all the reads for your program are satisfied from the cache itself.
 
 ## Build
 
-Using [https://github.com/laher/goxc](https://github.com/laher/goxc)
-
-Setup go/src for darwin, linux and windows [http://dave.cheney.net/2013/07/09/an-introduction-to-cross-compilation-with-go-1-1](http://dave.cheney.net/2013/07/09/an-introduction-to-cross-compilation-with-go-1-1)
-
-Run `make build`. If you are interested in pre-compiled binaries, ping me.
-
-Dependencies to external packages are all included in this repository. 
-Yes there are apps like `godep` [here](https://coreos.com/blog/godep-for-end-user-go-projects/) 
-to handle this but I decided 
-to implement each package directly. Maybe some parts will be moved out of the 
-repository, mainly those which are on github and keep those which needs hg or bzr.
-
-Cross build inside docker container [https://github.com/docker-library/docs/tree/master/golang](https://github.com/docker-library/docs/tree/master/golang)
-
-## Godeps
+Install [http://getgb.io/](http://getgb.io/)
 
 ```
-$ godep save -r ./...
+$ go get -u github.com/constabulary/gb/...
+$ git clone --recursive git@github.com:SchumacherFM/wanderlust.git
+$ gb build all
+$ ./bin/wanderlust
 ```
+
+@todo: Review special build process when including static assets.
+
 
 ## Profiling
 
