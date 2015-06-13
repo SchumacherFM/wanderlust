@@ -30,4 +30,4 @@
 	url = git@github.com:codegangsta/cli.git
 [submodule "vendor/src/github.com/pkg/profile"]
 	path = vendor/src/github.com/pkg/profile
-	url = git@github.com:github.com/pkg/profile.git
+	url = git@github.com:pkg/profile.git
