@@ -19,7 +19,7 @@ package provisionerApi
 import (
 	"bytes"
 
-	"github.com/SchumacherFM/wanderlust/helpers"
+	"helpers"
 )
 
 // MarshalJSON implements encoding/json.Marshaler interface

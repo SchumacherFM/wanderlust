@@ -21,7 +21,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/juju/errgo"
+	"github.com/juju/errgo"
 )
 
 // GeneratePems creates new PEM files if they not yet exists

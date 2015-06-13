@@ -5,7 +5,7 @@ import (
 	"go/build"
 	"os"
 
-	goflags "github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/jessevdk/go-flags" // rename import to `goflags` (file scope) so we can use `var flags` (package scope)
+	goflags "github.com/jessevdk/go-flags" // rename import to `goflags` (file scope) so we can use `var flags` (package scope)
 )
 
 // flags

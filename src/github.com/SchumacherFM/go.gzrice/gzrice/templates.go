@@ -15,7 +15,7 @@ func init() {
 	tmplEmbeddedBox, err = template.New("embeddedBox").Parse(`package {{.Package}}
 
 import (
-	"github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice/embedded"
+	"github.com/SchumacherFM/go.gzrice/embedded"
 	"time"
 )
 

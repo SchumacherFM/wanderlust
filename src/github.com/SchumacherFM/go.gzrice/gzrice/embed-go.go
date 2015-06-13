@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	gzrice "github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice"
+	gzrice "github.com/SchumacherFM/go.gzrice"
 )
 
 func operationEmbedGo(pkg *build.Package) {

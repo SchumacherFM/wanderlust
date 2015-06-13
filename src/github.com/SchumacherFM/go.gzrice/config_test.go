@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice/embedded"
+	"github.com/SchumacherFM/go.gzrice/embedded"
 )
 
 // For all test code in this package, define a set of test boxes.

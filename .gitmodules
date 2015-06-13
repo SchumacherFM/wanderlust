@@ -1,0 +1,33 @@
+[submodule "vendor/src/github.com/juju/errgo"]
+	path = vendor/src/github.com/juju/errgo
+	url = git@github.com:juju/errgo.git
+[submodule "vendor/src/github.com/segmentio/go-log"]
+	path = vendor/src/github.com/segmentio/go-log
+	url = git@github.com:segmentio/go-log.git
+[submodule "vendor/src/github.com/boltdb/bolt"]
+	path = vendor/src/github.com/boltdb/bolt
+	url = git@github.com:boltdb/bolt.git
+[submodule "vendor/src/github.com/GeertJohan/go.incremental"]
+	path = vendor/src/github.com/GeertJohan/go.incremental
+	url = git@github.com:GeertJohan/go.incremental.git
+[submodule "vendor/src/github.com/jessevdk/go-flags"]
+	path = vendor/src/github.com/jessevdk/go-flags
+	url = git@github.com:jessevdk/go-flags.git
+[submodule "vendor/src/github.com/codegangsta/negroni"]
+	path = vendor/src/github.com/codegangsta/negroni
+	url = git@github.com:codegangsta/negroni.git
+[submodule "vendor/src/github.com/dgrijalva/jwt-go"]
+	path = vendor/src/github.com/dgrijalva/jwt-go
+	url = git@github.com:dgrijalva/jwt-go.git
+[submodule "vendor/src/github.com/julienschmidt/httprouter"]
+	path = vendor/src/github.com/julienschmidt/httprouter
+	url = git@github.com:julienschmidt/httprouter.git
+[submodule "vendor/src/golang.org/x/crypto"]
+	path = vendor/src/golang.org/x/crypto
+	url = git@github.com:golang/crypto.git
+[submodule "vendor/src/github.com/codegangsta/cli"]
+	path = vendor/src/github.com/codegangsta/cli
+	url = git@github.com:codegangsta/cli.git
+[submodule "vendor/src/github.com/pkg/profile"]
+	path = vendor/src/github.com/pkg/profile
+	url = git@github.com:github.com/pkg/profile.git

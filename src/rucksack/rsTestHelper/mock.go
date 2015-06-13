@@ -17,7 +17,7 @@
 package rsTestHelper
 
 import (
-	"github.com/SchumacherFM/wanderlust/rucksack"
+	"rucksack"
 )
 
 type (

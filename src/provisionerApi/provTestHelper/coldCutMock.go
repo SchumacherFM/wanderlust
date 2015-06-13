@@ -17,9 +17,9 @@
 package provTestHelper
 
 import (
-	log "github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/segmentio/go-log"
-	"github.com/SchumacherFM/wanderlust/provisionerApi"
-	"github.com/SchumacherFM/wanderlust/rucksack"
+	log "github.com/segmentio/go-log"
+	"provisionerApi"
+	"rucksack"
 )
 
 type (

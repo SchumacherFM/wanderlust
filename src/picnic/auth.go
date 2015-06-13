@@ -19,7 +19,7 @@ package picnic
 import (
 	"net/http"
 
-	"github.com/SchumacherFM/wanderlust/picnicApi"
+	"picnicApi"
 )
 
 type authLevel int

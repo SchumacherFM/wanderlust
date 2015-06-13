@@ -22,7 +22,6 @@ import (
 
 	"github.com/codegangsta/cli"
 	"github.com/pkg/profile"
-	"wlapp"
 )
 
 // The following vars will be injected during the build process via -ldflags.
@@ -34,14 +33,14 @@ var (
 
 // mainAction will be executed when the CLI command run will be provided
 func mainAction(c *cli.Context) {
-	wlapp.CliContext = c
-	wlapp.Boot()
+	CliContext = c
+	Boot()
 }
 
 // passwordAction changes the password for the admin user
 func passwordAction(c *cli.Context) {
-	wlapp.CliContext = c
-	wlapp.UpdateAdminPassword()
+	CliContext = c
+	UpdateAdminPassword()
 }
 
 // @todo maybe use https://github.com/spf13/viper

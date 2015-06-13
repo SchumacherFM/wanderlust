@@ -19,8 +19,8 @@ package picnic
 import (
 	"net/http"
 
-	"github.com/SchumacherFM/wanderlust/picnicApi"
-	"github.com/SchumacherFM/wanderlust/rucksack"
+	"picnicApi"
+	"rucksack"
 )
 
 type (

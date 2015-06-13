@@ -22,9 +22,9 @@ package picnic
 import (
 	"net/http"
 
-	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/julienschmidt/httprouter"
-	"github.com/SchumacherFM/wanderlust/helpers"
-	"github.com/SchumacherFM/wanderlust/picnicApi"
+	"github.com/julienschmidt/httprouter"
+	"helpers"
+	"picnicApi"
 )
 
 type loginPostData struct {

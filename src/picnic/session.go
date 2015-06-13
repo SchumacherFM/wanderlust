@@ -17,7 +17,7 @@
 package picnic
 
 import (
-	"github.com/SchumacherFM/wanderlust/picnicApi"
+	"picnicApi"
 )
 
 // Basic user session info

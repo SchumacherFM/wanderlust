@@ -20,7 +20,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/SchumacherFM/wanderlust/rucksack"
+	"rucksack"
 )
 
 // And here we go ... ;-(

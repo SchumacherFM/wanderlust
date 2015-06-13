@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package wlapp
+package main
 
 import (
 	"io"
@@ -25,11 +25,11 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/codegangsta/cli"
-	log "github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/segmentio/go-log"
-	"github.com/SchumacherFM/wanderlust/brotzeit"
-	"github.com/SchumacherFM/wanderlust/picnic"
-	"github.com/SchumacherFM/wanderlust/rucksack"
+	"github.com/codegangsta/cli"
+	log "github.com/segmentio/go-log"
+	"brotzeit"
+	"picnic"
+	"rucksack"
 )
 
 var (

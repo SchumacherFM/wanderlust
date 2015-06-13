@@ -9,7 +9,7 @@ package picnic
 import (
 	"bytes"
 
-	"github.com/SchumacherFM/wanderlust/helpers"
+	"helpers"
 )
 
 func (mj *userModelCollection) MarshalJSON() ([]byte, error) {

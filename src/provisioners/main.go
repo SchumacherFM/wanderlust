@@ -20,11 +20,11 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/SchumacherFM/wanderlust/helpers"
-	"github.com/SchumacherFM/wanderlust/picnicApi"
-	"github.com/SchumacherFM/wanderlust/provisionerApi"
-	"github.com/SchumacherFM/wanderlust/provisioners/sitemap"
-	"github.com/SchumacherFM/wanderlust/provisioners/textarea"
+	"helpers"
+	"picnicApi"
+	"provisionerApi"
+	"provisioners/sitemap"
+	"provisioners/textarea"
 )
 
 var (

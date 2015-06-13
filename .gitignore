@@ -36,3 +36,7 @@ bower_components
 
 # rice boxes (embedded go files of the responsive dashboard)
 *.rice-box.go
+/bin/gzrice
+/bin/wanderlust
+/bin/*.exe
+/pkg/*

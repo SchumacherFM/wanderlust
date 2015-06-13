@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice/embedded"
+	"github.com/SchumacherFM/go.gzrice/embedded"
 )
 
 // Box abstracts a directory for resources/files.

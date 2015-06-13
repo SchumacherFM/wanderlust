@@ -19,11 +19,11 @@ package picnic
 import (
 	"net/http"
 
-	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/julienschmidt/httprouter"
-	"github.com/SchumacherFM/wanderlust/brotzeit"
-	"github.com/SchumacherFM/wanderlust/helpers"
-	"github.com/SchumacherFM/wanderlust/picnicApi"
-	"github.com/SchumacherFM/wanderlust/provisioners"
+	"github.com/julienschmidt/httprouter"
+	"brotzeit"
+	"helpers"
+	"picnicApi"
+	"provisioners"
 )
 
 func (p *PicnicApp) initRoutesBrotzeit(r *httprouter.Router) error {

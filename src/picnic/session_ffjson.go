@@ -8,7 +8,7 @@ package picnic
 import (
 	"bytes"
 
-	"github.com/SchumacherFM/wanderlust/helpers"
+	"helpers"
 )
 
 func (mj *SessionInfo) MarshalJSON() ([]byte, error) {

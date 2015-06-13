@@ -8,7 +8,7 @@ import (
 	"sort"
 	"syscall"
 
-	"github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice/embedded"
+	"github.com/SchumacherFM/go.gzrice/embedded"
 )
 
 //++ TODO: IDEA: merge virtualFile and virtualDir, this decreases work done by rice.File

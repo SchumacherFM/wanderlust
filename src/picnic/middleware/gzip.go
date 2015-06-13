@@ -26,8 +26,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/SchumacherFM/wanderlust/Godeps/_workspace/src/github.com/codegangsta/negroni"
-	gzrice "github.com/SchumacherFM/wanderlust/github.com/SchumacherFM/go.gzrice"
+	"github.com/codegangsta/negroni"
+	gzrice "github.com/SchumacherFM/go.gzrice"
 )
 
 var (
